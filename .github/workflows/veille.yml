@@ -1,0 +1,37 @@
+# Lance le robot chaque matin sur les serveurs de GitHub, puis publie les offres mises à jour.
+name: Veille emploi quotidienne
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # tous les jours à 5 h UTC, soit 6 h (hiver) ou 7 h (été) à Paris
+  workflow_dispatch:       # permet aussi de le lancer à la main depuis l'onglet « Actions »
+
+permissions:
+  contents: write          # pour enregistrer docs/offres.json dans le dépôt
+
+jobs:
+  veille:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer les bibliothèques
+        run: pip install -r requirements.txt
+
+      - name: Lancer le robot
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PROFIL: ${{ secrets.PROFIL }}
+        run: python robot.py
+
+      - name: Publier les offres mises à jour
+        run: |
+          git config user.name "robot-veille"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/offres.json
+          git diff --staged --quiet || git commit -m "Mise à jour des offres du $(date +%d/%m/%Y)"
+          git push

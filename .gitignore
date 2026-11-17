@@ -1,0 +1,15 @@
+# Clés et mots de passe : ne jamais publier
+.env
+
+# Bibliothèques installées localement
+.venv/
+
+# Fichiers temporaires
+__pycache__/
+.DS_Store
+
+# Profil personnel : rangé dans un secret GitHub
+profil.md
+
+# Réglages locaux de Claude Code (aperçu)
+.claude/
