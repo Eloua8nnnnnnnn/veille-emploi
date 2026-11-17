@@ -204,11 +204,11 @@
   <nav class="creux">
     <button data-onglet="compagnies" class="actif">Compagnies aériennes</button>
     <button data-onglet="startups">Offres en startup</button>
-    <button data-onglet="contacts">Startups à contacter</button>
+    <button data-onglet="autres">Offres autres</button>
     <button data-onglet="candidatures">Mes candidatures</button>
   </nav>
 
-  <!-- Onglets d'offres (compagnies et startups) -->
+  <!-- Onglets d'offres (compagnies, startups et autres) -->
   <section id="offres">
     <div class="filtres">
       <select id="f-pays"></select>
@@ -306,6 +306,8 @@ function ecrireLocal(cle, valeur) {
   try { localStorage.setItem(cle, JSON.stringify(valeur)); } catch {}
 }
 let statuts = lireLocal("statuts", {});
+let repechees = lireLocal("repechees", {});  // offres écartées par Claude que vous avez remises dans la liste
+const retenue = o => o.pertinente || !!repechees[o.lien];
 
 // ---------- Outils ----------
 const $ = id => document.getElementById(id);
@@ -386,7 +388,7 @@ function afficherOffres() {
   remplirMenu($("f-niveau"), "Tous les niveaux", toutes.map(o => o.niveau));
 
   if (!toutes.length) {
-    const textes = { startups: "Les offres en startup arriveront avec le volet 2 du robot.", contacts: "Les startups à contacter arriveront avec le volet 3 du robot." };
+    const textes = { startups: "Les offres en startup arriveront avec le volet 2 du robot.", autres: "Les offres VIE et les autres offres intéressantes arriveront bientôt." };
     $("liste-offres").innerHTML = `<p class="vide">${textes[ongletActif] || "Aucune offre pour l'instant."}</p>`;
     return;
   }
@@ -401,9 +403,9 @@ function afficherOffres() {
     : (a, b) => b.date_publication.localeCompare(a.date_publication) || b.score - a.score;
   visibles.sort(tri);
 
-  const postes = visibles.filter(o => o.pertinente && !STAGES.includes(o.type_contrat));
-  const stages = visibles.filter(o => o.pertinente && STAGES.includes(o.type_contrat));
-  const ecartees = visibles.filter(o => !o.pertinente);
+  const postes = visibles.filter(o => retenue(o) && !STAGES.includes(o.type_contrat));
+  const stages = visibles.filter(o => retenue(o) && STAGES.includes(o.type_contrat));
+  const ecartees = visibles.filter(o => !retenue(o));
 
   $("liste-offres").innerHTML =
     (postes.length ? postes.map(carteOffre).join("") : `<p class="vide">Aucun poste ne correspond à ces filtres.</p>`) +
@@ -421,6 +423,7 @@ function carteOffre(o) {
     <div class="ligne-titre">
       <div>
         ${nouvelle && o.pertinente ? '<span class="etiquette nouveau">Nouveau</span>' : ""}
+        ${!o.pertinente && repechees[o.lien] ? '<span class="etiquette c-gris">Repêchée</span>' : ""}
         <span class="etiquette ${couleurContrat(o.type_contrat)}">${echapper(o.type_contrat)}</span>
         ${o.visa === "Parrainé" ? '<span class="etiquette visa">Visa parrainé</span>' : ""}
         <a class="titre" href="${echapper(o.lien)}" target="_blank" rel="noopener">${echapper(o.titre)}</a>
@@ -432,11 +435,20 @@ function carteOffre(o) {
     <div class="avis">Avis de Claude : ${echapper(o.raison)}</div>
     <div class="actions">
       ${bouton("vue", "Vue")}${bouton("interessante", "Intéressante")}${bouton("postule", "J'ai postulé")}
+      ${o.pertinente ? "" : `<button class="bouton" data-repecher="${echapper(o.lien)}">${repechees[o.lien] ? "Retirer de la liste" : "Remettre dans la liste"}</button>`}
     </div>
   </div>`;
 }
 
 $("liste-offres").addEventListener("click", async e => {
+  const repecher = e.target.closest("button[data-repecher]");
+  if (repecher) {
+    const lien = repecher.dataset.repecher;
+    if (repechees[lien]) delete repechees[lien]; else repechees[lien] = true;
+    ecrireLocal("repechees", repechees);
+    afficherOffres();
+    return;
+  }
   const bouton = e.target.closest("button[data-statut]");
   if (!bouton) return;
   const { lien, statut } = bouton.dataset;

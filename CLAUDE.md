@@ -64,38 +64,21 @@ Je n'ai pas de visa de travail hors de l'Union européenne. Écarte les offres q
 
 ---
 
-## Volet 3 : startups à contacter
+## Volet 3 : offres autres (VIE et autres offres intéressantes)
 
 ### Objectif
-Beaucoup de postes de Chief of Staff ne sont jamais publiés. Ce volet repère les startups qui sont au bon moment pour recruter un bras droit, afin que je puisse écrire directement à leur dirigeant, même sans offre publiée.
+Rassembler les offres qui sortent des volets 1 et 2 mais qui m'intéressent : les VIE et d'autres postes proches de mes candidatures (à préciser).
 
-### Sources des levées de fonds
-- **France** : le bilan hebdomadaire des levées de fonds publié par Maddyness.
-- **Asie du Sud-Est** : DealStreetAsia et Tech in Asia, qui couvrent les levées de fonds de la région.
-- **Inde** : les récapitulatifs de levées de fonds publiés par la presse spécialisée indienne.
-- **Moyen-Orient** : Wamda, qui publie chaque mois le bilan des levées de fonds de la région.
-- **États-Unis** : les startups Y Combinator ayant annoncé une levée récente.
+### Sources
+- Business France (offres VIE) : extraction automatique interdite par ses mentions légales sans autorisation. Lien direct dans le tableau de bord en attendant.
+- Autres sources : à définir (Adzuna en priorité, car son interface est officielle).
 
-### Critères de sélection
-- Levée de fonds annoncée dans les 12 derniers mois.
-- Stade de financement : de l'amorçage (seed) à la série B. Écarte les séries C et au-delà, ainsi que les entreprises sans aucune levée.
-- Taille : entre 15 et 200 salariés quand l'information est disponible.
-- Nombre d'offres d'emploi ouvertes : plus il est élevé, plus l'entreprise est en croissance. Indique ce nombre quand tu peux le trouver.
-- Mêmes zones géographiques que le volet 2.
-
-### Informations à afficher pour chaque startup
-- Nom, pays et ville
-- Secteur et description en une phrase
-- Montant, stade et date de la dernière levée
-- Taille de l'équipe, si disponible
-- Nombre d'offres d'emploi ouvertes, si disponible
-- Nom du dirigeant, uniquement s'il figure dans l'annonce de la levée
-- Lien vers le site de l'entreprise et vers l'article annonçant la levée
+(L'ancien volet « startups à contacter » a été abandonné le 17/11/2026.)
 
 ---
 
 ## Critères communs
-- Types de contrats : CDI et CDD en priorité. Les stages sont acceptés mais secondaires : affiche-les après les CDI/CDD et signale-les clairement. Écarte les autres types de contrats.
+- Types de contrats : CDI, CDD, VIE et graduate programs en priorité. Les stages sont acceptés mais secondaires : affiche-les après les CDI/CDD et signale-les clairement. Écarte les autres types de contrats.
 - Niveau : de 0 à 3 ans d'expérience demandée. Ne te limite pas aux offres qui mentionnent explicitement « junior » : beaucoup d'annonces ne précisent pas le niveau. Garde une offre si l'expérience demandée est de 3 ans maximum ou si elle n'est pas indiquée. Écarte uniquement les offres qui demandent clairement plus de 3 ans d'expérience, ou les postes seniors, de direction ou d'encadrement d'équipe.
 
 ## Informations à extraire pour chaque offre
@@ -116,10 +99,11 @@ Beaucoup de postes de Chief of Staff ne sont jamais publiés. Ce volet repère l
 
 ## Tableau de bord
 - Une seule page web simple, lisible sur ordinateur et sur téléphone.
-- Trois onglets : compagnies aériennes / offres en startup / startups à contacter.
-- Dans l'onglet « startups à contacter », trier par date de levée (les plus récentes en premier) et permettre de marquer une startup comme « contactée ».
+- Quatre onglets : compagnies aériennes / offres en startup / offres autres / mes candidatures.
+- L'onglet « mes candidatures » lit et modifie mon Google Sheet de suivi (script Google Apps Script, voir `google_sheet_script.js`).
+- Les offres écartées par Claude sont dans une section repliée, avec un bouton pour les remettre dans la liste.
 - Filtres : pays, entreprise, type de contrat, niveau d'expérience.
-- Tri par date de publication, les plus récentes en premier.
+- Tri par date de publication (par défaut) ou par score de pertinence.
 - Mettre en évidence les offres apparues depuis la dernière mise à jour.
 - Stages affichés après les CDI/CDD et clairement identifiés.
 - Section Afrique séparée dans le volet startups.
