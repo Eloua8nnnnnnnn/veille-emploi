@@ -148,8 +148,63 @@ def qatar():
         time.sleep(1)
 
 
+def emirates():
+    """Interface utilisée par emiratesgroupcareers.com : toutes les offres, avec leur description."""
+    offres = []
+    for o in lire("https://www.emiratesgroupcareers.com/api/v1/jobs", params={"showAll": "true"}).json()["data"]:
+        offres.append({
+            "entreprise": f"Emirates Group ({o.get('brand') or 'Emirates'})",
+            "titre": html.unescape(o["title"]),
+            "lieu": ", ".join(x for x in (o.get("city"), o.get("country")) if x),
+            "date_publication": datetime.fromtimestamp(o["postingdate"] / 1000, timezone.utc).strftime("%Y-%m-%d") if o.get("postingdate") else "",
+            "lien": f"https://www.emiratesgroupcareers.com/search-and-apply/{o['reqid']}/",
+            "texte": nettoyer(o.get("jobdescription") or ""),
+        })
+    return offres
+
+
+def air_new_zealand():
+    """Page carrières (outil Attrax), 12 offres par page. Les tuiles n'indiquent pas de date de publication."""
+    aujourd_hui = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    offres, page = [], 1
+    while True:
+        contenu = lire("https://careers.airnewzealand.co.nz/jobs", params={"page": page}).text
+        tuiles = re.findall(r'<div class="attrax-vacancy-tile[ "].*?(?=<div class="attrax-vacancy-tile[ "]|$)', contenu, re.S)
+        nouvelles = 0
+        for tuile in tuiles:
+            lien = re.search(r'href="(/job/[^"]+)"', tuile)
+            if not lien or any(o["lien"].endswith(lien.group(1)) for o in offres):
+                continue
+            texte = re.sub(r"(\s*\|\s*)+", " | ", re.sub(r"<[^>]+>", " | ", tuile))
+            titre = texte.strip(" |").split(" | ")[0]
+            lieu = re.search(r"\| Location \| ([^|]+)", texte)
+            offres.append({
+                "entreprise": "Air New Zealand",
+                "titre": html.unescape(titre),
+                "lieu": lieu.group(1).strip() if lieu else "Nouvelle-Zélande",
+                "date_publication": aujourd_hui,  # inconnue : on note le jour où le robot l'a vue
+                "lien": "https://careers.airnewzealand.co.nz" + lien.group(1),
+            })
+            nouvelles += 1
+        if not nouvelles:
+            return offres
+        page += 1
+        time.sleep(1)
+
+
+def air_tahiti_nui():
+    """Page « Job offers » du site, souvent vide (petite compagnie)."""
+    aujourd_hui = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    contenu = lire("https://www.airtahitinui.com/en/career/jobs").text
+    liens = dict(re.findall(r'href="(/en/career/jobs/[^"#?]+)"[^>]*>\s*(?:<[^>]+>\s*)*([^<]+)', contenu))
+    return [{"entreprise": "Air Tahiti Nui", "titre": html.unescape(titre.strip()), "lieu": "Polynésie française",
+             "date_publication": aujourd_hui, "lien": "https://www.airtahitinui.com" + lien}
+            for lien, titre in liens.items()]
+
+
 SOURCES = {"Etihad Airways": etihad, "Lufthansa": lufthansa,
-           "Singapore Airlines": singapore, "Qatar Airways": qatar}
+           "Singapore Airlines": singapore, "Qatar Airways": qatar,
+           "Emirates": emirates, "Air New Zealand": air_new_zealand, "Air Tahiti Nui": air_tahiti_nui}
 
 
 # ---------- Texte complet d'une annonce ----------
@@ -161,6 +216,8 @@ def nettoyer(page_html):
 
 
 def texte_annonce(offre):
+    if offre.get("texte"):  # Emirates : la description arrive avec la liste des offres
+        return offre["texte"]
     if "detail" in offre:  # Etihad : l'interface donne l'annonce par sections
         sections = lire(offre["detail"]).json()["jobAd"]["sections"]
         return nettoyer(" ".join(s.get("text", "") for s in sections.values()))
@@ -275,6 +332,7 @@ def main():
             print(f"⚠️  {offre['titre']} : analyse impossible ({erreur}), nouvel essai au prochain lancement")
             continue
         offre.pop("detail", None)
+        offre.pop("texte", None)
         offre.update(analyse.model_dump(), volet="compagnies", premiere_vue=maintenant)
         connues[offre["lien"]] = offre
         print(f"  {'✅' if analyse.pertinente else '❌'} [{analyse.score}/10] {offre['entreprise']} – {offre['titre']}")

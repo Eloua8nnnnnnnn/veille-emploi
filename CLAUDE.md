@@ -28,7 +28,7 @@ Associate product manager, digital product owner, junior product manager, produc
 Air Tahiti Nui, Air Tahiti, Qatar Airways, Singapore Airlines, Cathay Pacific, Korean Air, Starlux Airlines, SAS, Emirates, Etihad Airways, Qantas, Vietnam Airlines, China Eastern, TAP Portugal, Lufthansa, Air New Zealand, EVA Air, Delta Air Lines
 
 ### Sources
-Les sites carrières officiels de chaque compagnie. Pour chacune, identifie la page carrières et la meilleure façon légale d'en récupérer les offres. Si une page ne peut pas être consultée automatiquement, signale-le-moi plutôt que de contourner une protection.
+Les sites carrières officiels de chaque compagnie. Pour chacune, identifie la page carrières et la meilleure façon d'en récupérer les offres. Si une page ne peut pas être consultée automatiquement, signale-le-moi plutôt que de contourner une protection.
 
 ---
 
@@ -57,7 +57,7 @@ Je cherche un poste **interne**, au cœur d'une structure entrepreneuriale en cr
 - **France** : les sites carrières des entreprises de la promotion en cours du French Tech Next40/120.
 - **Asie** : le site d'offres de Tech in Asia.
 - **Partout** : l'interface Adzuna en complément.
-- N'utilise que des sources légales et accessibles. Si une source ne peut pas être consultée automatiquement, signale-le-moi.
+- N'utilise que des sources accessibles publiquement. Si une source ne peut pas être consultée automatiquement, signale-le-moi.
 
 ### Droit de travailler
 Je n'ai pas de visa de travail hors de l'Union européenne. Écarte les offres qui exigent explicitement la nationalité du pays ou un visa déjà obtenu (par exemple « US citizen / visa only »). Si l'annonce indique que l'entreprise parraine les visas, signale-le.
@@ -113,7 +113,8 @@ Rassembler les offres qui sortent des volets 1 et 2 mais qui m'intéressent : le
 ## Règles à respecter
 - Les clés et mots de passe sont stockés dans un fichier `.env` en local et dans les secrets GitHub en ligne. Ne jamais les écrire en clair dans le code.
 - Le fichier `.env` doit toujours figurer dans `.gitignore`. Vérifie-le avant toute publication sur GitHub.
-- Ne jamais extraire automatiquement de pages LinkedIn ou de sites qui l'interdisent dans leurs conditions d'utilisation.
+- Usage strictement personnel : l'extraction automatique de pages publiques est acceptée même quand les conditions d'utilisation d'un site l'interdisent (décision prise en connaissance de cause le 17/11/2026).
+- Limites maintenues : ne jamais contourner une protection technique (anti-robot, captcha, connexion obligatoire, imitation d'un navigateur) et ne jamais extraire de LinkedIn.
 - Demande-moi avant d'installer une nouvelle bibliothèque ou de publier quoi que ce soit.
 - Garde le code simple et lisible, en un minimum de fichiers.
 - Après chaque modification importante, propose un test pour vérifier que tout fonctionne.
