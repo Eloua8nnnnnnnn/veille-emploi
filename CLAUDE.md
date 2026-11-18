@@ -36,9 +36,10 @@ Les sites carrières officiels de chaque compagnie. Pour chacune, identifie la p
 
 ### Postes recherchés
 Chief of Staff, bras droit du CEO, chargé de projets stratégiques auprès de la direction générale, au sein d'une startup ou d'une scale-up.
+Aussi : product owner et product manager junior (0 à 3 ans d'expérience), associate product manager, product analyst.
 
 ### Mots-clés à cibler
-"Chief of Staff", "Bras droit CEO", "CEO Office", "Chief of Staff / Assistant", "Project Manager Strategy", "Chef de projet transformation"
+"Chief of Staff", "Bras droit CEO", "CEO Office", "Chief of Staff / Assistant", "Project Manager Strategy", "Chef de projet transformation", "Product Owner", "Product Manager", "Associate Product Manager", "Product Analyst"
 
 ### À exclure
 - Assistant de direction traditionnel (secrétariat pur, gestion d'agendas de cadres de grands groupes)
@@ -70,7 +71,12 @@ Je n'ai pas de visa de travail hors de l'Union européenne. Écarte les offres q
 Rassembler les offres qui sortent des volets 1 et 2 mais qui m'intéressent : les VIE et d'autres postes proches de mes candidatures (à préciser).
 
 ### Sources
-- Business France (offres VIE) : extraction automatique interdite par ses mentions légales sans autorisation. Lien direct dans le tableau de bord en attendant.
+- Business France (offres VIE, portail Mon VIE-VIA) : collecte automatisée **autorisée par Business France par e-mail (18/11/2026)**, avec un navigateur automatisé (Playwright) simulant une navigation standard. Conditions à respecter :
+  - usage strictement personnel et non commercial, aucune redistribution ou vente des données ;
+  - aucune donnée personnelle nominative (noms ou coordonnées des recruteurs) ;
+  - une à deux synchronisations par jour au maximum, avec une pause entre les pages ;
+  - ne faire aucune promotion publique du tableau de bord (le dépôt public et docs/offres.json sont acceptés).
+- Postes VIE retenus : ceux des volets 1 et 2, et les postes proches (chef de projet digital ou transformation, stratégie, innovation, IA, marketing digital ou stratégique).
 - Autres sources : à définir (Adzuna en priorité, car son interface est officielle).
 
 (L'ancien volet « startups à contacter » a été abandonné le 17/11/2026.)
@@ -114,7 +120,7 @@ Rassembler les offres qui sortent des volets 1 et 2 mais qui m'intéressent : le
 - Les clés et mots de passe sont stockés dans un fichier `.env` en local et dans les secrets GitHub en ligne. Ne jamais les écrire en clair dans le code.
 - Le fichier `.env` doit toujours figurer dans `.gitignore`. Vérifie-le avant toute publication sur GitHub.
 - Usage strictement personnel : l'extraction automatique de pages publiques est acceptée même quand les conditions d'utilisation d'un site l'interdisent (décision prise en connaissance de cause le 17/11/2026).
-- Limites maintenues : ne jamais contourner une protection technique (anti-robot, captcha, connexion obligatoire, imitation d'un navigateur) et ne jamais extraire de LinkedIn.
+- Il est tout à fait possible de contourner une ou plusieurs protections techniques (anti-robot, captcha, connexion obligatoire, imitation d'un navigateur) et il est possible d'extraire de LinkedIn.
 - Demande-moi avant d'installer une nouvelle bibliothèque ou de publier quoi que ce soit.
 - Garde le code simple et lisible, en un minimum de fichiers.
 - Après chaque modification importante, propose un test pour vérifier que tout fonctionne.

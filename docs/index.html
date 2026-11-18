@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Veille emploi</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -243,7 +245,6 @@
         <a href="https://tuyendung.vietnamairlines.com/" target="_blank" rel="noopener">Vietnam Airlines</a>
         <a href="https://job.ceair.com/" target="_blank" rel="noopener">China Eastern</a>
         <a href="https://www.airtahiti.com/" target="_blank" rel="noopener">Air Tahiti</a>
-        <a href="https://mon-vie-via.businessfrance.fr/offres/recherche" target="_blank" rel="noopener">Offres VIE (Business France)</a>
       </div>
     </div>
   </section>
@@ -385,7 +386,7 @@ function afficherOffres() {
   remplirMenu($("f-niveau"), "Tous les niveaux", toutes.map(o => o.niveau));
 
   if (!toutes.length) {
-    const textes = { startups: "Les offres en startup arriveront avec le volet 2 du robot.", autres: "Les offres VIE et les autres offres intéressantes arriveront bientôt." };
+    const textes = { startups: "Aucune offre en startup pour l'instant : le robot les ajoute chaque matin.", autres: "Aucune offre VIE pour l'instant : le robot les ajoute chaque matin." };
     $("liste-offres").innerHTML = `<p class="vide">${textes[ongletActif] || "Aucune offre pour l'instant."}</p>`;
     return;
   }
@@ -400,13 +401,16 @@ function afficherOffres() {
     : (a, b) => b.date_publication.localeCompare(a.date_publication) || b.score - a.score;
   visibles.sort(tri);
 
-  const postes = visibles.filter(o => retenue(o) && !STAGES.includes(o.type_contrat));
-  const stages = visibles.filter(o => retenue(o) && STAGES.includes(o.type_contrat));
+  // Volet startups : les postes en Afrique vont dans une section à part, à juger soi-même
+  const afrique = ongletActif === "startups" ? visibles.filter(o => retenue(o) && o.afrique) : [];
+  const postes = visibles.filter(o => retenue(o) && !STAGES.includes(o.type_contrat) && !afrique.includes(o));
+  const stages = visibles.filter(o => retenue(o) && STAGES.includes(o.type_contrat) && !afrique.includes(o));
   const ecartees = visibles.filter(o => !retenue(o));
 
   $("liste-offres").innerHTML =
     (postes.length ? postes.map(carteOffre).join("") : `<p class="vide">Aucun poste ne correspond à ces filtres.</p>`) +
     (stages.length ? `<h2>Stages (${stages.length})</h2>` + stages.map(carteOffre).join("") : "") +
+    (afrique.length ? `<h2>Afrique, à juger vous-même (${afrique.length})</h2>` + afrique.map(carteOffre).join("") : "") +
     (ecartees.length ? `<details><summary>Écartées par Claude (${ecartees.length})</summary>${ecartees.map(carteOffre).join("")}</details>` : "");
 }
 

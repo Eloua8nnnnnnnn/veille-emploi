@@ -20,7 +20,9 @@ jobs:
           python-version: "3.12"
 
       - name: Installer les bibliothèques
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium   # navigateur pour les offres VIE
 
       - name: Lancer le robot
         env:
