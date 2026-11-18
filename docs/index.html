@@ -290,7 +290,8 @@
 </main>
 
 <script>
-const JOURS_ANCIENNE = 30;
+const JOURS_ANCIENNE = 30;  // grisées au-delà
+const JOURS_MAX = 60;       // plus affichées du tout au-delà
 const STAGES = ["Stage", "Alternance"];
 let donnees = { offres: [] };
 let ongletActif = "compagnies";
@@ -368,13 +369,13 @@ async function chargerOffres() {
   const quand = new Date(donnees.derniere_mise_a_jour);
   $("h-date").textContent = quand.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
   $("maj").textContent = "Dernière mise à jour à " + quand.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-  $("h-retenues").textContent = donnees.offres.filter(o => o.pertinente).length;
+  $("h-retenues").textContent = donnees.offres.filter(o => o.pertinente && joursDepuis(o.date_publication) <= JOURS_MAX).length;
   $("h-nouvelles").textContent = nouvelles;
   afficherOffres();
 }
 
 function offresDuVolet() {
-  return donnees.offres.filter(o => o.volet === ongletActif);
+  return donnees.offres.filter(o => o.volet === ongletActif && joursDepuis(o.date_publication) <= JOURS_MAX);
 }
 
 function afficherOffres() {
@@ -425,6 +426,7 @@ function carteOffre(o) {
       <div>
         ${nouvelle && o.pertinente ? '<span class="etiquette nouveau">Nouveau</span>' : ""}
         ${!o.pertinente && repechees[o.lien] ? '<span class="etiquette c-gris">Repêchée</span>' : ""}
+        ${ancienne ? '<span class="etiquette c-gris">Plus de 30 jours</span>' : ""}
         <span class="etiquette ${couleurContrat(o.type_contrat)}">${echapper(o.type_contrat)}</span>
         ${o.visa === "Parrainé" ? '<span class="etiquette visa">Visa parrainé</span>' : ""}
         <a class="titre" href="${echapper(o.lien)}" target="_blank" rel="noopener">${echapper(o.titre)}</a>

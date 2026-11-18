@@ -100,7 +100,7 @@ Rassembler les offres qui sortent des volets 1 et 2 mais qui m'intéressent : le
 ## Fonctionnement attendu
 - Recherche quotidienne des offres, puis mise à jour automatique du tableau de bord.
 - Garder l'historique des offres trouvées, sans doublons.
-- Griser les offres publiées depuis plus de 30 jours.
+- Griser les offres publiées depuis plus de 30 jours, et ne plus afficher (ni analyser) celles publiées depuis plus de 60 jours.
 - À chaque mise à jour, vérifier si les offres sont toujours en ligne et retirer du tableau de bord celles qui ne le sont plus.
 
 ## Tableau de bord

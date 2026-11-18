@@ -234,6 +234,7 @@ def air_tahiti_nui():
             for lien, titre in liens.items()]
 
 
+JOURS_MAX = 60  # au-delà de 60 jours, une offre n'est plus analysée (ni affichée sur le tableau de bord)
 JOURS_VIE = 14  # le robot ne lit que les offres VIE publiées depuis moins de 14 jours
 
 
@@ -592,6 +593,13 @@ def main():
             offre["date_publication"] = maintenant[:10]
         offre.update(analyse.model_dump(), volet=volet, premiere_vue=maintenant, **extra)
         connues[offre["lien"]] = offre
+
+    # Les offres publiées depuis plus de 60 jours ne sont ni analysées ni affichées
+    limite = (datetime.now(timezone.utc) - timedelta(days=JOURS_MAX)).strftime("%Y-%m-%d")
+    trop_vieilles = [o for o in a_analyser if o.get("date_publication") and o["date_publication"] < limite]
+    a_analyser = [o for o in a_analyser if o not in trop_vieilles]
+    if trop_vieilles:
+        print(f"{len(trop_vieilles)} offres ignorées car publiées depuis plus de {JOURS_MAX} jours")
 
     # Étape 2 : Claude trie les intitulés (une demande par volet, quelques centimes au plus)
     print(f"\n{len(a_analyser)} nouvelles offres après les mots-clés")
