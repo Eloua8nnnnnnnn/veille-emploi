@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   veille:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # version fixe : Playwright ne gère pas encore Ubuntu 26.04
     steps:
       - uses: actions/checkout@v4
 
