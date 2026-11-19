@@ -66,7 +66,7 @@ MOTS_CIBLES_STARTUP = re.compile(
     re.I,
 )
 MOTS_EXCLUS_STARTUP = re.compile(
-    r"\b(executive assistant|office manager|deployment|customer success|engineer|engineering|developer|nurse|sales|account executive"
+    r"\b(staff (?:product|engineer|software|data)\w*|executive assistant|office manager|deployment|customer success|engineer|engineering|developer|nurse|sales|account executive"
     r"|head of|director|vp|vice president|senior|sr\.?|lead|principal)\b",
     re.I,
 )
@@ -374,11 +374,94 @@ def date_relative(texte, aujourd_hui):
     return (aujourd_hui - timedelta(days=ecart)).strftime("%Y-%m-%d")
 
 
+# French Tech 120 (promotion 2026) : entreprises dont l'outil de recrutement a une interface publique.
+# Les 67 autres (Welcome to the Jungle ou site maison) ne sont pas encore lues.
+FRENCH_TECH = {
+    "lever": {"360Learning": "360learning", "Agicap": "agicap", "Bigblue": "bigblue", "BlaBlaCar": "blablacar",
+              "Contentsquare": "contentsquare", "Ekimetrics": "ekimetrics", "Malt": "malt", "Pigment": "pigment",
+              "Swile": "swile", "Verkor": "verkor", "Vestiaire Collective": "vestiairecollective"},
+    "ashby": {"AMI Labs": "ami", "Akur8": "akur8", "Alan": "alan", "Alma": "alma", "Back Market": "backmarket",
+              "Doctolib": "doctolib", "H Company": "hcompany", "Ledger": "ledger", "Pennylane": "pennylane",
+              "Qonto": "qonto", "Seyna": "seyna", "Voodoo": "voodoo", "Yubo": "yubo"},
+    "greenhouse": {"Flowdesk": "flowdesk", "Ouihelp": "ouihelp", "Shift Technology": "shifttechnology"},
+    "workable": {"Exotec": "exotec"},
+    "recruitee": {"Adikteev": "adikteev", "Mistertemp' Group": "mistertemp", "Quobly": "quobly"},
+    "smartrecruiters": {"EcoVadis": "ecovadis", "Shippeo": "shippeo", "Yespark": "yespark"},
+    "teamtailor": {"Akeneo": "akeneo", "Aqemia": "aqemia", "Deepki": "deepki", "Descartes Underwriting": "descartesunderwriting",
+                   "Exotrail": "exotrail", "Foodles": "foodles", "GitGuardian": "gitguardian", "HomeExchange": "homeexchange",
+                   "Hublo": "hublo", "Legalplace": "legalplace", "Libon": "libon", "MWM": "mwm", "MyLight150": "mylight150",
+                   "MyUnisoft": "myunisoft", "Ornikar": "ornikar", "Pasqal": "pasqal", "PayFit": "payfit", "Stoïk": "stoik",
+                   "Tissium": "tissium", "Waat": "waat"},
+}
+
+
+def offres_ats(outil, entreprise, code):
+    """Lit les offres d'une entreprise sur l'interface publique de son outil de recrutement."""
+    def offre(titre, lieu, date, lien, texte=""):
+        return {"entreprise": entreprise, "titre": titre.strip(), "lieu": lieu or "", "date_publication": date or "",
+                "lien": lien, "texte": nettoyer(texte) if texte else ""}
+    if outil == "lever":
+        return [offre(o["text"], (o.get("categories") or {}).get("location"),
+                      datetime.fromtimestamp(o["createdAt"] / 1000, timezone.utc).strftime("%Y-%m-%d"),
+                      o["hostedUrl"], o.get("descriptionPlain") or o.get("description") or "")
+                for o in lire(f"https://api.lever.co/v0/postings/{code}", params={"mode": "json"}).json()]
+    if outil == "ashby":
+        return [offre(o["title"], o.get("location"), (o.get("publishedAt") or "")[:10], o["jobUrl"], o.get("descriptionPlain") or "")
+                for o in lire(f"https://api.ashbyhq.com/posting-api/job-board/{code}").json()["jobs"] if o.get("isListed", True)]
+    if outil == "greenhouse":
+        return [offre(o["title"], (o.get("location") or {}).get("name"), (o.get("first_published") or o.get("updated_at") or "")[:10],
+                      o["absolute_url"], html.unescape(o.get("content") or ""))
+                for o in lire(f"https://boards-api.greenhouse.io/v1/boards/{code}/jobs", params={"content": "true"}).json()["jobs"]]
+    if outil == "workable":
+        return [offre(o["title"], ", ".join(x for x in (o.get("city"), o.get("country")) if x), o.get("published_on"), o["url"])
+                for o in lire(f"https://apply.workable.com/api/v1/widget/accounts/{code}").json()["jobs"]]
+    if outil == "recruitee":
+        return [offre(o["title"], ", ".join(x for x in (o.get("city"), o.get("country")) if x), (o.get("published_at") or "")[:10],
+                      o["careers_url"], o.get("description") or "")
+                for o in lire(f"https://{code}.recruitee.com/api/offers/").json()["offers"]]
+    if outil == "smartrecruiters":
+        return [offre(o["name"], ", ".join(x for x in ((o.get("location") or {}).get("city"), (o.get("location") or {}).get("country")) if x),
+                      (o.get("releasedDate") or "")[:10], f"https://jobs.smartrecruiters.com/{code}/{o['id']}")
+                for o in lire(f"https://api.smartrecruiters.com/v1/companies/{code}/postings", params={"limit": 100}).json()["content"]]
+    if outil == "teamtailor":  # flux RSS public
+        offres = []
+        for item in re.findall(r"<item>(.*?)</item>", lire(f"https://{code}.teamtailor.com/jobs.rss").text, re.S):
+            champ = lambda nom: (re.search(rf"<{nom}>(.*?)</{nom}>", item, re.S) or [None, ""])[1]
+            try:
+                date = datetime.strptime(champ("pubDate").strip()[:16], "%a, %d %b %Y").strftime("%Y-%m-%d")
+            except ValueError:
+                date = ""
+            offres.append(offre(html.unescape(champ("title")), html.unescape(champ("tt:city") or champ("tt:name")),
+                                date, champ("link").strip(), html.unescape(champ("description"))))
+        return offres
+    return []
+
+
+ENTREPRISES_EN_ECHEC = set()  # entreprises French Tech illisibles ce jour-là : on garde leurs offres
+
+
+def french_tech():
+    """Offres des entreprises de la French Tech 120 (promotion 2026) lisibles par une interface publique."""
+    offres, total = [], sum(len(e) for e in FRENCH_TECH.values())
+    for outil, entreprises in FRENCH_TECH.items():
+        for entreprise, code in entreprises.items():
+            try:
+                offres += offres_ats(outil, entreprise, code)
+            except Exception as erreur:  # une entreprise en panne ne bloque pas les autres
+                print(f"⚠️  French Tech {entreprise} : lecture impossible ({erreur})")
+                ENTREPRISES_EN_ECHEC.add(entreprise)
+            time.sleep(0.5)
+    if len(ENTREPRISES_EN_ECHEC) > total / 2:  # sans doute une coupure d'Internet : on ne touche à rien
+        raise RuntimeError(f"{len(ENTREPRISES_EN_ECHEC)} entreprises sur {total} illisibles")
+    return offres
+
+
 SOURCES = {"Etihad Airways": etihad, "Lufthansa": lufthansa,
            "Singapore Airlines": singapore, "Qatar Airways": qatar,
            "Emirates": emirates, "Air New Zealand": air_new_zealand, "Air Tahiti Nui": air_tahiti_nui,
-           "Business France (VIE)": business_france, "Y Combinator": y_combinator}
-VOLETS = {"Business France (VIE)": "autres", "Y Combinator": "startups"}  # les autres sources vont dans le volet « compagnies »
+           "Business France (VIE)": business_france, "Y Combinator": y_combinator,
+           "French Tech 120": french_tech}
+VOLETS = {"Business France (VIE)": "autres", "Y Combinator": "startups", "French Tech 120": "startups"}  # les autres sources vont dans le volet « compagnies »
 
 
 def filtre_titre(source, titre):
@@ -581,7 +664,8 @@ def main():
                 a_analyser.append(dict(offre, source=nom))
 
     # Retire les offres qui ne sont plus en ligne (seulement pour les sites lus avec succès)
-    retirees = [l for l, o in connues.items() if o["source"] in sources_lues and l not in en_ligne]
+    retirees = [l for l, o in connues.items() if o["source"] in sources_lues and l not in en_ligne
+                and o["entreprise"] not in ENTREPRISES_EN_ECHEC]
     for lien in retirees:
         del connues[lien]
 
