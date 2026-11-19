@@ -17,6 +17,8 @@ import os
 import re
 import sys
 import time
+import hashlib
+from urllib.parse import urljoin, urlparse
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Literal
@@ -28,6 +30,7 @@ from pydantic import BaseModel
 
 DOSSIER = Path(__file__).parent
 FICHIER_OFFRES = DOSSIER / "docs" / "offres.json"
+FICHIER_STARTUPS = DOSSIER / "startups_suivies.json"  # jeunes startups découvertes via leurs levées de fonds
 MODELE = "claude-haiku-5-5"  # modèle le moins cher ; "claude-opus-5-5" juge plus finement
 MAX_ANALYSES = int(sys.argv[1]) if len(sys.argv) > 1 else 60  # plafond de dépenses par lancement
 EN_TETES = {"User-Agent": "Mozilla/5.0 (compatible; veille-emploi-personnelle)"}
@@ -66,7 +69,7 @@ MOTS_CIBLES_STARTUP = re.compile(
     re.I,
 )
 MOTS_EXCLUS_STARTUP = re.compile(
-    r"\b(staff (?:product|engineer|software|data)\w*|executive assistant|office manager|deployment|customer success|engineer|engineering|developer|nurse|sales|account executive"
+    r"\b(staff (?:product|engineer|software|data)\w*|driver|warehouse|group product|executive assistant|office manager|deployment|customer success|engineer|engineering|developer|nurse|sales|account executive"
     r"|head of|director|vp|vice president|senior|sr\.?|lead|principal)\b",
     re.I,
 )
@@ -394,6 +397,27 @@ FRENCH_TECH = {
                    "Tissium": "tissium", "Waat": "waat"},
 }
 
+# Scale-ups d'Asie et du Moyen-Orient dont l'outil de recrutement a une interface publique
+# (Tech in Asia refuse tout ce qui n'est pas un vrai navigateur : non lu).
+ASIE_MOYEN_ORIENT = {
+    "lever": {"CRED": "cred", "Lalamove": "lalamove", "Meesho": "meesho", "Ninja Van": "ninjavan", "Nium": "nium"},
+    "ashby": {"Airwallex": "airwallex", "Ziina": "ziina"},
+    "greenhouse": {"Careem": "careem", "Coupang": "coupang", "Groww": "groww", "Moloco": "moloco",
+                   "Sendbird": "sendbird", "Tamara": "tamara", "Thunes": "thunes", "Xendit": "xendit"},
+    "workable": {"Ajaib": "ajaib", "Foodics": "foodics", "Funding Societies": "fundingsocieties",
+                 "Mercari": "mercari", "Salla": "salla", "SmartNews": "smartnews"},
+    "recruitee": {"PatSnap": "patsnap", "Unifonic": "unifonic"},
+    "smartrecruiters": {"Doctor Anywhere": "doctoranywhere", "Freshworks": "freshworks", "Grab": "grab", "Swiggy": "swiggy"},
+}
+
+# Scale-ups africaines (les postes en Afrique s'affichent dans une section à part du tableau de bord)
+AFRIQUE = {
+    "ashby": {"Andela": "andela", "LemFi": "lemfi", "M-KOPA": "m-kopa"},
+    "greenhouse": {"Jumia": "jumia", "Moniepoint": "moniepoint", "Ozow": "ozow"},
+    "workable": {"Kuda": "kuda"},
+    "smartrecruiters": {"Brimore": "brimore", "PalmPay": "palmpay", "Yassir": "yassir"},
+}
+
 
 def offres_ats(outil, entreprise, code):
     """Lit les offres d'une entreprise sur l'interface publique de son outil de recrutement."""
@@ -440,19 +464,269 @@ def offres_ats(outil, entreprise, code):
 ENTREPRISES_EN_ECHEC = set()  # entreprises French Tech illisibles ce jour-là : on garde leurs offres
 
 
-def french_tech():
-    """Offres des entreprises de la French Tech 120 (promotion 2026) lisibles par une interface publique."""
-    offres, total = [], sum(len(e) for e in FRENCH_TECH.values())
-    for outil, entreprises in FRENCH_TECH.items():
+def lire_liste(liste, nom):
+    """Lit toutes les entreprises d'une liste {outil: {entreprise: code}}."""
+    offres, total = [], sum(len(e) for e in liste.values())
+    echecs = 0
+    for outil, entreprises in liste.items():
         for entreprise, code in entreprises.items():
             try:
                 offres += offres_ats(outil, entreprise, code)
             except Exception as erreur:  # une entreprise en panne ne bloque pas les autres
-                print(f"⚠️  French Tech {entreprise} : lecture impossible ({erreur})")
+                print(f"⚠️  {nom} {entreprise} : lecture impossible ({erreur})")
                 ENTREPRISES_EN_ECHEC.add(entreprise)
+                echecs += 1
             time.sleep(0.5)
-    if len(ENTREPRISES_EN_ECHEC) > total / 2:  # sans doute une coupure d'Internet : on ne touche à rien
-        raise RuntimeError(f"{len(ENTREPRISES_EN_ECHEC)} entreprises sur {total} illisibles")
+    if echecs > total / 2:  # sans doute une coupure d'Internet : on ne touche à rien
+        raise RuntimeError(f"{echecs} entreprises sur {total} illisibles")
+    return offres
+
+
+def french_tech():
+    """Offres des entreprises de la French Tech 120 (promotion 2026) lisibles par une interface publique."""
+    return lire_liste(FRENCH_TECH, "French Tech")
+
+
+def asie_moyen_orient():
+    """Offres de scale-ups d'Asie et du Moyen-Orient lisibles par une interface publique."""
+    return lire_liste(ASIE_MOYEN_ORIENT, "Asie / Moyen-Orient")
+
+
+def afrique():
+    """Offres de scale-ups africaines lisibles par une interface publique."""
+    return lire_liste(AFRIQUE, "Afrique")
+
+
+# ---------- Jeunes startups en croissance : découvertes via leurs levées de fonds ----------
+# Chaque semaine, Les Pépites Tech publie les levées de fonds françaises (données Eldorado.co).
+# On garde les tours d'amorçage, série A et série B, puis on cherche où chaque startup publie ses offres :
+#   1. un outil de recrutement à interface publique (Lever, Ashby…) repéré dans les liens de son site ;
+#   2. sinon sa page carrières, que Claude lit (seulement quand elle a changé, pour limiter le coût).
+
+PEPITES = "https://lespepitestech.com"
+TOURS_GARDES = re.compile(r"pre-?seed|seed|amor|s[ée]rie [ab]\b|series [ab]\b", re.I)
+MOIS_SUIVI = 18  # une startup est suivie pendant 18 mois après sa levée
+LIENS_ATS = [  # (outil, motif repérant l'outil dans un lien du site)
+    ("lever", r"jobs\.(?:eu\.)?lever\.co/([\w.-]+)"),
+    ("ashby", r"jobs\.ashbyhq\.com/([\w.%-]+)"),
+    ("greenhouse", r"(?:boards|job-boards)(?:\.eu)?\.greenhouse\.io/([\w-]+)"),
+    ("workable", r"apply\.workable\.com/([\w-]+)"),
+    ("recruitee", r"([\w-]+)\.recruitee\.com"),
+    ("teamtailor", r"([\w-]+)\.teamtailor\.com"),
+    ("smartrecruiters", r"(?:careers|jobs)\.smartrecruiters\.com/([\w-]+)"),
+    ("wttj", r"welcometothejungle\.com/(?:fr|en)/companies/([\w-]+)"),
+]
+MOTS_CARRIERES = re.compile(r"career|carri[eè]re|jobs?\b|emplois?|recrut|join|rejoign|hiring|work-with-us|talent", re.I)
+
+
+def charger_suivi():
+    if FICHIER_STARTUPS.exists():
+        return json.loads(FICHIER_STARTUPS.read_text(encoding="utf-8"))
+    return {"articles_lus": [], "startups": {}}
+
+
+def outil_dans_page(contenu):
+    """Cherche dans le HTML d'une page un lien vers un outil de recrutement connu."""
+    for outil, motif in LIENS_ATS:
+        m = re.search(motif, contenu, re.I)
+        if m and m.group(1).lower() not in ("www", "jobs", "app", "embed", "api"):
+            return outil, m.group(1)
+    return None
+
+
+def trouver_offres_startup(site):
+    """Renvoie {"outil": ..., "code": ...} ou {"outil": "page", "page": url} ou {"outil": "aucun"}."""
+    try:
+        accueil = lire(site).text
+    except Exception:
+        return {"outil": "aucun"}
+    trouve = outil_dans_page(accueil)
+    if trouve and trouve[0] != "wttj":
+        return {"outil": trouve[0], "code": trouve[1]}
+    # Liens vers une page carrières sur le même site
+    candidats = []
+    for lien, texte in re.findall(r'<a[^>]+href="([^"#]+)"[^>]*>(.*?)</a>', accueil, re.S | re.I):
+        if MOTS_CARRIERES.search(lien) or MOTS_CARRIERES.search(re.sub(r"<[^>]+>", " ", texte)):
+            url = urljoin(site, lien)
+            if urlparse(url).netloc.replace("www.", "") == urlparse(site).netloc.replace("www.", ""):
+                candidats.append(url)
+    for page in list(dict.fromkeys(candidats))[:3]:
+        try:
+            contenu = lire(page).text
+        except Exception:
+            continue
+        trouve = outil_dans_page(contenu)
+        if trouve and trouve[0] != "wttj":
+            return {"outil": trouve[0], "code": trouve[1]}
+        if trouve:  # offres publiées sur Welcome to the Jungle : illisibles par le robot
+            return {"outil": "wttj", "code": trouve[1]}
+        if len(nettoyer(contenu)) > 300:
+            return {"outil": "page", "page": page}
+        time.sleep(1)
+    return {"outil": "wttj", "code": trouve[1]} if trouve else {"outil": "aucun"}
+
+
+def decouvrir_startups(suivi):
+    """Lit les récapitulatifs hebdomadaires de levées de fonds pas encore traités (au plus 26 semaines)."""
+    articles = []
+    for page in range(3):
+        contenu = lire(f"{PEPITES}/blog/levees-de-fonds", params={"page": page} if page else None).text
+        articles += re.findall(r'href="(/blog/20\d\d/\d\d/\d\d/[^"?]*semaine-\d+-20\d\d)"', contenu)
+        if suivi["articles_lus"]:  # après le premier lancement, la première page suffit
+            break
+        time.sleep(1)
+    nouvelles = 0
+    for article in list(dict.fromkeys(articles))[:26]:
+        if article in suivi["articles_lus"]:
+            continue
+        date_article = "-".join(article.split("/")[2:5])
+        contenu = lire(PEPITES + article).text
+        for bloc in re.split(r"<h2", contenu)[1:]:
+            nom = nettoyer("<h2" + bloc.split("</h2>")[0])
+            tour = re.search(r"<strong>([\d,.]+) en ([^<]+)</strong>", bloc)
+            site = re.search(r'href="(https?://[^"]+?)(?:\?utm[^"]*)?"[^>]*>\s*Voir le site web', bloc)
+            if not (nom and tour and site) or not TOURS_GARDES.search(tour.group(2)) or nom in suivi["startups"]:
+                continue
+            fiche = {"site": site.group(1), "tour": tour.group(2).strip(), "montant": tour.group(1), "levee_le": date_article}
+            fiche.update(trouver_offres_startup(fiche["site"]))
+            suivi["startups"][nom] = fiche
+            nouvelles += 1
+            print(f"  + {nom} ({fiche['tour']}) : {fiche['outil']}")
+            time.sleep(1)
+        suivi["articles_lus"].append(article)
+        time.sleep(1)
+    return nouvelles
+
+
+class OffrePage(BaseModel):
+    titre: str
+    lien: str
+    lieu: str
+
+
+class OffresPage(BaseModel):
+    offres: list[OffrePage]
+
+
+def offres_page_carrieres(client, nom, fiche):
+    """Lit une page carrières « maison ». Claude n'est sollicité que si la page a changé."""
+    contenu = lire(fiche["page"]).text
+    # Texte de la page en gardant les liens, pour que Claude puisse les recopier
+    avec_liens = re.sub(r'<a[^>]+href="([^"#]+)"[^>]*>(.*?)</a>',
+                        lambda m: f" [{re.sub(r'<[^>]+>', ' ', m.group(2)).strip()}]({urljoin(fiche['page'], m.group(1))}) ",
+                        contenu, flags=re.S | re.I)
+    texte = nettoyer(avec_liens)[:15000]
+    empreinte = hashlib.sha1(texte.encode()).hexdigest()
+    if empreinte != fiche.get("empreinte"):
+        reponse = client.messages.parse(
+            model=MODELE, max_tokens=4000, output_config={"effort": "low"},
+            messages=[{"role": "user", "content":
+                       f"Voici la page carrières de la startup {nom}. Liste ses offres d'emploi ouvertes "
+                       "(intitulé, lien complet vers l'annonce, lieu). N'inclus pas les candidatures spontanées. "
+                       f"S'il n'y a aucune offre, renvoie une liste vide.\n\n{texte}"}],
+            output_format=OffresPage,
+        )
+        # Garde-fou : on ne garde que les offres dont l'intitulé ou le lien figure vraiment sur la page
+        fiche["offres"] = [dict(o.model_dump(), lien=o.lien if o.lien in texte and o.lien.startswith("http") else fiche["page"])
+                           for o in reponse.parsed_output.offres
+                           if o.lien in texte or o.titre.lower()[:40] in texte.lower()]
+        fiche["empreinte"] = empreinte
+    return [{"entreprise": nom, "titre": o["titre"], "lieu": o["lieu"], "date_publication": "",
+             "lien": urljoin(fiche["page"], o["lien"]) or fiche["page"]} for o in fiche.get("offres", [])]
+
+
+def jeunes_startups():
+    """Offres des jeunes startups suivies (amorçage, série A, série B), découvertes via leurs levées de fonds."""
+    suivi = charger_suivi()
+    try:
+        nouvelles = decouvrir_startups(suivi)
+        print(f"Jeunes startups : {nouvelles} nouvelles startups découvertes, {len(suivi['startups'])} suivies")
+    except Exception as erreur:
+        print(f"⚠️  Découverte des levées de fonds impossible ({erreur})")
+    limite = (datetime.now(timezone.utc) - timedelta(days=30 * MOIS_SUIVI)).strftime("%Y-%m-%d")
+    client = anthropic.Anthropic(api_key=cle_api())
+    offres, echecs, lisibles = [], 0, 0
+    for nom, fiche in suivi["startups"].items():
+        if fiche["levee_le"] < limite or fiche["outil"] in ("aucun", "wttj"):
+            continue
+        lisibles += 1
+        try:
+            if fiche["outil"] == "page":
+                offres += offres_page_carrieres(client, nom, fiche)
+            else:
+                offres += offres_ats(fiche["outil"], nom, fiche["code"])
+        except Exception as erreur:
+            print(f"⚠️  Jeune startup {nom} : lecture impossible ({erreur})")
+            ENTREPRISES_EN_ECHEC.add(nom)
+            echecs += 1
+        time.sleep(0.5)
+    FICHIER_STARTUPS.write_text(json.dumps(suivi, ensure_ascii=False, indent=1), encoding="utf-8")
+    if lisibles and echecs > lisibles / 2:
+        raise RuntimeError(f"{echecs} startups sur {lisibles} illisibles")
+    return offres
+
+
+# ---------- États-Unis : job boards de fonds d'investissement et « Who is hiring? » ----------
+
+FONDS_GETRO = ["jobs.accel.com", "jobs.generalcatalyst.com", "jobs.insightpartners.com", "jobs.khoslaventures.com"]
+RECHERCHES_GETRO = ["chief of staff", "founder associate", "founders associate", "bizops", "business operations",
+                    "strategy operations", "special projects", "associate product manager", "product manager", "product owner"]
+STADES_GARDES = {"pre_seed", "seed", "series_a", "series_b", "series_c"}  # jeunes startups en forte croissance
+
+
+def fonds_investissement():
+    """Offres des startups financées par de grands fonds (pages publiques Getro), filtrées par stade de financement."""
+    offres = {}
+    for site in FONDS_GETRO:
+        for recherche in RECHERCHES_GETRO:
+            contenu = lire(f"https://{site}/jobs", params={"q": recherche}).text
+            m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', contenu, re.S)
+            if not m:
+                continue
+            for o in json.loads(m.group(1))["props"]["pageProps"]["initialState"]["jobs"]["found"]:
+                org = o.get("organization") or {}
+                # « Remote » est une plateforme qui republie les offres d'autres entreprises : on l'ignore
+                if org.get("stage") not in STADES_GARDES or not o.get("url") or org.get("name") == "Remote":
+                    continue
+                offres.setdefault(o["url"], {
+                    "entreprise": org.get("name", ""),
+                    "titre": o["title"],
+                    "lieu": " / ".join(o.get("locations") or []) or ("Remote" if o.get("workMode") == "remote" else ""),
+                    "date_publication": datetime.fromtimestamp(o["createdAt"], timezone.utc).strftime("%Y-%m-%d") if o.get("createdAt") else "",
+                    "lien": o["url"],  # lien direct vers l'annonce sur le site de la startup
+                })
+            time.sleep(1)
+    return list(offres.values())
+
+
+def who_is_hiring():
+    """Fil mensuel « Ask HN: Who is hiring? » de Hacker News (interface officielle Algolia de HN).
+    Chaque commentaire est une offre rédigée par une startup ; on garde ceux qui parlent des postes visés."""
+    fils = lire("https://hn.algolia.com/api/v1/search_by_date",
+                params={"query": "Who is hiring", "tags": "story,author_whoishiring", "hitsPerPage": 2}).json()["hits"]
+    offres = []
+    for fil in fils:
+        if not fil["title"].startswith("Ask HN: Who is hiring"):
+            continue
+        commentaires = lire(f"https://hn.algolia.com/api/v1/search",
+                            params={"tags": f"comment,story_{fil['objectID']}", "hitsPerPage": 1000}).json()["hits"]
+        for c in commentaires:
+            if c.get("parent_id") != int(fil["objectID"]) or not c.get("comment_text"):
+                continue  # seulement les offres (pas les réponses aux offres)
+            texte = nettoyer(c["comment_text"])
+            if not MOTS_CIBLES_STARTUP.search(texte[:1500]):
+                continue
+            entete = texte.split(" | ")
+            offres.append({
+                "entreprise": entete[0][:60],
+                "titre": " | ".join(entete[1:3])[:150] if len(entete) > 1 else texte[:150],
+                "lieu": entete[2][:80] if len(entete) > 2 else "",
+                "date_publication": c["created_at"][:10],
+                "lien": f"https://news.ycombinator.com/item?id={c['objectID']}",
+                "texte": texte,
+                "hn": True,
+            })
+        time.sleep(1)
     return offres
 
 
@@ -460,8 +734,11 @@ SOURCES = {"Etihad Airways": etihad, "Lufthansa": lufthansa,
            "Singapore Airlines": singapore, "Qatar Airways": qatar,
            "Emirates": emirates, "Air New Zealand": air_new_zealand, "Air Tahiti Nui": air_tahiti_nui,
            "Business France (VIE)": business_france, "Y Combinator": y_combinator,
-           "French Tech 120": french_tech}
-VOLETS = {"Business France (VIE)": "autres", "Y Combinator": "startups", "French Tech 120": "startups"}  # les autres sources vont dans le volet « compagnies »
+           "French Tech 120": french_tech, "Asie / Moyen-Orient": asie_moyen_orient,
+           "Afrique": afrique, "Jeunes startups (levées de fonds)": jeunes_startups,
+           "Fonds d'investissement (US)": fonds_investissement, "Hacker News (US)": who_is_hiring}
+VOLETS = {"Business France (VIE)": "autres", "Y Combinator": "startups", "French Tech 120": "startups", "Asie / Moyen-Orient": "startups", "Afrique": "startups", "Jeunes startups (levées de fonds)": "startups",
+          "Fonds d'investissement (US)": "startups", "Hacker News (US)": "startups"}  # les autres sources vont dans le volet « compagnies »
 
 
 def filtre_titre(source, titre):
@@ -655,7 +932,7 @@ def main():
             print(f"⚠️  {nom} : lecture impossible ({erreur})")
             continue
         sources_lues.add(nom)
-        retenues = [o for o in offres if filtre_titre(nom, o["titre"])]
+        retenues = [o for o in offres if o.get("hn") or filtre_titre(nom, o["titre"])]
         print(f"{nom} : {len(offres)} offres en ligne, {len(retenues)} retenues après le tri par mots-clés")
         for offre in offres:
             en_ligne.add(offre["lien"])
@@ -673,6 +950,7 @@ def main():
         offre.pop("detail", None)
         offre.pop("texte", None)
         offre.pop("texte_complet", None)
+        offre.pop("hn", None)
         if not offre["date_publication"]:  # date inconnue : on note le jour où le robot l'a vue
             offre["date_publication"] = maintenant[:10]
         offre.update(analyse.model_dump(), volet=volet, premiere_vue=maintenant, **extra)

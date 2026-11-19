@@ -1,0 +1,1810 @@
+{
+ "articles_lus": [
+  "/blog/2026/11/15/129-millions-deuros-leves-par-les-startups-francaises-semaine-46-2026",
+  "/blog/2026/11/09/2445-millions-deuros-leves-par-les-startups-francaises-semaine-45-2026",
+  "/blog/2026/11/02/254-millions-deuros-leves-par-les-startups-francaises-semaine-44-2026",
+  "/blog/2026/10/26/3679-millions-deuros-leves-par-les-startups-francaises-semaine-43-2026",
+  "/blog/2026/10/20/1088-millions-deuros-leves-par-les-startups-francaises-semaine-42-2026",
+  "/blog/2026/10/13/2671-millions-deuros-leves-par-les-startups-francaises-semaine-41-2026",
+  "/blog/2026/10/05/55-millions-deuros-leves-par-les-startups-francaises-semaine-40-2026",
+  "/blog/2026/09/28/1936-millions-deuros-leves-par-les-startups-francaises-semaine-39-2026",
+  "/blog/2026/09/21/802-millions-deuros-leves-par-les-startups-francaises-semaine-38-2026",
+  "/blog/2026/09/15/348-milliards-deuros-deuros-leves-par-les-startups-francaises-semaine-37-2026",
+  "/blog/2026/09/09/102-6-millions-deuros-leves-par-les-startups-francaises-semaine-36-2026",
+  "/blog/2026/08/04/141-millions-deuros-leves-par-les-startups-francaises-semaine-31-2026",
+  "/blog/2026/07/28/317-millions-deuros-leves-par-les-startups-francaises-semaine-30-2026",
+  "/blog/2026/07/21/9474-millions-millions-deuros-leves-par-les-startups-francaises-semaine-29-2026",
+  "/blog/2026/07/13/878-millions-deuros-leves-par-les-startups-francaises-semaine-28-2026",
+  "/blog/2026/07/07/587-millions-deuros-leves-par-les-startups-francaises-semaine-27-2026",
+  "/blog/2026/06/30/7205-millions-deuros-leves-par-les-startups-francaises-semaine-26-2026",
+  "/blog/2026/06/22/797-millions-deuros-leves-par-les-startups-francaises-semaine-25-2026",
+  "/blog/2026/06/15/2864-millions-deuros-leves-par-les-startups-francaises-semaine-24-2026",
+  "/blog/2026/06/09/2357-millions-deuros-leves-par-les-startups-francaises-semaine-23-2026",
+  "/blog/2026/06/03/4215-millions-deuros-leves-par-les-startups-francaises-semaine-22-2026",
+  "/blog/2026/05/27/1266-millions-deuros-leves-par-les-startups-francaises-semaine-21-2026",
+  "/blog/2026/05/19/1429-millions-deuros-leves-par-les-startups-francaises-semaine-20-2026",
+  "/blog/2026/05/11/1283-millions-deuros-leves-par-les-startups-francaises-semaine-19-2026",
+  "/blog/2026/04/28/626-millions-deuros-leves-par-les-startups-francaises-semaine-17-2026",
+  "/blog/2026/04/21/399-millions-deuros-leves-par-les-startups-francaises-semaine-16-2026"
+ ],
+ "startups": {
+  "Orakl Oncology": {
+   "site": "https://www.orakl-oncology.com/",
+   "tour": "Serie A",
+   "montant": "30,000,000",
+   "levee_le": "2026-11-15",
+   "outil": "wttj",
+   "code": "orakl-oncology"
+  },
+  "Gama": {
+   "site": "https://www.gamaspace.com/",
+   "tour": "Seed",
+   "montant": "15,000,000",
+   "levee_le": "2026-11-15",
+   "outil": "page",
+   "page": "https://www.gamaspace.com/join/",
+   "offres": [],
+   "empreinte": "f078a34bf58adcf8faf8faccf9cb090f3f4808d7"
+  },
+  "Physicl": {
+   "site": "https://www.physicl.ai/",
+   "tour": "Seed",
+   "montant": "9,000,000",
+   "levee_le": "2026-11-15",
+   "outil": "aucun"
+  },
+  "Heal.dev": {
+   "site": "https://www.heal.dev/",
+   "tour": "Seed",
+   "montant": "4,000,000",
+   "levee_le": "2026-11-15",
+   "outil": "aucun"
+  },
+  "Well": {
+   "site": "https://wellapp.ai/",
+   "tour": "Pre-seed",
+   "montant": "3,500,000",
+   "levee_le": "2026-11-15",
+   "outil": "aucun"
+  },
+  "Humbird": {
+   "site": "https://www.humbird.fr/",
+   "tour": "Seed",
+   "montant": "1,100,000",
+   "levee_le": "2026-11-15",
+   "outil": "aucun"
+  },
+  "Armor Check": {
+   "site": "https://www.armor-check.fr/",
+   "tour": "Seed",
+   "montant": "1,000,000",
+   "levee_le": "2026-11-15",
+   "outil": "aucun"
+  },
+  "Gallium Defense": {
+   "site": "https://gallium-defense.com/",
+   "tour": "Seed",
+   "montant": "7,100,000",
+   "levee_le": "2026-11-09",
+   "outil": "page",
+   "page": "https://gallium-defense.com/careers.html",
+   "offres": [],
+   "empreinte": "df4831ece7b545255bf9087c5e71f89fe318eef5"
+  },
+  "Granit": {
+   "site": "https://www.getgranit.ai/",
+   "tour": "Seed",
+   "montant": "5,000,000",
+   "levee_le": "2026-11-09",
+   "outil": "aucun"
+  },
+  "AICE Power": {
+   "site": "https://aicepower.com/",
+   "tour": "Seed",
+   "montant": "4,000,000",
+   "levee_le": "2026-11-09",
+   "outil": "page",
+   "page": "https://aicepower.com/careers",
+   "offres": [
+    {
+     "titre": "Senior Software Engineer Algorithms & AI",
+     "lien": "mailto:jobs@aicepower.com?subject=Application%20-%20Senior%20Software%20Engineer%20-%20Algorithms%20%26%20AI",
+     "lieu": "Paris / On-site"
+    },
+    {
+     "titre": "Embedded Software Engineer Sensors & navigation",
+     "lien": "mailto:jobs@aicepower.com?subject=Application%20-%20Embedded%20Software%20Engineer%20-%20Sensors%20%26%20navigation",
+     "lieu": "Paris / On-site"
+    },
+    {
+     "titre": "Electronics Engineer PCB design & integration",
+     "lien": "mailto:jobs@aicepower.com?subject=Application%20-%20Electronics%20Engineer%20-%20PCB%20design%20%26%20integration",
+     "lieu": "Paris / On-site"
+    },
+    {
+     "titre": "Mechanical Engineer Design & small-series production",
+     "lien": "mailto:jobs@aicepower.com?subject=Application%20-%20Mechanical%20Engineer%20-%20Design%20%26%20small-series%20production",
+     "lieu": "Paris / On-site"
+    }
+   ],
+   "empreinte": "24f0ef7e6204223eaf5651b65a1529268ec8e909"
+  },
+  "QRU": {
+   "site": "https://qru.pet/",
+   "tour": "Seed",
+   "montant": "1,650,000",
+   "levee_le": "2026-11-09",
+   "outil": "page",
+   "page": "https://qru.pet/offre-emploi-barf/",
+   "offres": [
+    {
+     "titre": "Agent commercial terrain (H/F)",
+     "lien": "https://qru.pet/",
+     "lieu": "Plusieurs secteurs ouverts en France"
+    }
+   ],
+   "empreinte": "5b7b88058e040fea04554ba077f524bfd6c23908"
+  },
+  "Gimii": {
+   "site": "https://gimii.fr/",
+   "tour": "Seed",
+   "montant": "1,500,000",
+   "levee_le": "2026-11-09",
+   "outil": "page",
+   "page": "https://gimii.fr/job/",
+   "offres": [
+    {
+     "titre": "Gimii Business Developer marché allemand",
+     "lien": "mailto:tgicquel@gimii.fr?subject=Business%20Developer%20DE",
+     "lieu": "Paris ou Allemagne – Télétravail possible"
+    },
+    {
+     "titre": "Business Developer marché ES",
+     "lien": "mailto:tgicquel@gimii.fr?subject=Business%20Developer%20ES%20IT",
+     "lieu": "Paris ou Madrid – Télétravail possible"
+    }
+   ],
+   "empreinte": "0de0b2aae709dec128722d68a017a64f059a49c9"
+  },
+  "Playa Rent": {
+   "site": "https://www.playa-rent.fr/",
+   "tour": "Seed",
+   "montant": "800,000",
+   "levee_le": "2026-11-09",
+   "outil": "aucun"
+  },
+  "Shaarp": {
+   "site": "https://shaarp.ai/",
+   "tour": "Pre-seed",
+   "montant": "400,000",
+   "levee_le": "2026-11-09",
+   "outil": "aucun"
+  },
+  "Wormsensing": {
+   "site": "https://www.wormsensing.com/",
+   "tour": "Serie A",
+   "montant": "9,500,000",
+   "levee_le": "2026-11-02",
+   "outil": "page",
+   "page": "https://www.wormsensing.com/careers",
+   "offres": [
+    {
+     "titre": "REF. 0030 Field Application Engineer",
+     "lien": "https://www.wormsensing.com/careers/0030-field-application-engineer",
+     "lieu": "Grenoble"
+    },
+    {
+     "titre": "REF. 0029 Sales & Business Developer",
+     "lien": "https://www.wormsensing.com/careers/0029-sales-business-developer",
+     "lieu": "Grenoble"
+    }
+   ],
+   "empreinte": "7e2d707e8d6e54055affb0fe3d477ddbd7285e13"
+  },
+  "Bleu Robotics": {
+   "site": "https://bleu-robotics.com/",
+   "tour": "Pre-seed",
+   "montant": "5,000,000",
+   "levee_le": "2026-11-02",
+   "outil": "ashby",
+   "code": "bleu-robotics"
+  },
+  "AQQI": {
+   "site": "https://aqqi.com/",
+   "tour": "Pre-seed",
+   "montant": "4,000,000",
+   "levee_le": "2026-11-02",
+   "outil": "aucun"
+  },
+  "Dyameo": {
+   "site": "https://dyameo.com/",
+   "tour": "Seed",
+   "montant": "3,000,000",
+   "levee_le": "2026-11-02",
+   "outil": "aucun"
+  },
+  "Aíma": {
+   "site": "https://aima-diagnostics.com/",
+   "tour": "Seed",
+   "montant": "2,200,000",
+   "levee_le": "2026-11-02",
+   "outil": "aucun"
+  },
+  "Pint": {
+   "site": "https://pint.fr/",
+   "tour": "Seed",
+   "montant": "1,700,000",
+   "levee_le": "2026-11-02",
+   "outil": "aucun"
+  },
+  "Elax Énergie": {
+   "site": "https://www.elaxenergie.com/",
+   "tour": "Serie A",
+   "montant": "30,000,000",
+   "levee_le": "2026-10-26",
+   "outil": "wttj",
+   "code": "elax-energie"
+  },
+  "Bageera": {
+   "site": "https://bageera.ai/",
+   "tour": "Serie A",
+   "montant": "10,000,000",
+   "levee_le": "2026-10-26",
+   "outil": "aucun"
+  },
+  "Reduck": {
+   "site": "https://reduck.ai/",
+   "tour": "Pre-seed",
+   "montant": "2,700,000",
+   "levee_le": "2026-10-26",
+   "outil": "aucun"
+  },
+  "Weflayr": {
+   "site": "https://weflayr.com/",
+   "tour": "Pre-seed",
+   "montant": "2,200,000",
+   "levee_le": "2026-10-26",
+   "outil": "page",
+   "page": "https://weflayr.com/careers/",
+   "offres": [
+    {
+     "titre": "Senior AI Engineer",
+     "lien": "https://weflayr.com/careers/senior-ai-engineer/",
+     "lieu": "Paris"
+    },
+    {
+     "titre": "Senior Rust Engineer",
+     "lien": "https://weflayr.com/careers/senior-rust-engineer/",
+     "lieu": "Paris"
+    },
+    {
+     "titre": "Senior DevOps",
+     "lien": "https://weflayr.com/careers/senior-devops/",
+     "lieu": "Paris"
+    },
+    {
+     "titre": "Solutions Engineer",
+     "lien": "https://weflayr.com/careers/solutions-engineer/",
+     "lieu": "Paris"
+    }
+   ],
+   "empreinte": "ddde4bad5bc02698ccfe182d9d5cd93075af23fa"
+  },
+  "Treewater": {
+   "site": "https://www.treewater.fr/",
+   "tour": "Seed",
+   "montant": "1,900,000",
+   "levee_le": "2026-10-26",
+   "outil": "aucun"
+  },
+  "Kompa": {
+   "site": "https://kompa.pro/",
+   "tour": "Seed",
+   "montant": "1,600,000",
+   "levee_le": "2026-10-26",
+   "outil": "aucun"
+  },
+  "Bravi": {
+   "site": "https://www.bravi.app/",
+   "tour": "Seed",
+   "montant": "1,500,000",
+   "levee_le": "2026-10-26",
+   "outil": "aucun"
+  },
+  "Pesia": {
+   "site": "https://pesia.fr/",
+   "tour": "Seed",
+   "montant": "500,000",
+   "levee_le": "2026-10-26",
+   "outil": "aucun"
+  },
+  "Rivercell": {
+   "site": "https://rivercell.ai/",
+   "tour": "Seed",
+   "montant": "22,500,000",
+   "levee_le": "2026-10-20",
+   "outil": "wttj",
+   "code": "rivercell"
+  },
+  "Epyr": {
+   "site": "https://www.epyr.co/",
+   "tour": "Serie A",
+   "montant": "15,000,000",
+   "levee_le": "2026-10-20",
+   "outil": "aucun"
+  },
+  "HyLight": {
+   "site": "https://hylight.aero/",
+   "tour": "Serie A",
+   "montant": "13,000,000",
+   "levee_le": "2026-10-20",
+   "outil": "page",
+   "page": "https://hylight.aero/careers",
+   "offres": [],
+   "empreinte": "3da277d9be5c1a07f8382a3f923580e8ee09e991"
+  },
+  "Goodweek": {
+   "site": "https://goodweek.com/",
+   "tour": "Seed",
+   "montant": "10,700,000",
+   "levee_le": "2026-10-20",
+   "outil": "aucun"
+  },
+  "Archeon Medical": {
+   "site": "https://archeon-medical.com/",
+   "tour": "Serie A",
+   "montant": "7,500,000",
+   "levee_le": "2026-10-20",
+   "outil": "page",
+   "page": "https://archeon-medical.com/career/",
+   "offres": [
+    {
+     "titre": "NEW Business Developer Permanent – Europe",
+     "lien": "https://archeon-medical.com/wp-content/uploads/2026/11/2026-Business-Developer-Archeon.pdf",
+     "lieu": "Europe"
+    }
+   ],
+   "empreinte": "aaed3646fa794a40080be799b6480dad2a25e540"
+  },
+  "CarbonFarm": {
+   "site": "https://carbonfarm.tech/",
+   "tour": "Serie A",
+   "montant": "7,000,000",
+   "levee_le": "2026-10-20",
+   "outil": "aucun"
+  },
+  "Webyn": {
+   "site": "https://www.webyn.ai/",
+   "tour": "Seed",
+   "montant": "7,000,000",
+   "levee_le": "2026-10-20",
+   "outil": "aucun"
+  },
+  "Sintermat": {
+   "site": "https://sinter-mat.com/",
+   "tour": "Serie B",
+   "montant": "6,000,000",
+   "levee_le": "2026-10-20",
+   "outil": "page",
+   "page": "https://sinter-mat.com/carrieres/",
+   "offres": [
+    {
+     "titre": "Ingénieur chargé de projets industrialisation (H/F)",
+     "lien": "https://sinter-mat.com/carrieres/ingenieur-charge-de-projets-industrialisation-h-f/",
+     "lieu": "Venarey-les-Laumes"
+    }
+   ],
+   "empreinte": "f5b8c8041680e5ece5fbfde78778f015749a2cb6"
+  },
+  "Koddex": {
+   "site": "https://koddex.io/",
+   "tour": "Seed",
+   "montant": "3,000,000",
+   "levee_le": "2026-10-20",
+   "outil": "page",
+   "page": "https://koddex.io/careers",
+   "offres": [
+    {
+     "titre": "Engineering",
+     "lien": "https://2fopz5.share-eu1.hsforms.com/2Qm9zA5GjTI6YhtGZ_GWnuQ",
+     "lieu": "Lille"
+    },
+    {
+     "titre": "Product",
+     "lien": "https://2fopz5.share-eu1.hsforms.com/2Qm9zA5GjTI6YhtGZ_GWnuQ",
+     "lieu": "Lille"
+    },
+    {
+     "titre": "Go-to-market",
+     "lien": "https://2fopz5.share-eu1.hsforms.com/2Qm9zA5GjTI6YhtGZ_GWnuQ",
+     "lieu": "Lille"
+    }
+   ],
+   "empreinte": "17977a7e658fc3b311e426d75fa29c218d92dea4"
+  },
+  "H&B Materials": {
+   "site": "https://www.hbmaterials.fr/",
+   "tour": "Pre-seed",
+   "montant": "2,100,000",
+   "levee_le": "2026-10-20",
+   "outil": "aucun"
+  },
+  "UZAI": {
+   "site": "https://uz-ip.tech/",
+   "tour": "Seed",
+   "montant": "1,000,000",
+   "levee_le": "2026-10-20",
+   "outil": "aucun"
+  },
+  "Spiko": {
+   "site": "http://www.spiko.xyz/",
+   "tour": "Serie B",
+   "montant": "80,000,000",
+   "levee_le": "2026-10-13",
+   "outil": "teamtailor",
+   "code": "spiko"
+  },
+  "VoltR": {
+   "site": "http://www.voltr.tech/",
+   "tour": "Serie A",
+   "montant": "22,000,000",
+   "levee_le": "2026-10-13",
+   "outil": "wttj",
+   "code": "voltr"
+  },
+  "WHITELAB GENOMICS": {
+   "site": "https://whitelabgx.com/",
+   "tour": "Serie B",
+   "montant": "22,000,000",
+   "levee_le": "2026-10-13",
+   "outil": "wttj",
+   "code": "whitelab-genomics"
+  },
+  "Vocca": {
+   "site": "http://vocca.ai/",
+   "tour": "Serie A",
+   "montant": "17,900,000",
+   "levee_le": "2026-10-13",
+   "outil": "aucun"
+  },
+  "Edonia": {
+   "site": "https://www.edonia.eu/",
+   "tour": "Serie A",
+   "montant": "15,000,000",
+   "levee_le": "2026-10-13",
+   "outil": "aucun"
+  },
+  "Cleavr": {
+   "site": "https://eldorado.co/bo/portfolio/stats?field_date_de_lev_e_souhait_value%5Bmin%5D%5Bdate%5D=05%2F10%2F26&amp;field_date_de_lev_e_souhait_value%5Bmax%5D%5Bdate%5D=11%2F10%2F26&amp;field_business_model_tid_op=or&amp;field_sector_tid_op=or&amp;field_strategy_tid_op=or&amp;field_votre_lev_e_de_fond_tid_op=or&amp;field_montant_de_l_investissemen_value_op=%3D&amp;field_montant_de_l_investissemen_value%5Bvalue%5D=&amp;field_montant_de_l_investissemen_value%5Bmin%5D=&amp;field_montant_de_l_investissemen_value%5Bmax%5D=",
+   "tour": "Seed",
+   "montant": "8,000,000",
+   "levee_le": "2026-10-13",
+   "outil": "aucun"
+  },
+  "AlloBrain": {
+   "site": "http://www.allobrain.com/",
+   "tour": "Seed",
+   "montant": "6,300,000",
+   "levee_le": "2026-10-13",
+   "outil": "aucun"
+  },
+  "VERSO Capital": {
+   "site": "https://eldorado.co/bo/portfolio/stats?field_date_de_lev_e_souhait_value%5Bmin%5D%5Bdate%5D=05%2F10%2F26&amp;field_date_de_lev_e_souhait_value%5Bmax%5D%5Bdate%5D=11%2F10%2F26&amp;field_business_model_tid_op=or&amp;field_sector_tid_op=or&amp;field_strategy_tid_op=or&amp;field_votre_lev_e_de_fond_tid_op=or&amp;field_montant_de_l_investissemen_value_op=%3D&amp;field_montant_de_l_investissemen_value%5Bvalue%5D=&amp;field_montant_de_l_investissemen_value%5Bmin%5D=&amp;field_montant_de_l_investissemen_value%5Bmax%5D=",
+   "tour": "Seed",
+   "montant": "5,400,000",
+   "levee_le": "2026-10-13",
+   "outil": "aucun"
+  },
+  "Fleuret AI": {
+   "site": "http://fleuret.ai/",
+   "tour": "Seed",
+   "montant": "4,000,000",
+   "levee_le": "2026-10-13",
+   "outil": "page",
+   "page": "http://fleuret.ai/careers",
+   "offres": [
+    {
+     "titre": "Product Engineer (reliability)",
+     "lien": "mailto:jobs@fleuret.ai?subject=Product%20Engineer",
+     "lieu": "Paris, hybrid"
+    },
+    {
+     "titre": "Product Designer (UI/UX)",
+     "lien": "mailto:jobs@fleuret.ai?subject=Product%20Designer",
+     "lieu": "Paris, hybrid"
+    },
+    {
+     "titre": "Account Executive",
+     "lien": "mailto:jobs@fleuret.ai?subject=Account%20Executive",
+     "lieu": "Paris, hybrid"
+    }
+   ],
+   "empreinte": "d05b78eab03a7b1fc10e2bbce3efc2f57ef42cdd"
+  },
+  "Voltaback": {
+   "site": "http://www.voltaback.com/",
+   "tour": "Seed",
+   "montant": "2,800,000",
+   "levee_le": "2026-10-13",
+   "outil": "wttj",
+   "code": "voltaback"
+  },
+  "Vasco": {
+   "site": "https://www.vasco-impact.com/",
+   "tour": "Seed",
+   "montant": "1,700,000",
+   "levee_le": "2026-10-13",
+   "outil": "wttj",
+   "code": "vasco-impact"
+  },
+  "InBolt": {
+   "site": "https://inbolt.fr/",
+   "tour": "Serie B",
+   "montant": "11,000,000",
+   "levee_le": "2026-10-05",
+   "outil": "aucun"
+  },
+  "Rayon": {
+   "site": "http://www.rayon.design/",
+   "tour": "Serie A",
+   "montant": "10,000,000",
+   "levee_le": "2026-10-05",
+   "outil": "aucun"
+  },
+  "Graneet": {
+   "site": "https://www.graneet.com/fr",
+   "tour": "Serie B",
+   "montant": "7,000,000",
+   "levee_le": "2026-10-05",
+   "outil": "aucun"
+  },
+  "Marble": {
+   "site": "https://www.checkmarble.com/",
+   "tour": "Serie A",
+   "montant": "6,500,000",
+   "levee_le": "2026-10-05",
+   "outil": "aucun"
+  },
+  "Shadow": {
+   "site": "http://www.shadow.eco/",
+   "tour": "Seed",
+   "montant": "2,500,000",
+   "levee_le": "2026-10-05",
+   "outil": "aucun"
+  },
+  "Revalue": {
+   "site": "https://revalue.eco/",
+   "tour": "Seed",
+   "montant": "2,200,000",
+   "levee_le": "2026-10-05",
+   "outil": "aucun"
+  },
+  "SoonGo": {
+   "site": "http://soongo.co/",
+   "tour": "Seed",
+   "montant": "2,200,000",
+   "levee_le": "2026-10-05",
+   "outil": "aucun"
+  },
+  "Spash": {
+   "site": "http://spash.com/",
+   "tour": "Serie A",
+   "montant": "2,000,000",
+   "levee_le": "2026-10-05",
+   "outil": "page",
+   "page": "https://spash.com/carriere-fr/",
+   "offres": [],
+   "empreinte": "dc68b4edee3a1a008649d81edf76bceb45b621ad"
+  },
+  "Joe AI": {
+   "site": "http://www.getjoe-ai.com/",
+   "tour": "Seed",
+   "montant": "2,000,000",
+   "levee_le": "2026-10-05",
+   "outil": "aucun"
+  },
+  "C-Clerc": {
+   "site": "http://c-clerc.fr/",
+   "tour": "Seed",
+   "montant": "1,200,000",
+   "levee_le": "2026-10-05",
+   "outil": "aucun"
+  },
+  "LegiPilot": {
+   "site": "http://legipilot.com/",
+   "tour": "Seed",
+   "montant": "500,000",
+   "levee_le": "2026-10-05",
+   "outil": "aucun"
+  },
+  "Biolevate": {
+   "site": "http://www.biolevate.com/",
+   "tour": "Serie A",
+   "montant": "30,000,000",
+   "levee_le": "2026-09-28",
+   "outil": "page",
+   "page": "http://www.biolevate.com/pages/careers",
+   "offres": [],
+   "empreinte": "dc042564599e908168f61f774307cda66b9adfd5"
+  },
+  "Wealthcome": {
+   "site": "http://www.wealthcome.fr/",
+   "tour": "Serie B",
+   "montant": "15,000,000",
+   "levee_le": "2026-09-28",
+   "outil": "page",
+   "page": "http://www.wealthcome.fr/nous-rejoindre",
+   "offres": [
+    {
+     "titre": "Full Stack Developer H/F",
+     "lien": "http://www.wealthcome.fr/nous-rejoindre/full-stack-developer-h-f",
+     "lieu": "Non précisé"
+    }
+   ],
+   "empreinte": "d6efa5cb084445f52107324eab669188852ca4a8"
+  },
+  "Kheops": {
+   "site": "https://www.kheops.io/",
+   "tour": "Serie A",
+   "montant": "12,000,000",
+   "levee_le": "2026-09-28",
+   "outil": "aucun"
+  },
+  "Zeliq": {
+   "site": "https://www.zeliq.com/fr",
+   "tour": "Seed",
+   "montant": "7,000,000",
+   "levee_le": "2026-09-28",
+   "outil": "page",
+   "page": "https://www.zeliq.com/customer-stories/join",
+   "offres": [],
+   "empreinte": "140a83ab9c60f5394d4015379972f06ab97725a7"
+  },
+  "PRIMO": {
+   "site": "https://www.getprimo.com/fr",
+   "tour": "Serie A",
+   "montant": "7,000,000",
+   "levee_le": "2026-09-28",
+   "outil": "aucun"
+  },
+  "RelaiSanté": {
+   "site": "http://www.relaisante.com/",
+   "tour": "Seed",
+   "montant": "6,000,000",
+   "levee_le": "2026-09-28",
+   "outil": "aucun"
+  },
+  "Lightspring": {
+   "site": "http://www.light-spring.com/",
+   "tour": "Seed",
+   "montant": "3,500,000",
+   "levee_le": "2026-09-28",
+   "outil": "aucun"
+  },
+  "Iopole": {
+   "site": "http://www.iopole.com/",
+   "tour": "Seed",
+   "montant": "3,000,000",
+   "levee_le": "2026-09-28",
+   "outil": "page",
+   "page": "http://www.iopole.com/nous-rejoindre",
+   "offres": [
+    {
+     "titre": "Développeur",
+     "lien": "https://www.linkedin.com/jobs/view/4464332867",
+     "lieu": ""
+    }
+   ],
+   "empreinte": "9691b221e95a8077fbdfdf7b618f8faae003aa76"
+  },
+  "AbTx": {
+   "site": "http://www.abtx-bio.com/",
+   "tour": "Seed",
+   "montant": "1,700,000",
+   "levee_le": "2026-09-28",
+   "outil": "aucun"
+  },
+  "AlphaYoda": {
+   "site": "http://www.alphayoda.com/",
+   "tour": "Pre-seed",
+   "montant": "900,000",
+   "levee_le": "2026-09-28",
+   "outil": "aucun"
+  },
+  "KAIKO": {
+   "site": "http://kaiko.com/",
+   "tour": "Serie B",
+   "montant": "49,500,000",
+   "levee_le": "2026-09-21",
+   "outil": "lever",
+   "code": "kaiko"
+  },
+  "Hackuity": {
+   "site": "https://hackuity.io/",
+   "tour": "Serie B",
+   "montant": "13,500,000",
+   "levee_le": "2026-09-21",
+   "outil": "aucun"
+  },
+  "Delos": {
+   "site": "http://www.delos.so/",
+   "tour": "Serie A",
+   "montant": "10,000,000",
+   "levee_le": "2026-09-21",
+   "outil": "aucun"
+  },
+  "Opio": {
+   "site": "http://www.opio.fi/",
+   "tour": "Seed",
+   "montant": "4,000,000",
+   "levee_le": "2026-09-21",
+   "outil": "aucun"
+  },
+  "AAIS": {
+   "site": "http://www.aais.ai/",
+   "tour": "Seed",
+   "montant": "2,200,000",
+   "levee_le": "2026-09-21",
+   "outil": "aucun"
+  },
+  "BlueSecure": {
+   "site": "http://www.bluesecure.fr/",
+   "tour": "Seed",
+   "montant": "1,000,000",
+   "levee_le": "2026-09-21",
+   "outil": "aucun"
+  },
+  "Arlequin AI": {
+   "site": "http://www.arlq.ai/",
+   "tour": "Serie A",
+   "montant": "28,000,000",
+   "levee_le": "2026-09-15",
+   "outil": "page",
+   "page": "http://www.arlq.ai/careers",
+   "offres": [
+    {
+     "titre": "Forward Deployed Engineer",
+     "lien": "http://www.arlq.ai/careers/forward-deployed-engineer",
+     "lieu": "Paris, with regular travel across Europe"
+    },
+    {
+     "titre": "HPC Engineer",
+     "lien": "http://www.arlq.ai/careers/hpc-engineer",
+     "lieu": "Paris (hybrid / full-remote / on-site flexible)"
+    },
+    {
+     "titre": "AI Data Scientist",
+     "lien": "http://www.arlq.ai/careers/ai-data-scientist",
+     "lieu": "On-site in Paris"
+    },
+    {
+     "titre": "Fullstack Engineer",
+     "lien": "http://www.arlq.ai/careers/fullstack-engineer",
+     "lieu": "On-site in Paris"
+    },
+    {
+     "titre": "Tech Lead",
+     "lien": "http://www.arlq.ai/careers/tech-lead",
+     "lieu": "On-site in Paris"
+    },
+    {
+     "titre": "Senior Product Manager",
+     "lien": "http://www.arlq.ai/careers/senior-product-manager",
+     "lieu": "On-site in Paris"
+    },
+    {
+     "titre": "Product Designer",
+     "lien": "http://www.arlq.ai/careers/senior-designer",
+     "lieu": "On-site in Paris"
+    },
+    {
+     "titre": "Account Executive – France",
+     "lien": "http://www.arlq.ai/careers/account-executive-france",
+     "lieu": "Paris"
+    },
+    {
+     "titre": "Account Executive – Germany",
+     "lien": "http://www.arlq.ai/careers/account-executive-germany",
+     "lieu": "Germany (remote, with travel)"
+    }
+   ],
+   "empreinte": "f1f50d2ecf3756c437c28bf5b022f2be5c8887a8"
+  },
+  "Actionable": {
+   "site": "http://actionable.live/",
+   "tour": "Serie A",
+   "montant": "8,600,000",
+   "levee_le": "2026-09-15",
+   "outil": "page",
+   "page": "http://actionable.live/careers/",
+   "offres": [
+    {
+     "titre": "Data Engineer",
+     "lien": "http://actionable.live/careers/data-engineer/",
+     "lieu": "Remote, Paris or Nancy"
+    },
+    {
+     "titre": "Technical Solution Engineer",
+     "lien": "http://actionable.live/careers/technical-solution-engineer/",
+     "lieu": "Remote, Paris or Nancy"
+    },
+    {
+     "titre": "Customer Value Manager",
+     "lien": "http://actionable.live/careers/customer-value-manager/",
+     "lieu": "Paris"
+    },
+    {
+     "titre": "Security & Cloud Infrastructure Engineer",
+     "lien": "http://actionable.live/careers/security-cloud-infrastructure-engineer/",
+     "lieu": "Remote, Paris or Nancy"
+    }
+   ],
+   "empreinte": "eb653d5fafe729a08dc2aa02a48f4589179283ac"
+  },
+  "Ed Ai": {
+   "site": "http://ed.ai/",
+   "tour": "Serie A",
+   "montant": "8,000,000",
+   "levee_le": "2026-09-15",
+   "outil": "aucun"
+  },
+  "Olenbee": {
+   "site": "http://www.olenbee.com/",
+   "tour": "Serie A",
+   "montant": "7,000,000",
+   "levee_le": "2026-09-15",
+   "outil": "page",
+   "page": "https://www.olenbee.com/blog/titres-restaurant/comment-mettre-titres-restaurant-premier-recrutement/",
+   "offres": [],
+   "empreinte": "93e36cf9459140af88814c112432ec1df7648e2a"
+  },
+  "Outline": {
+   "site": "http://www.outlineapp.ai/",
+   "tour": "Pre-seed",
+   "montant": "3,000,000",
+   "levee_le": "2026-09-15",
+   "outil": "aucun"
+  },
+  "Bob! Desk": {
+   "site": "http://www.bob-desk.fr/",
+   "tour": "Seed",
+   "montant": "2,500,000",
+   "levee_le": "2026-09-15",
+   "outil": "aucun"
+  },
+  "Paradigme": {
+   "site": "https://paradigme.fr/",
+   "tour": "Serie A",
+   "montant": "1,200,000",
+   "levee_le": "2026-09-15",
+   "outil": "aucun"
+  },
+  "Lupin Dental": {
+   "site": "https://lupindental.com/",
+   "tour": "Serie A",
+   "montant": "15,000,000",
+   "levee_le": "2026-09-09",
+   "outil": "aucun"
+  },
+  "Korben Robots": {
+   "site": "https://www.korbenforpeople.com/",
+   "tour": "Seed",
+   "montant": "10,200,000",
+   "levee_le": "2026-09-09",
+   "outil": "aucun"
+  },
+  "Huscarl": {
+   "site": "https://huscarl.io/",
+   "tour": "Seed",
+   "montant": "4,800,000",
+   "levee_le": "2026-09-09",
+   "outil": "aucun"
+  },
+  "Viraj Aero": {
+   "site": "https://www.viraj-aero.com/fr",
+   "tour": "Seed",
+   "montant": "2,700,000",
+   "levee_le": "2026-09-09",
+   "outil": "aucun"
+  },
+  "Blacknut": {
+   "site": "https://www.blacknut.com/fr",
+   "tour": "Seed",
+   "montant": "2,400,000",
+   "levee_le": "2026-09-09",
+   "outil": "aucun"
+  },
+  "Therasonic": {
+   "site": "https://www.therasonic.fr/",
+   "tour": "Seed",
+   "montant": "1,500,000",
+   "levee_le": "2026-09-09",
+   "outil": "page",
+   "page": "https://www.therasonic.fr/fr/careers/",
+   "offres": [],
+   "empreinte": "3729343bd9a7e044428fba460bebad8f009bad4c"
+  },
+  "Brenus Pharma": {
+   "site": "https://www.brenus-pharma.com/",
+   "tour": "Serie A",
+   "montant": "11,000,000",
+   "levee_le": "2026-08-04",
+   "outil": "aucun"
+  },
+  "Aptimiz": {
+   "site": "http://aptimiz.com/",
+   "tour": "Serie A",
+   "montant": "1,400,000",
+   "levee_le": "2026-08-04",
+   "outil": "aucun"
+  },
+  "Remedy Metals": {
+   "site": "http://www.remedy-metals.com/",
+   "tour": "Seed",
+   "montant": "1,000,000",
+   "levee_le": "2026-08-04",
+   "outil": "aucun"
+  },
+  "Muodim": {
+   "site": "http://muodim.com/",
+   "tour": "Seed",
+   "montant": "700,000",
+   "levee_le": "2026-08-04",
+   "outil": "aucun"
+  },
+  "Ascendance": {
+   "site": "https://www.ascendance-ft.com/",
+   "tour": "Serie B",
+   "montant": "14,000,000",
+   "levee_le": "2026-07-28",
+   "outil": "page",
+   "page": "https://www.ascendance-ft.com/career",
+   "offres": [
+    {
+     "titre": "Stage - Talent & RH (all gender)",
+     "lien": "https://www.ascendance-ft.com/https-taleez-com-apply-talent-hr-intern-all-gender-toulouse-ascendance",
+     "lieu": "Toulouse"
+    },
+    {
+     "titre": "Stage - Technicien Production & Assemblage Batteries (all gender)",
+     "lien": "https://taleez.com/apply/stage-technicien-production-assemblage-batteries-all-gender-muret-ascendance",
+     "lieu": "Toulouse"
+    },
+    {
+     "titre": "Hybrid Electrical Propulsive Test Intern (all gender)",
+     "lien": "https://taleez.com/apply/hybrid-electrical-propulsive-test-intern-all-gender-toulouse-ascendance",
+     "lieu": "Toulouse"
+    },
+    {
+     "titre": "VTOL Aerodynamic Simulation and Modelling Intern (all gender)",
+     "lien": "https://taleez.com/apply/vtol-aerodynamic-and-performance-intern-all-gender-toulouse-ascendance",
+     "lieu": "Toulouse"
+    },
+    {
+     "titre": "Strategy & Partnership Director (all gender)",
+     "lien": "https://taleez.com/apply/strategy-partnership-director-all-gender-toulouse-ascendance-cdi",
+     "lieu": "Toulouse"
+    },
+    {
+     "titre": "Flight Control System Lead (all gender)",
+     "lien": "https://taleez.com/apply/flight-control-system-engineer-all-gender-toulouse-ascendance-flight-technologies-cdi-6",
+     "lieu": "Toulouse"
+    },
+    {
+     "titre": "eDrive Engineer (all gender)",
+     "lien": "https://taleez.com/apply/edrive-ingineer-toulouse-ascendance-cdi",
+     "lieu": "Toulouse"
+    },
+    {
+     "titre": "Multiphysics Modeling Engineer (all gender)",
+     "lien": "https://taleez.com/apply/multiphysics-modeling-engineer-all-gender-toulouse-ascendance-flight-technologies-cdi-3",
+     "lieu": "Toulouse"
+    },
+    {
+     "titre": "Avionics System Designer and Integrator (all gender)",
+     "lien": "https://taleez.com/apply/avionics-system-engineer-toulouse-ascendance-flight-technologies-cdi",
+     "lieu": "Toulouse"
+    }
+   ],
+   "empreinte": "6f8c1731b29a61b1ae7c914f915dcc1c4f90f65b"
+  },
+  "Womed": {
+   "site": "http://www.womedtech.com/",
+   "tour": "Seed",
+   "montant": "7,100,000",
+   "levee_le": "2026-07-28",
+   "outil": "aucun"
+  },
+  "Engo": {
+   "site": "http://fr.engoeyewear.com/",
+   "tour": "Seed",
+   "montant": "5,100,000",
+   "levee_le": "2026-07-28",
+   "outil": "aucun"
+  },
+  "Aiffin": {
+   "site": "http://aiffin.com/",
+   "tour": "Seed",
+   "montant": "3,100,000",
+   "levee_le": "2026-07-28",
+   "outil": "page",
+   "page": "http://aiffin.com/jobs",
+   "offres": [
+    {
+     "titre": "Senior Sales Manager - Leasing Partnerships",
+     "lien": "http://aiffin.com/jobs/senior-sales-manager-leasing-partnerships",
+     "lieu": "Office - France"
+    },
+    {
+     "titre": "ML Engineer - Credit Scoring & Risk Models",
+     "lien": "http://aiffin.com/jobs/ml-engineer-credit-scoring-risk-models",
+     "lieu": "Remote - France"
+    }
+   ],
+   "empreinte": "ff426a26dcb415e6d865cc0382a7a7a84854c188"
+  },
+  "Hekat Fluidics": {
+   "site": "http://hekat.com/",
+   "tour": "Seed",
+   "montant": "2,400,000",
+   "levee_le": "2026-07-28",
+   "outil": "aucun"
+  },
+  "Syntetica": {
+   "site": "http://www.syntetica.co/",
+   "tour": "Serie A",
+   "montant": "26,200,000",
+   "levee_le": "2026-07-21",
+   "outil": "page",
+   "page": "http://www.syntetica.co/careers",
+   "offres": [
+    {
+     "titre": "Project Manager",
+     "lien": "https://example.com/jobs/project-manager-boston",
+     "lieu": "Boston, MA"
+    }
+   ],
+   "empreinte": "e478b007600dfdfe451b674b1f6ee421ddf37e54"
+  },
+  "ZML": {
+   "site": "http://zml.ai/",
+   "tour": "Seed",
+   "montant": "17,500,000",
+   "levee_le": "2026-07-21",
+   "outil": "aucun"
+  },
+  "NeoCem": {
+   "site": "http://www.neo-eco.fr/",
+   "tour": "Serie B",
+   "montant": "17,000,000",
+   "levee_le": "2026-07-21",
+   "outil": "aucun"
+  },
+  "ARIA": {
+   "site": "http://www.helloaria.me/",
+   "tour": "Serie A",
+   "montant": "7,000,000",
+   "levee_le": "2026-07-21",
+   "outil": "page",
+   "page": "http://www.helloaria.me/careers/",
+   "offres": [],
+   "empreinte": "03e5d9b2a4ace8c80dd66c286ed242561d37f1be"
+  },
+  "En Carta Diagnostics": {
+   "site": "http://www.encarta.bio/",
+   "tour": "Serie A",
+   "montant": "5,000,000",
+   "levee_le": "2026-07-21",
+   "outil": "page",
+   "page": "https://www.encarta.bio/home",
+   "offres": [],
+   "empreinte": "6a331d883d640a962d8ad3ed5aca62f33e1c7ace"
+  },
+  "Stracker": {
+   "site": "http://www.stracker.tech/",
+   "tour": "Seed",
+   "montant": "2,500,000",
+   "levee_le": "2026-07-21",
+   "outil": "wttj",
+   "code": "stracker-1"
+  },
+  "Gradium": {
+   "site": "https://eldorado.co/bo/portfolio/stats?field_date_de_lev_e_souhait_value%5Bmin%5D%5Bdate%5D=06%2F07%2F26&amp;field_date_de_lev_e_souhait_value%5Bmax%5D%5Bdate%5D=12%2F07%2F26&amp;field_business_model_tid_op=or&amp;field_sector_tid_op=or&amp;field_strategy_tid_op=or&amp;field_votre_lev_e_de_fond_tid_op=or&amp;field_montant_de_l_investissemen_value_op=%3D&amp;field_montant_de_l_investissemen_value%5Bvalue%5D=&amp;field_montant_de_l_investissemen_value%5Bmin%5D=&amp;field_montant_de_l_investissemen_value%5Bmax%5D=",
+   "tour": "Seed",
+   "montant": "26,300,000",
+   "levee_le": "2026-07-13",
+   "outil": "aucun"
+  },
+  "Bohr Energie": {
+   "site": "http://www.bohr-energie.fr/",
+   "tour": "Serie A",
+   "montant": "10,000,000",
+   "levee_le": "2026-07-13",
+   "outil": "aucun"
+  },
+  "Naaia": {
+   "site": "http://naaia.ai/",
+   "tour": "Serie A",
+   "montant": "6,000,000",
+   "levee_le": "2026-07-13",
+   "outil": "page",
+   "page": "http://naaia.ai/rejoignez-nous",
+   "offres": [
+    {
+     "titre": "Sales Manager - Responsable commercial grands comptes",
+     "lien": "https://naaia.ai/jobs/sales-manager/",
+     "lieu": "Paris"
+    },
+    {
+     "titre": "Administrateur systèmes, cloud & sécurité IT",
+     "lien": "https://naaia.ai/jobs/administrateur-systemes-cloud-securite-it/",
+     "lieu": "Paris"
+    }
+   ],
+   "empreinte": "8818ed5fb77a04ec5a36856bd742a17a25e8cc92"
+  },
+  "CLICK&CARE": {
+   "site": "https://clickandcare.fr/",
+   "tour": "Serie A",
+   "montant": "5,000,000",
+   "levee_le": "2026-07-13",
+   "outil": "wttj",
+   "code": "click-care"
+  },
+  "Panorama Education": {
+   "site": "https://panoramaed.com/",
+   "tour": "Seed",
+   "montant": "4,400,000",
+   "levee_le": "2026-07-13",
+   "outil": "page",
+   "page": "https://panoramaed.com/products/pathways",
+   "offres": [],
+   "empreinte": "37448d45bfaa3104605ce7774e60c6d8da5bfb13"
+  },
+  "Twinsight": {
+   "site": "http://twinsight-medical.com/",
+   "tour": "Seed",
+   "montant": "1,600,000",
+   "levee_le": "2026-07-13",
+   "outil": "page",
+   "page": "http://twinsight-medical.com/careers/",
+   "offres": [],
+   "empreinte": "7807e0194621c69f07762259ef5c6c54b24a5d93"
+  },
+  "Rivage": {
+   "site": "https://eldorado.co/bo/portfolio/stats?field_date_de_lev_e_souhait_value%5Bmin%5D%5Bdate%5D=06%2F07%2F26&amp;field_date_de_lev_e_souhait_value%5Bmax%5D%5Bdate%5D=12%2F07%2F26&amp;field_business_model_tid_op=or&amp;field_sector_tid_op=or&amp;field_strategy_tid_op=or&amp;field_votre_lev_e_de_fond_tid_op=or&amp;field_montant_de_l_investissemen_value_op=%3D&amp;field_montant_de_l_investissemen_value%5Bvalue%5D=&amp;field_montant_de_l_investissemen_value%5Bmin%5D=&amp;field_montant_de_l_investissemen_value%5Bmax%5D=",
+   "tour": "Seed",
+   "montant": "1,500,000",
+   "levee_le": "2026-07-13",
+   "outil": "aucun"
+  },
+  "Tallano Technologies": {
+   "site": "https://www.tallano.eu/",
+   "tour": "Serie A",
+   "montant": "10,000,000",
+   "levee_le": "2026-07-07",
+   "outil": "aucun"
+  },
+  "Concord ad": {
+   "site": "http://concord.ad/",
+   "tour": "Seed",
+   "montant": "2,700,000",
+   "levee_le": "2026-07-07",
+   "outil": "aucun"
+  },
+  "Loumo": {
+   "site": "http://www.loumo-correction.com/",
+   "tour": "Seed",
+   "montant": "1,000,000",
+   "levee_le": "2026-07-07",
+   "outil": "aucun"
+  },
+  "Bionyra Pharma": {
+   "site": "http://bionyra.com/",
+   "tour": "Serie A",
+   "montant": "143,000,000",
+   "levee_le": "2026-06-30",
+   "outil": "aucun"
+  },
+  "Tsuga": {
+   "site": "http://www.tsuga.com/",
+   "tour": "Serie A",
+   "montant": "35,000,000",
+   "levee_le": "2026-06-30",
+   "outil": "page",
+   "page": "http://www.tsuga.com/resources/join-us",
+   "offres": [
+    {
+     "titre": "Senior backend engineer - NodeJS / Rust",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDo2YcQupubW5r7HskHJZsry-senior-backend-engineer-nodejs-rust",
+     "lieu": "Paris, France - hybrid"
+    },
+    {
+     "titre": "Senior Product Manager",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDow7m3Oit8ySIykqKUZe2XZ-senior-product-manager",
+     "lieu": "Paris, France - hybrid"
+    },
+    {
+     "titre": "Enterprise Sales Account Executive, West Coast (USA)",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDqZOzhgenrHzNMkf824BtQH-enterprise-sales-account-executive-west-coast-usa",
+     "lieu": "United states - remote"
+    },
+    {
+     "titre": "Enterprise Sales Account Executive, East Coast (USA)",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDqX3TEhVQ04Tn6fjvaU83AB-enterprise-sales-account-executive-east-coast-usa",
+     "lieu": "United states - remote"
+    },
+    {
+     "titre": "Sales Leader - UK",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDoWp2Ae2w2300RkGat4bA8W-sales-leader-uk",
+     "lieu": "United kingdom - remote"
+    },
+    {
+     "titre": "Enterprise Sales Account Executive, Spain",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDrsqnLV90589Il6gPoGLoQv-enterprise-sales-account-executive-spain",
+     "lieu": "Spain - remote"
+    },
+    {
+     "titre": "Product Marketing Manager, USA",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDrOPV1aG3tyBT62QxvjdHqo-product-marketing-manager-usa",
+     "lieu": "United states - remote"
+    },
+    {
+     "titre": "Head of Enablement, GTM",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDoCP5J4gS55hRRQy-5dzygS-head-of-enablement-gtm",
+     "lieu": "New york, United states - remote"
+    },
+    {
+     "titre": "Regional Marketing Manager, USA",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDrRdRy8RawI9Z9YvUHuyULI-regional-marketing-manager-usa",
+     "lieu": "United states - remote"
+    },
+    {
+     "titre": "Enterprise Sales Account Executive, LATAM",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDoZG_bg7VUeOu48mP6dICtY-enterprise-sales-account-executive-latam",
+     "lieu": "Remote"
+    },
+    {
+     "titre": "Forward Deployed Engineer - UK",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDqyJHNTHbv5YY-sgwY_vYm0-forward-deployed-engineer-uk",
+     "lieu": "United kingdom - remote"
+    },
+    {
+     "titre": "Sales Leader - West Coast",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDq6bfexhLj7c4KWOgza9DBr-sales-leader-west-coast",
+     "lieu": "United states - remote"
+    }
+   ],
+   "empreinte": "94e9382fbe74a68b037f1d90003183df085a0c6c"
+  },
+  "Wheere": {
+   "site": "http://wheere.io/",
+   "tour": "Seed",
+   "montant": "8,500,000",
+   "levee_le": "2026-06-30",
+   "outil": "wttj",
+   "code": "wheere"
+  },
+  "Sopht": {
+   "site": "http://sopht.com/",
+   "tour": "Serie A",
+   "montant": "7,500,000",
+   "levee_le": "2026-06-30",
+   "outil": "page",
+   "page": "http://sopht.com/careers",
+   "offres": [
+    {
+     "titre": "Green IT R&D Lead (Product Builder)",
+     "lien": "https://sopht.welcomekit.co/jobs/greenit-r-d-lead-product-builder",
+     "lieu": ""
+    },
+    {
+     "titre": "Full Stack Lead Dev",
+     "lien": "http://sopht.com/careers",
+     "lieu": ""
+    },
+    {
+     "titre": "CFO",
+     "lien": "http://sopht.com/careers",
+     "lieu": ""
+    },
+    {
+     "titre": "Senior Account Exec UK",
+     "lien": "http://sopht.com/careers",
+     "lieu": ""
+    }
+   ],
+   "empreinte": "32567e7818434a9c4ec720353eaffed4af95763a"
+  },
+  "Comand AI": {
+   "site": "http://www.comand.ai/",
+   "tour": "Serie A",
+   "montant": "32,000,000",
+   "levee_le": "2026-06-22",
+   "outil": "ashby",
+   "code": "comand-ai"
+  },
+  "Rocapine": {
+   "site": "http://rocapi.ne/",
+   "tour": "Serie A",
+   "montant": "11,000,000",
+   "levee_le": "2026-06-22",
+   "outil": "page",
+   "page": "http://rocapi.ne/careers",
+   "offres": [
+    {
+     "titre": "Mobile Engineer",
+     "lien": "http://rocapi.ne/",
+     "lieu": "Remote-friendly"
+    },
+    {
+     "titre": "Data Engineer",
+     "lien": "http://rocapi.ne/",
+     "lieu": "Paris"
+    },
+    {
+     "titre": "Publishing Associate",
+     "lien": "http://rocapi.ne/",
+     "lieu": "Paris"
+    },
+    {
+     "titre": "Product Manager",
+     "lien": "http://rocapi.ne/",
+     "lieu": "Paris ou remote"
+    }
+   ],
+   "empreinte": "bda5ee2e3ee6964f8f07a07e7da5f5238fd0faa2"
+  },
+  "CardNexus": {
+   "site": "http://cardnexus.com/",
+   "tour": "Seed",
+   "montant": "3,500,000",
+   "levee_le": "2026-06-22",
+   "outil": "aucun"
+  },
+  "Osmos X": {
+   "site": "http://www.osmos-x.com/",
+   "tour": "Seed",
+   "montant": "2,000,000",
+   "levee_le": "2026-06-22",
+   "outil": "page",
+   "page": "http://www.osmos-x.com/company/careers/",
+   "offres": [
+    {
+     "titre": "Systems engineer, platform (OBC, AOCS, GNC, power)",
+     "lien": "",
+     "lieu": "Toulouse"
+    },
+    {
+     "titre": "Plasma propulsion engineer",
+     "lien": "",
+     "lieu": "Bruz"
+    },
+    {
+     "titre": "Business developer, orbital services",
+     "lien": "",
+     "lieu": "Toulouse"
+    }
+   ],
+   "empreinte": "811020a5e720a5094d0af9cf7a49b6e035fb5feb"
+  },
+  "NotiPark": {
+   "site": "http://www.notipark.com/",
+   "tour": "Seed",
+   "montant": "1,700,000",
+   "levee_le": "2026-06-22",
+   "outil": "aucun"
+  },
+  "Eledone": {
+   "site": "http://eledone-ai.com/",
+   "tour": "Seed",
+   "montant": "1,500,000",
+   "levee_le": "2026-06-22",
+   "outil": "page",
+   "page": "http://eledone-ai.com/recrutement",
+   "offres": [],
+   "empreinte": "37898e5d93055739c983377cd0c27673d4fa3f15"
+  },
+  "Alta Ares": {
+   "site": "http://altaares.com/",
+   "tour": "Serie A",
+   "montant": "50,000,000",
+   "levee_le": "2026-06-15",
+   "outil": "ashby",
+   "code": "alta-ares"
+  },
+  "Eclipse": {
+   "site": "http://www.eclipse.org/",
+   "tour": "Serie A",
+   "montant": "20,000,000",
+   "levee_le": "2026-06-15",
+   "outil": "aucun"
+  },
+  "Mendo": {
+   "site": "https://mendo.cloud/",
+   "tour": "Serie A",
+   "montant": "12,000,000",
+   "levee_le": "2026-06-15",
+   "outil": "teamtailor",
+   "code": "mendoai-1730204279"
+  },
+  "Finovox": {
+   "site": "http://finovox.com/",
+   "tour": "Serie A",
+   "montant": "8,200,000",
+   "levee_le": "2026-06-15",
+   "outil": "aucun"
+  },
+  "Kyber": {
+   "site": "http://kyber.tech/",
+   "tour": "Seed",
+   "montant": "4,300,000",
+   "levee_le": "2026-06-15",
+   "outil": "aucun"
+  },
+  "Rematch": {
+   "site": "http://www.rematch.tv/",
+   "tour": "Serie A",
+   "montant": "3,000,000",
+   "levee_le": "2026-06-15",
+   "outil": "aucun"
+  },
+  "Builder Assist": {
+   "site": "http://www.builder-assist.com/",
+   "tour": "Seed",
+   "montant": "2,000,000",
+   "levee_le": "2026-06-15",
+   "outil": "aucun"
+  },
+  "Hit Mag": {
+   "site": "http://www.hit-mag.fr/",
+   "tour": "Seed",
+   "montant": "1,600,000",
+   "levee_le": "2026-06-15",
+   "outil": "aucun"
+  },
+  "Réempro": {
+   "site": "http://www.reempro.com/",
+   "tour": "Seed",
+   "montant": "1,600,000",
+   "levee_le": "2026-06-15",
+   "outil": "page",
+   "page": "http://www.reempro.com/recrutement",
+   "offres": [
+    {
+     "titre": "Préparateur de commande mobilier (H/F)",
+     "lien": "https://reempro.com/offre-demploi/preparateur-de-commande-mobilier-h-f",
+     "lieu": "Lille / Lomme"
+    },
+    {
+     "titre": "Gestionnaire d’entrepôt (H/F)",
+     "lien": "https://reempro.com/offre-demploi/gestionnaire-dentrepot-h-f",
+     "lieu": "Val de Fontenay"
+    }
+   ],
+   "empreinte": "0203922dd8ecfae0cd21c9aa85a73b8645a2059e"
+  },
+  "Mobioos": {
+   "site": "http://www.mobioos.ai/",
+   "tour": "Seed",
+   "montant": "1,300,000",
+   "levee_le": "2026-06-15",
+   "outil": "aucun"
+  },
+  "Quobly": {
+   "site": "https://www.quobly.io/",
+   "tour": "Serie A",
+   "montant": "115,000,000",
+   "levee_le": "2026-06-09",
+   "outil": "page",
+   "page": "https://www.quobly.io/quobly",
+   "offres": [],
+   "empreinte": "f79fa4647242d25bb84e75ca750efa8d87754337"
+  },
+  "NPCo": {
+   "site": "http://www.npco.ai",
+   "tour": "Seed",
+   "montant": "6,000,000",
+   "levee_le": "2026-06-09",
+   "outil": "page",
+   "page": "http://www.npco.ai/careers",
+   "offres": [
+    {
+     "titre": "AI Deployment Engineer - AI & Industry",
+     "lien": "http://www.npco.ai/careers/ai-deployment-engineer-ai-industry",
+     "lieu": "paris"
+    },
+    {
+     "titre": "Software Engineer - Platform & DevOps",
+     "lien": "http://www.npco.ai/careers/software-engineer-platform-devops",
+     "lieu": "paris"
+    },
+    {
+     "titre": "Research Scientist - Topology Optimization",
+     "lien": "http://www.npco.ai/careers/research-scientist-topological-optimization",
+     "lieu": "paris"
+    },
+    {
+     "titre": "Research Scientist - Large Model Training",
+     "lien": "http://www.npco.ai/careers/research-scientist-large-model-training",
+     "lieu": "paris"
+    },
+    {
+     "titre": "Research Scientist - Generalization",
+     "lien": "http://www.npco.ai/careers/research-scientist-generalization",
+     "lieu": "paris"
+    },
+    {
+     "titre": "Simulation Engineer - CFD Simulation",
+     "lien": "http://www.npco.ai/careers/simulation-engineer-cfd-simulation",
+     "lieu": "paris"
+    },
+    {
+     "titre": "Simulation Engineer - Mechanical Simulation",
+     "lien": "http://www.npco.ai/careers/simulation-engineer-mechanical",
+     "lieu": "paris"
+    }
+   ],
+   "empreinte": "5880f8397f245ed689536d502f6afccd220bc35c"
+  },
+  "noa": {
+   "site": "https://noa.fit/",
+   "tour": "Seed",
+   "montant": "5,000,000",
+   "levee_le": "2026-06-09",
+   "outil": "aucun"
+  },
+  "Upstream": {
+   "site": "https://www.upstream.do/",
+   "tour": "Seed",
+   "montant": "2,600,000",
+   "levee_le": "2026-06-09",
+   "outil": "aucun"
+  },
+  "Primomanda": {
+   "site": "https://primomanda.fr/",
+   "tour": "Seed",
+   "montant": "600,000",
+   "levee_le": "2026-06-09",
+   "outil": "aucun"
+  },
+  "TIVA": {
+   "site": "https://tiva-performance.com/?srsltid=AfmBOopaDV8WVnlTB7dFuytGS4jxorCh5yiwGPiYyhqyq--eRAIMxHd4",
+   "tour": "Seed",
+   "montant": "525,000",
+   "levee_le": "2026-06-09",
+   "outil": "page",
+   "page": "https://tiva-performance.com/pages/performance-club",
+   "offres": [],
+   "empreinte": "23c47308aae270377a806dada578daba19f74da4"
+  },
+  "Lucis": {
+   "site": "https://www.lucis.life/fr",
+   "tour": "Serie A",
+   "montant": "17,200,000",
+   "levee_le": "2026-06-03",
+   "outil": "ashby",
+   "code": "lucis"
+  },
+  "Olyzon": {
+   "site": "http://olyzon.tv",
+   "tour": "Serie B",
+   "montant": "8,600,000",
+   "levee_le": "2026-06-03",
+   "outil": "aucun"
+  },
+  "Vortex-io": {
+   "site": "http://www.vortex-io.fr",
+   "tour": "Serie A",
+   "montant": "8,500,000",
+   "levee_le": "2026-06-03",
+   "outil": "page",
+   "page": "https://www.vortex-io.fr/recrutement/",
+   "offres": [],
+   "empreinte": "3e53b7f59a36beb7e19b704ca35e65123812feea"
+  },
+  "Thia": {
+   "site": "https://www.thiasantementale.fr/",
+   "tour": "Seed",
+   "montant": "3,000,000",
+   "levee_le": "2026-06-03",
+   "outil": "page",
+   "page": "https://www.thiasantementale.fr/jobs",
+   "offres": [
+    {
+     "titre": "Account Manager",
+     "lien": "mailto:recrutement@thia.fr",
+     "lieu": "Paris 8e"
+    },
+    {
+     "titre": "Product Manager",
+     "lien": "mailto:recrutement@thia.fr",
+     "lieu": "Montpellier"
+    }
+   ],
+   "empreinte": "5624301c0941183999c80091ee05d893e8b7ca7b"
+  },
+  "MySunBed": {
+   "site": "http://mysunbed.com",
+   "tour": "Seed",
+   "montant": "1,600,000",
+   "levee_le": "2026-06-03",
+   "outil": "page",
+   "page": "http://mysunbed.com/fr/contact/",
+   "offres": [],
+   "empreinte": "5a1c3cfadcb75edaf8e7e6963bf1ee1feb8256e4"
+  },
+  "Ellipse Bikes": {
+   "site": "http://ellipsebikes.com",
+   "tour": "Seed",
+   "montant": "1,500,000",
+   "levee_le": "2026-06-03",
+   "outil": "aucun"
+  },
+  "K-Ren": {
+   "site": "http://k-ren.fr",
+   "tour": "Seed",
+   "montant": "1,200,000",
+   "levee_le": "2026-06-03",
+   "outil": "aucun"
+  },
+  "Orakle Weather": {
+   "site": "http://orakleweather.com",
+   "tour": "Seed",
+   "montant": "550,000",
+   "levee_le": "2026-06-03",
+   "outil": "aucun"
+  },
+  "Dust": {
+   "site": "https://dust.tt/",
+   "tour": "Serie B",
+   "montant": "35,000,000",
+   "levee_le": "2026-05-27",
+   "outil": "ashby",
+   "code": "dust"
+  },
+  "Pivot": {
+   "site": "https://www.pivotapp.ai/",
+   "tour": "Serie B",
+   "montant": "35,000,000",
+   "levee_le": "2026-05-27",
+   "outil": "ashby",
+   "code": "Pivot"
+  },
+  "Prelude": {
+   "site": "http://prelude.so/",
+   "tour": "Serie A",
+   "montant": "17,000,000",
+   "levee_le": "2026-05-27",
+   "outil": "page",
+   "page": "http://prelude.so/careers",
+   "offres": [],
+   "empreinte": "d975de0b2d3db9ca392fabae9c7b49181e6dcb72"
+  },
+  "Otrera New Energy": {
+   "site": "http://otrera.fr/",
+   "tour": "Serie B",
+   "montant": "17,000,000",
+   "levee_le": "2026-05-27",
+   "outil": "wttj",
+   "code": "otrera"
+  },
+  "Mister AI": {
+   "site": "http://www.mister-ia.com/",
+   "tour": "Serie A",
+   "montant": "10,000,000",
+   "levee_le": "2026-05-27",
+   "outil": "wttj",
+   "code": "mister-ia"
+  },
+  "Leadbay": {
+   "site": "http://wow.leadbay.ai/",
+   "tour": "Seed",
+   "montant": "3,700,000",
+   "levee_le": "2026-05-27",
+   "outil": "aucun"
+  },
+  "Mediads": {
+   "site": "http://mediads.io/",
+   "tour": "Seed",
+   "montant": "2,400,000",
+   "levee_le": "2026-05-27",
+   "outil": "aucun"
+  },
+  "Univity": {
+   "site": "http://www.univity.global/",
+   "tour": "Serie A",
+   "montant": "27,000,000",
+   "levee_le": "2026-04-28",
+   "outil": "aucun"
+  },
+  "Decade Energy": {
+   "site": "http://decade.energy/",
+   "tour": "Serie A",
+   "montant": "22,000,000",
+   "levee_le": "2026-04-28",
+   "outil": "aucun"
+  },
+  "Ouidrop": {
+   "site": "http://www.ouidrop.eu/",
+   "tour": "Serie A",
+   "montant": "7,000,000",
+   "levee_le": "2026-04-28",
+   "outil": "aucun"
+  },
+  "Axomove": {
+   "site": "https://www.axomove.com/",
+   "tour": "Serie A",
+   "montant": "4,000,000",
+   "levee_le": "2026-04-28",
+   "outil": "page",
+   "page": "https://www.axomove.com/nous-rejoindre",
+   "offres": [],
+   "empreinte": "cd2adbb3ba643309e53c4f12ce516254b22c759f"
+  },
+  "Glimpact": {
+   "site": "http://www.glimpact.com/",
+   "tour": "Seed",
+   "montant": "2,600,000",
+   "levee_le": "2026-04-28",
+   "outil": "wttj",
+   "code": "glimpact-1"
+  },
+  "Agriodor": {
+   "site": "https://agriodor.com/",
+   "tour": "Serie B",
+   "montant": "15,000,000",
+   "levee_le": "2026-04-21",
+   "outil": "aucun"
+  },
+  "Donecle": {
+   "site": "http://www.donecle.com/",
+   "tour": "Serie B",
+   "montant": "10,000,000",
+   "levee_le": "2026-04-21",
+   "outil": "page",
+   "page": "http://www.donecle.com/ https:/www.donecle.com/2026/09/japans-first-jal-and-donecle-launch-joint-verification-for-fully-autonomous-drone-aircraft-exterior-inspections/",
+   "offres": [],
+   "empreinte": "3c98e5888cbee0fbe985c3c43ac724cfd986992e"
+  },
+  "Mirabelle": {
+   "site": "http://www.mirabelle-retraite.fr/",
+   "tour": "Serie A",
+   "montant": "6,000,000",
+   "levee_le": "2026-04-21",
+   "outil": "aucun"
+  },
+  "HrFlow.ai": {
+   "site": "http://hrflow.ai/",
+   "tour": "Serie A",
+   "montant": "6,000,000",
+   "levee_le": "2026-04-21",
+   "outil": "page",
+   "page": "http://hrflow.ai/use-cases?category=HR+Businesses&amp;type=Hiring+Firms",
+   "offres": [],
+   "empreinte": "adc008bac807d2fe22b96a33324be8cec828ff93"
+  },
+  "Cosmyx": {
+   "site": "http://www.cosmyx3d.com/",
+   "tour": "Seed",
+   "montant": "1,300,000",
+   "levee_le": "2026-04-21",
+   "outil": "aucun"
+  },
+  "Cap Atlas": {
+   "site": "http://www.capatlas.fr/",
+   "tour": "Seed",
+   "montant": "1,100,000",
+   "levee_le": "2026-04-21",
+   "outil": "aucun"
+  },
+  "Oligo+": {
+   "site": "http://oligoplus.com/",
+   "tour": "Pre-seed",
+   "montant": "500,000",
+   "levee_le": "2026-04-21",
+   "outil": "teamtailor",
+   "code": "oligoplus"
+  }
+ }
+}
