@@ -30,6 +30,10 @@ Air Tahiti Nui, Air Tahiti, Qatar Airways, Singapore Airlines, Cathay Pacific, K
 ### Sources
 Les sites carrières officiels de chaque compagnie. Pour chacune, identifie la page carrières et la meilleure façon d'en récupérer les offres. Si une page ne peut pas être consultée automatiquement, signale-le-moi plutôt que de contourner une protection.
 
+Autorisations reçues par e-mail (lecture quotidienne, usage personnel, aucune rediffusion) :
+- **Cathay Pacific** (20/11/2026) : careers.cathaypacific.com, une fois par jour au maximum.
+- **Air Tahiti** : accord du service recrutement, mais le site bloque le robot (Cloudflare). Non lu tant qu'Air Tahiti n'a pas laissé passer le robot.
+
 ---
 
 ## Volet 2 : startups et scale-ups
@@ -59,6 +63,7 @@ Je cherche un poste **interne**, au cœur d'une structure entrepreneuriale en cr
 - **Asie et Moyen-Orient** : Tech in Asia refuse tout ce qui n'est pas un vrai navigateur (non lu). Le robot lit à la place une liste de scale-ups (Grab, Airwallex, Coupang, Careem, Tamara…) dont l'outil de recrutement a une interface publique.
 - **Afrique** : une liste de scale-ups africaines (Jumia, Moniepoint, M-KOPA, Kuda, Yassir…) lues de la même façon.
 - **Partout** : l'interface Adzuna en complément.
+- **Alertes e-mail** : le robot lit en lecture seule (Gmail, IMAP) les alertes emploi reçues ces 4 derniers jours (LinkedIn, Welcome to the Jungle, sites carrières…). Claude en extrait les offres et choisit l'onglet. Le robot ne visite pas les sites d'origine.
 - N'utilise que des sources accessibles publiquement. Si une source ne peut pas être consultée automatiquement, signale-le-moi.
 
 ### Droit de travailler

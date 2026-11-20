@@ -28,6 +28,9 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           PROFIL: ${{ secrets.PROFIL }}
+          GMAIL_ADRESSE: ${{ secrets.GMAIL_ADRESSE }}             # boîte qui reçoit les alertes emploi
+          GMAIL_MOT_DE_PASSE: ${{ secrets.GMAIL_MOT_DE_PASSE }}   # mot de passe d'application Gmail
+          GMAIL_LIBELLE: ${{ secrets.GMAIL_LIBELLE }}             # facultatif
         run: python robot.py
 
       - name: Publier les offres mises à jour

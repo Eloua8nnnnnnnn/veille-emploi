@@ -18,6 +18,10 @@ import re
 import sys
 import time
 import hashlib
+import imaplib
+import email
+import email.policy
+from email.utils import parsedate_to_datetime
 from urllib.parse import urljoin, urlparse
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -235,6 +239,35 @@ def air_tahiti_nui():
     return [{"entreprise": "Air Tahiti Nui", "titre": html.unescape(titre.strip()), "lieu": "Polynésie française",
              "date_publication": aujourd_hui, "lien": "https://www.airtahitinui.com" + lien}
             for lien, titre in liens.items()]
+
+
+def cathay_pacific():
+    """Offres de careers.cathaypacific.com (lecture quotidienne autorisée par Cathay Pacific par e-mail, novembre 2026 :
+    une fois par jour, usage personnel, aucune rediffusion). La liste n'apparaît qu'une fois la page affichée par un
+    navigateur : le robot ouvre chaque page de résultats (20 offres) et lit la liste que la page reçoit, avec une pause."""
+    base = "https://careers.cathaypacific.com"
+    offres, page_num = [], 1
+    with sync_playwright() as p:
+        navigateur = p.chromium.launch()
+        page = navigateur.new_page(user_agent=EN_TETES["User-Agent"])
+        while True:
+            with page.expect_response(lambda r: "job-search.json" in r.url, timeout=60000) as reponse:
+                page.goto(f"{base}/en/careers/jobs?keyword=&sortby=date&page={page_num}", timeout=60000)
+            donnees = reponse.value.json()
+            for o in donnees.get("items", []):
+                offres.append({
+                    "entreprise": "Cathay Pacific",
+                    "titre": html.unescape(o["title"]).strip(),
+                    "lieu": " ".join((o.get("location") or "").split()),
+                    "date_publication": (o.get("applicationStartDate_s") or "")[:10],
+                    "lien": base + o["url"],
+                })
+            if page_num >= donnees.get("meta", {}).get("totalPages", 1):
+                break
+            page_num += 1
+            time.sleep(3)
+        navigateur.close()
+    return offres
 
 
 JOURS_MAX = 60  # au-delà de 60 jours, une offre n'est plus analysée (ni affichée sur le tableau de bord)
@@ -730,15 +763,117 @@ def who_is_hiring():
     return offres
 
 
+# ---------- Alertes e-mail (LinkedIn, Welcome to the Jungle, sites carrières…) ----------
+# Le robot lit (sans rien modifier) les alertes emploi reçues sur Gmail ces derniers jours.
+# Il ne visite jamais les sites d'origine : il se contente de ce que dit l'e-mail.
+
+JOURS_ALERTES = 4  # relit les e-mails des 4 derniers jours (rattrape un lancement manqué)
+
+
+class OffreAlerte(BaseModel):
+    titre: str
+    entreprise: str
+    lieu: str
+    lien: str
+    volet: Literal["compagnies", "startups", "autres"]
+    extrait: str
+
+
+class OffresAlerte(BaseModel):
+    offres: list[OffreAlerte]
+
+
+def texte_avec_liens(contenu, base=""):
+    """Texte d'une page ou d'un e-mail HTML en gardant les liens sous la forme [texte](lien)."""
+    avec_liens = re.sub(r'<a[^>]+href="([^"#]+)"[^>]*>(.*?)</a>',
+                        lambda m: f" [{re.sub(r'<[^>]+>', ' ', m.group(2)).strip()}]({urljoin(base, m.group(1))}) ",
+                        contenu, flags=re.S | re.I)
+    return nettoyer(avec_liens)
+
+
+def lien_propre(lien):
+    """Retire les paramètres de suivi, pour reconnaître une même offre reçue dans plusieurs alertes."""
+    m = re.search(r"linkedin\.com/(?:comm/)?jobs/view/(\d+)", lien)
+    if m:
+        return f"https://www.linkedin.com/jobs/view/{m.group(1)}/"
+    morceaux = urlparse(lien)
+    gardes = [p for p in morceaux.query.split("&")
+              if p and not re.match(r"(utm_|trk|tracking|refid|ref=|src=|source=|mc_|email)", p, re.I)]
+    return morceaux._replace(query="&".join(gardes), fragment="").geturl()
+
+
+def alertes_email():
+    adresse = os.environ.get("GMAIL_ADRESSE", "").strip()
+    mot_de_passe = os.environ.get("GMAIL_MOT_DE_PASSE", "").replace(" ", "")
+    libelle = os.environ.get("GMAIL_LIBELLE", "").strip()  # facultatif : ne lire que ce libellé Gmail
+    if not adresse or not mot_de_passe:
+        print("   (alertes e-mail pas encore configurées : rien à lire)")
+        return []
+    client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    boite = imaplib.IMAP4_SSL("imap.gmail.com")
+    boite.login(adresse, mot_de_passe)
+    # Dossier « Tous les messages » (son nom dépend de la langue de Gmail)
+    _, dossiers = boite.list()
+    tous = next(d.decode().rsplit(' "/" ', 1)[1] for d in dossiers if b"\\All" in d)
+    boite.select(tous, readonly=True)  # lecture seule : le robot ne touche à rien
+    requete = f"newer_than:{JOURS_ALERTES}d" + (f" label:{libelle}" if libelle else "")
+    _, numeros = boite.search(None, "X-GM-RAW", f'"{requete}"')
+    offres = {}
+    for numero in numeros[0].split()[-50:]:  # 50 e-mails au plus
+        _, donnees = boite.fetch(numero, "(BODY.PEEK[])")
+        message = email.message_from_bytes(donnees[0][1], policy=email.policy.default)
+        corps = message.get_body(preferencelist=("html", "plain"))
+        if corps is None:
+            continue
+        contenu = corps.get_content()
+        texte = (texte_avec_liens(contenu) if corps.get_content_subtype() == "html" else contenu)[:15000]
+        sujet = str(message["subject"] or "")
+        try:
+            date = parsedate_to_datetime(message["date"]).strftime("%Y-%m-%d")
+        except Exception:
+            date = ""
+        reponse = client.messages.parse(
+            model=MODELE, max_tokens=4000, output_config={"effort": "low"},
+            messages=[{"role": "user", "content":
+                       f"Voici un e-mail reçu (objet : « {sujet} »). S'il s'agit d'une alerte emploi, liste "
+                       "les offres qu'il présente : intitulé, entreprise, lieu, lien complet vers l'annonce "
+                       "(recopié tel quel depuis l'e-mail), volet (« compagnies » si l'employeur est une compagnie "
+                       "aérienne, « startups » si c'est une startup ou une scale-up, « autres » sinon) et un extrait "
+                       "reprenant tout ce que l'e-mail dit de l'offre (contrat, salaire, description…), sans rien "
+                       "inventer et sans aucun nom de personne. Si l'e-mail ne présente aucune offre (publicité, "
+                       f"message de bienvenue, autre sujet), renvoie une liste vide.\n\n{texte}"}],
+            output_format=OffresAlerte,
+        )
+        for o in reponse.parsed_output.offres:
+            if not (o.lien.startswith("http") and o.lien in texte):
+                continue  # garde-fou : le lien doit vraiment figurer dans l'e-mail
+            lien = lien_propre(o.lien)
+            offres.setdefault(lien, {
+                "entreprise": o.entreprise, "titre": o.titre, "lieu": o.lieu, "date_publication": date,
+                "lien": lien, "volet": o.volet, "alerte": True,
+                "texte": f"{o.extrait}\n(Offre reçue par alerte e-mail : « {sujet} ».)",
+            })
+    boite.logout()
+    return list(offres.values())
+
+
 SOURCES = {"Etihad Airways": etihad, "Lufthansa": lufthansa,
            "Singapore Airlines": singapore, "Qatar Airways": qatar,
            "Emirates": emirates, "Air New Zealand": air_new_zealand, "Air Tahiti Nui": air_tahiti_nui,
+           "Cathay Pacific": cathay_pacific,
            "Business France (VIE)": business_france, "Y Combinator": y_combinator,
            "French Tech 120": french_tech, "Asie / Moyen-Orient": asie_moyen_orient,
            "Afrique": afrique, "Jeunes startups (levées de fonds)": jeunes_startups,
-           "Fonds d'investissement (US)": fonds_investissement, "Hacker News (US)": who_is_hiring}
+           "Fonds d'investissement (US)": fonds_investissement, "Hacker News (US)": who_is_hiring,
+           "Alertes e-mail": alertes_email}
 VOLETS = {"Business France (VIE)": "autres", "Y Combinator": "startups", "French Tech 120": "startups", "Asie / Moyen-Orient": "startups", "Afrique": "startups", "Jeunes startups (levées de fonds)": "startups",
           "Fonds d'investissement (US)": "startups", "Hacker News (US)": "startups"}  # les autres sources vont dans le volet « compagnies »
+SANS_VERIFICATION = {"Alertes e-mail"}  # offres vues seulement dans un e-mail : on ne peut pas vérifier qu'elles sont toujours en ligne
+
+
+def volet_de(offre):
+    """Volet du tableau de bord : donné par la source, ou choisi par Claude pour les alertes e-mail."""
+    return offre.get("volet") or VOLETS.get(offre["source"], "compagnies")
 
 
 def filtre_titre(source, titre):
@@ -803,7 +938,7 @@ def consignes(volet="compagnies"):
      the US », « no visa sponsorship »). « US citizenship/visa not required » n'est PAS un motif de refus."""
     elif volet == "autres":
         profil += "\n" + texte[texte.index("## Volet 1"):texte.index("## Volet 3")]
-        sujet = "des offres de VIE (volontariat international en entreprise)"
+        sujet = "des offres de VIE (volontariat international en entreprise) et d'autres offres proches"
         condition_poste = """1. Le poste correspond aux postes recherchés des volets 1 et 2 (product owner, product manager
      peu expérimenté, business analyst, chief of staff, projets stratégiques) ou à un poste proche :
      chef de projet digital ou transformation, stratégie, innovation, IA, marketing digital ou
@@ -877,7 +1012,7 @@ def analyser_en_lot(client, systemes, offres):
         model=MODELE,
         max_tokens=4000,
         output_config={"effort": "low", "format": {"type": "json_schema", "schema": SCHEMA_ANALYSE}},
-        system=systemes[VOLETS.get(o["source"], "compagnies")],
+        system=systemes[volet_de(o)],
         messages=[{"role": "user", "content":
                    f"Entreprise : {o['entreprise']}\nIntitulé : {o['titre']}\n"
                    f"Lieu : {o['lieu']}\n\nAnnonce :\n{o['texte_complet']}"}],
@@ -906,10 +1041,12 @@ def analyser_en_lot(client, systemes, offres):
 
 
 def cle_api():
-    if "ANTHROPIC_API_KEY" not in os.environ and (DOSSIER / ".env").exists():
+    """Charge les clés du fichier .env (sur l'ordinateur) ; en ligne, elles viennent des secrets GitHub."""
+    if (DOSSIER / ".env").exists():
         for ligne in (DOSSIER / ".env").read_text(encoding="utf-8").splitlines():
-            if ligne.startswith("ANTHROPIC_API_KEY="):
-                os.environ["ANTHROPIC_API_KEY"] = ligne.split("=", 1)[1].strip()
+            if "=" in ligne and not ligne.startswith("#"):
+                cle, valeur = ligne.split("=", 1)
+                os.environ.setdefault(cle.strip(), valeur.strip())
     return os.environ.get("ANTHROPIC_API_KEY")
 
 
@@ -932,7 +1069,7 @@ def main():
             print(f"⚠️  {nom} : lecture impossible ({erreur})")
             continue
         sources_lues.add(nom)
-        retenues = [o for o in offres if o.get("hn") or filtre_titre(nom, o["titre"])]
+        retenues = [o for o in offres if o.get("hn") or o.get("alerte") or filtre_titre(nom, o["titre"])]
         print(f"{nom} : {len(offres)} offres en ligne, {len(retenues)} retenues après le tri par mots-clés")
         for offre in offres:
             en_ligne.add(offre["lien"])
@@ -941,7 +1078,7 @@ def main():
                 a_analyser.append(dict(offre, source=nom))
 
     # Retire les offres qui ne sont plus en ligne (seulement pour les sites lus avec succès)
-    retirees = [l for l, o in connues.items() if o["source"] in sources_lues and l not in en_ligne
+    retirees = [l for l, o in connues.items() if o["source"] in sources_lues and o["source"] not in SANS_VERIFICATION and l not in en_ligne
                 and o["entreprise"] not in ENTREPRISES_EN_ECHEC]
     for lien in retirees:
         del connues[lien]
@@ -951,6 +1088,7 @@ def main():
         offre.pop("texte", None)
         offre.pop("texte_complet", None)
         offre.pop("hn", None)
+        offre.pop("alerte", None)
         if not offre["date_publication"]:  # date inconnue : on note le jour où le robot l'a vue
             offre["date_publication"] = maintenant[:10]
         offre.update(analyse.model_dump(), volet=volet, premiere_vue=maintenant, **extra)
@@ -967,7 +1105,7 @@ def main():
     print(f"\n{len(a_analyser)} nouvelles offres après les mots-clés")
     gardees = []
     for volet in ("compagnies", "startups", "autres"):
-        lot = [o for o in a_analyser if VOLETS.get(o["source"], "compagnies") == volet]
+        lot = [o for o in a_analyser if volet_de(o) == volet]
         if not lot:
             continue
         try:
@@ -1003,7 +1141,7 @@ def main():
         for i, offre in enumerate(a_lire):
             if i in resultats:
                 analyse = resultats[i]
-                enregistrer(offre, analyse, VOLETS.get(offre["source"], "compagnies"))
+                enregistrer(offre, analyse, volet_de(offre))
                 print(f"  {'✅' if analyse.pertinente else '❌'} [{analyse.score}/10] {offre['entreprise']} – {offre['titre']}")
 
     donnees = {"derniere_mise_a_jour": maintenant,
