@@ -32,6 +32,14 @@ Les sites carrières officiels de chaque compagnie. Pour chacune, identifie la p
 
 Autorisations reçues par e-mail (lecture quotidienne, usage personnel, aucune rediffusion) :
 - **Cathay Pacific** (20/11/2026) : careers.cathaypacific.com, une fois par jour au maximum.
+- **Qantas** (20/11/2026) : accord pour careers.qantas.com. Ce site est protégé par Akamai, qui ignore le robot, mais il affiche les mêmes offres que le tableau SmartRecruiters de Qantas : le robot lit donc l'interface publique SmartRecruiters (code `QantasGroup`), une fois par jour.
+- **TAP Air Portugal** (20/11/2026) : recrutamento.tap.pt, une fois par jour, sans gêner le site, informations publiques uniquement, aucune rediffusion.
+- **Korean Air** (20/11/2026) : recruit.koreanair.com, une fois par jour, sans surcharger le site, offres publiques uniquement, aucune rediffusion. Le site ne publie que quelques campagnes en coréen ; Claude les juge toutes.
+- **STARLUX Airlines** (20/11/2026) : careers.jx-starlux.com (interface publique du site), une fois par jour.
+- **SAS** (20/11/2026) : careers.sasgroup.net, une fois par jour, sans trafic excessif.
+- **Vietnam Airlines** (20/11/2026) : annonces publiques de vietnamairlines.com (« Career with us »), une fois par jour. Le portail tuyendung.vietnamairlines.com exige une connexion : non lu (contraire à leurs conditions).
+- **China Eastern** (20/11/2026) : job.ceair.com, rubriques publiques (recrutement confirmé et campus), une fois par jour. Annonces en chinois, triées sur des mots chinois.
+- **EVA Air** et **Delta Air Lines** (20/11/2026) : accord, mais leurs sites bloquent le robot (Akamai pour EVA, défi anti-robot AWS pour Delta) et leurs conditions interdisent de contourner ces protections. Non lus.
 - **Air Tahiti** : accord du service recrutement, mais le site bloque le robot (Cloudflare). Non lu tant qu'Air Tahiti n'a pas laissé passer le robot.
 
 ---

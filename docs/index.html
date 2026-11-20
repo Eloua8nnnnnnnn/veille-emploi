@@ -223,6 +223,7 @@
         <option value="vue">Vues</option>
         <option value="interessante">Intéressantes</option>
         <option value="postule">Candidature envoyée</option>
+        <option value="ignoree">Pas pour moi</option>
       </select>
       <select id="f-tri">
         <option value="date">Plus récentes d'abord</option>
@@ -407,12 +408,20 @@ function afficherOffres() {
   const postes = visibles.filter(o => retenue(o) && !STAGES.includes(o.type_contrat) && !afrique.includes(o));
   const stages = visibles.filter(o => retenue(o) && STAGES.includes(o.type_contrat) && !afrique.includes(o));
   const ecartees = visibles.filter(o => !retenue(o));
+  // Les offres marquées « Pas pour moi » quittent la liste et vont dans une section repliée
+  const deCote = o => statuts[o.lien] === "ignoree";
+  const miseDeCote = visibles.filter(deCote);
+  [postes, stages, afrique, ecartees].forEach(l => { for (let i = l.length - 1; i >= 0; i--) if (deCote(l[i])) l.splice(i, 1); });
+  const ouvertes = [...document.querySelectorAll("#liste-offres details[open]")].map(d => d.id);
+  const section = (id, titre, liste) => liste.length
+    ? `<details id="${id}" ${ouvertes.includes(id) ? "open" : ""}><summary>${titre} (${liste.length})</summary>${liste.map(carteOffre).join("")}</details>` : "";
 
   $("liste-offres").innerHTML =
     (postes.length ? postes.map(carteOffre).join("") : `<p class="vide">Aucun poste ne correspond à ces filtres.</p>`) +
     (stages.length ? `<h2>Stages (${stages.length})</h2>` + stages.map(carteOffre).join("") : "") +
     (afrique.length ? `<h2>Afrique, à juger vous-même (${afrique.length})</h2>` + afrique.map(carteOffre).join("") : "") +
-    (ecartees.length ? `<details><summary>Écartées par Claude (${ecartees.length})</summary>${ecartees.map(carteOffre).join("")}</details>` : "");
+    section("sec-de-cote", "Mises de côté par vous", miseDeCote) +
+    section("sec-ecartees", "Écartées par Claude", ecartees);
 }
 
 function carteOffre(o) {
@@ -438,6 +447,7 @@ function carteOffre(o) {
     <div class="avis">Avis de Claude : ${echapper(o.raison)}</div>
     <div class="actions">
       ${bouton("vue", "Vue")}${bouton("interessante", "Intéressante")}${bouton("postule", "J'ai postulé")}
+      ${statut === "ignoree" ? `<button class="bouton" data-lien="${echapper(o.lien)}" data-statut="ignoree">Remettre dans la liste</button>` : bouton("ignoree", "Pas pour moi")}
       ${o.pertinente ? "" : `<button class="bouton" data-repecher="${echapper(o.lien)}">${repechees[o.lien] ? "Retirer de la liste" : "Remettre dans la liste"}</button>`}
     </div>
   </div>`;

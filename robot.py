@@ -18,6 +18,7 @@ import re
 import sys
 import time
 import hashlib
+import base64
 import imaplib
 import email
 import email.policy
@@ -41,7 +42,7 @@ EN_TETES = {"User-Agent": "Mozilla/5.0 (compatible; veille-emploi-personnelle)"}
 
 # Premier tri gratuit sur l'intitulé : il faut au moins un mot cible et aucun mot exclu.
 MOTS_CIBLES = re.compile(
-    r"\b(product|produkt|business analyst|business owner|analyst|digital|owner|strateg\w*"
+    r"\b(product|produkt|produto|business analyst|business owner|analyst|analytics|analista|digital|owner|strateg\w*"
     r"|transformation|innovation|e-?commerce|customer experience|ai|genai"
     r"|artificial intelligence|data)\b",
     re.I,
@@ -268,6 +269,170 @@ def cathay_pacific():
             time.sleep(3)
         navigateur.close()
     return offres
+
+
+def qantas():
+    """Offres du groupe Qantas (lecture quotidienne autorisée par Qantas par e-mail, novembre 2026 : une fois par jour,
+    données publiques, aucune rediffusion). L'ancien tableau Workday est vide : Qantas publie désormais ses offres
+    sur SmartRecruiters, lu par son interface publique (une seule requête)."""
+    return offres_ats("smartrecruiters", "Qantas", "QantasGroup")
+
+
+def korean_air():
+    """Campagnes de recrutement de recruit.koreanair.com (outil coréen « recruiter.co.kr »), lecture quotidienne autorisée
+    par Korean Air par e-mail (novembre 2026 : une fois par jour, données publiques, aucune rediffusion).
+    Une seule requête ; on ne garde que les campagnes dont les candidatures sont ouvertes. Intitulés en coréen."""
+    filtre = {"keyword": "", "tagSnList": [], "jobGroupSnList": [], "careerTypeList": [], "regionSnList": [],
+              "submissionStatusList": [], "openStatusList": [], "resumeLanguageTypeList": []}
+    reponse = requests.post("https://api-recruiter.recruiter.co.kr/position/v1/jobflex", timeout=30,
+                            headers={**EN_TETES, "prefix": "koreanair.recruiter.co.kr"},
+                            json={"pageableRq": {"page": 1, "size": 100, "sort": ["CREATED_DATE_TIME"]}, "filter": filtre})
+    reponse.raise_for_status()
+    # Le détail des annonces est une affiche (image) : Claude juge sur l'intitulé, les étiquettes et les dates.
+    return [{"entreprise": "Korean Air", "titre": o["title"].strip(), "lieu": "Corée du Sud",
+             "date_publication": (o.get("startDateTime") or "")[:10],
+             "lien": f"https://koreanair.recruiter.co.kr/career/jobs/{o['positionSn']}",
+             "texte": f"Campagne de recrutement Korean Air (annonce en coréen, détail publié sous forme d'image). "
+                      f"Intitulé : {o['title']}. Étiquettes : {', '.join(t['tagName'] for t in o.get('tagList') or [])}. "
+                      f"Niveau : {o.get('classificationCode', '')}. Candidatures du {(o.get('startDateTime') or '')[:10]} "
+                      f"au {(o.get('endDateTime') or '')[:10]}."}
+            for o in reponse.json()["list"] if o.get("submissionStatus") == "IN_SUBMISSION"]
+
+
+def starlux():
+    """Offres de careers.jx-starlux.com, lues par l'interface publique du site (une requête). Lecture quotidienne
+    autorisée par STARLUX par e-mail (novembre 2026 : une fois par jour, usage personnel, aucune rediffusion)."""
+    donnees = lire("https://erecruiter.jx-starlux.com/api/0.1.0/jobs", params={"rowPerPage": 100}).json()["result"]["data"]
+    return [{"entreprise": "STARLUX Airlines", "titre": html.unescape(o["name"]).strip(),
+             "lieu": (o.get("location") or {}).get("name") or o.get("locationName") or "Taïwan",
+             "date_publication": (o.get("published") or "").replace("/", "-")[:10],
+             "lien": f"https://careers.jx-starlux.com/Jobs/Detail/{o['id']}",
+             "texte": nettoyer((o.get("description") or "") + " " + (o.get("conditions") or ""))}
+            for o in donnees]
+
+
+def sas():
+    """Offres de careers.sasgroup.net (même outil que TAP, présentation en tuiles, sans date de publication).
+    Lecture quotidienne autorisée par SAS par e-mail (novembre 2026 : une fois par jour, sans trafic excessif)."""
+    base = "https://careers.sasgroup.net"
+    aujourd_hui = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    offres, debut = {}, 0
+    while True:
+        contenu = lire(base + "/search/", params={"q": "", "sortColumn": "referencedate", "sortDirection": "desc",
+                                                  "startrow": debut}).text
+        nouvelles = 0
+        for tuile in re.findall(r'<li[^>]+class="job-tile .*?</li>', contenu, re.S):
+            lien = re.search(r'href="(/job/[^"]+)"', tuile)
+            titre = re.search(r'class="jobTitle-link[^"]*"[^>]*>\s*([^<]+?)\s*</a>', tuile)
+            lieu = re.search(r'multilocation-value">\s*([^<]+?)\s*</div>', tuile)
+            if not lien or not titre or base + html.unescape(lien.group(1)) in offres:
+                continue
+            offres[base + html.unescape(lien.group(1))] = {
+                "entreprise": "SAS", "titre": html.unescape(titre.group(1)),
+                "lieu": html.unescape(lieu.group(1)) if lieu else "Scandinavie",
+                "date_publication": aujourd_hui,  # inconnue : on note le jour où le robot l'a vue
+                "lien": base + html.unescape(lien.group(1))}
+            nouvelles += 1
+        if nouvelles < 20:
+            return list(offres.values())
+        debut += nouvelles
+        time.sleep(2)
+
+
+def vietnam_airlines():
+    """Annonces de recrutement publiques de vietnamairlines.com (« Career with us »). Le portail tuyendung.* exige une
+    connexion : il n'est pas lu. La liste n'apparaît qu'une fois la page affichée : le robot l'ouvre avec le navigateur
+    automatisé. Lecture quotidienne autorisée par Vietnam Airlines par e-mail (novembre 2026), données publiques seulement."""
+    base = "https://www.vietnamairlines.com"
+    with sync_playwright() as p:
+        navigateur = p.chromium.launch()
+        page = navigateur.new_page(user_agent=EN_TETES["User-Agent"])
+        page.goto(base + "/vn/vi/vietnam-airlines/career-with-us/information", wait_until="networkidle", timeout=90000)
+        page.wait_for_timeout(3000)
+        liens = page.eval_on_selector_all("a[href*='career-with-us/information/']",
+                                          "els => els.map(a => [a.getAttribute('href'), a.innerText.trim()])")
+        navigateur.close()
+    offres = {}
+    for lien, titre in liens:
+        date = re.search(r"(\d{2})(\d{2})(\d{4})$", lien.rstrip("/"))  # l'adresse finit par MMJJAAAA
+        lien = urljoin(base, lien).replace("/content/vna/vn/vi/", "/vn/vi/")
+        if titre and lien not in offres:
+            offres[lien] = {"entreprise": "Vietnam Airlines", "titre": " ".join(titre.split()), "lieu": "Viêt Nam",
+                            "date_publication": f"{date[3]}-{date[1]}-{date[2]}" if date else "", "lien": lien}
+    return list(offres.values())
+
+
+# China Eastern publie en chinois : premier tri sur des mots chinois (produit, numérique, stratégie, analyse…)
+MOTS_CHINE = re.compile(r"产品|数字|数据|战略|规划|分析|储备人才|国际化|管培|燕计划|信息|市场|营销|商务|电商|创新|智能|AI|IT类")
+EXCLUS_CHINE = re.compile(r"飞行|招飞|乘务|安全员|机务|医生|医学|餐厨")
+
+
+def china_eastern():
+    """Annonces de job.ceair.com : recrutement confirmé (rubrique 3000) et campus (rubrique 4000) ; pilotes et
+    personnel navigant ne sont pas lus. Lecture quotidienne autorisée par China Eastern par e-mail (novembre 2026) :
+    une fois par jour, rubriques publiques uniquement, aucune rediffusion. Annonces en chinois."""
+    offres = {}
+    for rubrique in (3000, 4000):
+        page_num = 1
+        while True:
+            reponse = requests.post("https://job.ceair.com/Ashx/Campus.ashx?active=GetPositionListByParams", headers=EN_TETES,
+                                    timeout=30, data={"pageIndex": page_num, "pageSize": 50, "positionName": "", "workCity": "",
+                                                      "cateId": "", "deptId": "", "banKuaiId": rubrique})
+            reponse.raise_for_status()
+            donnees = reponse.json()
+            for o in donnees.get("data") or []:
+                code = lambda x: base64.b64encode(str(x).encode()).decode()
+                lien = f"https://job.ceair.com/JobDetail.html?positionId={code(o['zp_NewsInfoID'])}&cateId={code(o['News_CategoryId'])}"
+                offre = offres.setdefault(lien, {
+                    "entreprise": "China Eastern Airlines", "titre": o["News_Title"].strip(), "lieu": "Chine",
+                    "date_publication": datetime.fromtimestamp(int(re.search(r"\d+", o["News_CreateDate"])[0]) / 1000,
+                                                               timezone.utc).strftime("%Y-%m-%d"),
+                    "lien": lien, "postes": [], "texte": ""})
+                offre["postes"].append(o.get("Active_Name") or "")
+                if o.get("Active_WorkAddress"):
+                    offre["lieu"] = f"{o['Active_WorkAddress']}, Chine"
+                offre["texte"] += f"\nPoste : {o.get('Active_Name', '')} ({o.get('Active_WorkAddress', '')})\n{(o.get('Active_Notice') or '')[:1500]}"
+            if page_num * 50 >= (donnees.get("total") or 0):
+                break
+            page_num += 1
+            time.sleep(2)
+        time.sleep(2)
+    retenues = []
+    for o in offres.values():
+        intitules = o.pop("postes") + [o["titre"]]
+        if MOTS_CHINE.search(" ".join(intitules)) and not EXCLUS_CHINE.search(" ".join(intitules)):
+            retenues.append(o)
+    return retenues
+
+
+def tap_portugal():
+    """Offres du portail recrutamento.tap.pt (lecture quotidienne autorisée par TAP par e-mail, novembre 2026 : une fois
+    par jour, données publiques, usage personnel). Page de recherche triée par date, 25 offres par page, avec une pause.
+    Les « candidatures spontanées » ne sont pas des offres : on les ignore."""
+    base = "https://recrutamento.tap.pt"
+    offres, debut = [], 0
+    while True:
+        contenu = lire(base + "/search/", params={"q": "", "sortColumn": "referencedate", "sortDirection": "desc",
+                                                  "startrow": debut}).text
+        lignes = re.findall(r'<tr class="data-row[^"]*".*?</tr>', contenu, re.S)
+        for ligne in lignes:
+            lien = re.search(r'href="(/job/[^"]+)"', ligne)
+            textes = [html.unescape(x.strip()) for x in re.sub(r"<[^>]+>", "|", ligne).split("|") if x.strip()]
+            date = re.search(r"(\d{2})/(\d{2})/(\d{4})", ligne)
+            if not lien or not textes or re.search(r"espont|spontaneous", textes[0], re.I):
+                continue
+            lieu = next((x for x in textes[1:] if "/" in x and not re.match(r"\d", x)), "Portugal")
+            offres.append({
+                "entreprise": "TAP Air Portugal",
+                "titre": textes[0],
+                "lieu": lieu.replace("/", ", "),
+                "date_publication": f"{date[3]}-{date[2]}-{date[1]}" if date else "",
+                "lien": base + html.unescape(lien.group(1)),
+            })
+        if len(lignes) < 25:
+            return offres
+        debut += 25
+        time.sleep(2)
 
 
 JOURS_MAX = 60  # au-delà de 60 jours, une offre n'est plus analysée (ni affichée sur le tableau de bord)
@@ -860,7 +1025,10 @@ def alertes_email():
 SOURCES = {"Etihad Airways": etihad, "Lufthansa": lufthansa,
            "Singapore Airlines": singapore, "Qatar Airways": qatar,
            "Emirates": emirates, "Air New Zealand": air_new_zealand, "Air Tahiti Nui": air_tahiti_nui,
-           "Cathay Pacific": cathay_pacific,
+           "Cathay Pacific": cathay_pacific, "Qantas": qantas,
+           "TAP Air Portugal": tap_portugal, "Korean Air": korean_air,
+           "STARLUX Airlines": starlux, "SAS": sas, "Vietnam Airlines": vietnam_airlines,
+           "China Eastern Airlines": china_eastern,
            "Business France (VIE)": business_france, "Y Combinator": y_combinator,
            "French Tech 120": french_tech, "Asie / Moyen-Orient": asie_moyen_orient,
            "Afrique": afrique, "Jeunes startups (levées de fonds)": jeunes_startups,
@@ -882,6 +1050,10 @@ def filtre_titre(source, titre):
         return bool(MOTS_CIBLES_STARTUP.search(titre)) and not MOTS_EXCLUS_STARTUP.search(titre)
     if VOLETS.get(source) == "autres":
         return bool(MOTS_CIBLES_VIE.search(titre)) and not MOTS_EXCLUS_VIE.search(titre) and not MOTS_EXCLUS.search(titre)
+    if source in ("Korean Air", "Vietnam Airlines"):  # intitulés en coréen / vietnamien, très peu d'annonces : Claude les juge toutes
+        return True
+    if source == "China Eastern Airlines":  # déjà triées sur des mots chinois dans china_eastern()
+        return True
     return bool(MOTS_CIBLES.search(titre)) and not MOTS_EXCLUS.search(titre)
 
 
