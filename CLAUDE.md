@@ -122,7 +122,7 @@ Rassembler les offres qui sortent des volets 1 et 2 mais qui m'intéressent : le
 - Quatre onglets : compagnies aériennes / offres en startup / offres autres / mes candidatures.
 - L'onglet « mes candidatures » lit et modifie mon Google Sheet de suivi (script Google Apps Script, voir `google_sheet_script.js`).
 - Les offres écartées par Claude sont dans une section repliée, avec un bouton pour les remettre dans la liste.
-- Filtres : pays, entreprise, type de contrat, niveau d'expérience.
+- Filtres : pays, métier (product management / Chief of Staff et autres), type de contrat, niveau d'expérience.
 - Tri par date de publication (par défaut) ou par score de pertinence.
 - Mettre en évidence les offres apparues depuis la dernière mise à jour.
 - Stages affichés après les CDI/CDD et clairement identifiés.

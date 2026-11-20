@@ -214,7 +214,11 @@
   <section id="offres">
     <div class="filtres">
       <select id="f-pays"></select>
-      <select id="f-entreprise"></select>
+      <select id="f-metier">
+        <option value="">Tous les métiers</option>
+        <option value="product">Product management</option>
+        <option value="cos">Chief of Staff et autres</option>
+      </select>
       <select id="f-contrat"></select>
       <select id="f-niveau"></select>
       <select id="f-statut">
@@ -341,6 +345,9 @@ function couleurEtat(etat) {
 function niveauScore(score) {
   return score >= 7 ? "bon" : score >= 5 ? "moyen" : "faible";
 }
+// Product management : product owner / manager / analyst, business analyst / owner… ; le reste : Chief of Staff, stratégie, etc.
+const MOTS_PRODUCT = /product|produit|produkt|produto|business (analyst|owner)|\bP[OM]\b|\bAPM\b|产品/i;
+const metier = o => MOTS_PRODUCT.test(o.titre) ? "product" : "cos";
 function remplirMenu(menu, libelleTous, valeurs) {
   const choix = menu.value;
   menu.innerHTML = `<option value="">${libelleTous}</option>` +
@@ -383,7 +390,6 @@ function afficherOffres() {
   const toutes = offresDuVolet();
   $("a-consulter").hidden = ongletActif !== "compagnies";
   remplirMenu($("f-pays"), "Tous les pays", toutes.map(o => o.pays));
-  remplirMenu($("f-entreprise"), "Toutes les entreprises", toutes.map(o => o.entreprise));
   remplirMenu($("f-contrat"), "Tous les contrats", toutes.map(o => o.type_contrat));
   remplirMenu($("f-niveau"), "Tous les niveaux", toutes.map(o => o.niveau));
 
@@ -393,9 +399,9 @@ function afficherOffres() {
     return;
   }
 
-  const f = { pays: $("f-pays").value, entreprise: $("f-entreprise").value, contrat: $("f-contrat").value, niveau: $("f-niveau").value, statut: $("f-statut").value };
+  const f = { pays: $("f-pays").value, metier: $("f-metier").value, contrat: $("f-contrat").value, niveau: $("f-niveau").value, statut: $("f-statut").value };
   const visibles = toutes.filter(o =>
-    (!f.pays || o.pays === f.pays) && (!f.entreprise || o.entreprise === f.entreprise) &&
+    (!f.pays || o.pays === f.pays) && (!f.metier || metier(o) === f.metier) &&
     (!f.contrat || o.type_contrat === f.contrat) && (!f.niveau || o.niveau === f.niveau) &&
     (!f.statut || (statuts[o.lien] || "aucun") === f.statut));
   const tri = $("f-tri").value === "score"
@@ -471,7 +477,7 @@ $("liste-offres").addEventListener("click", async e => {
   afficherOffres();
   if (statut === "postule" && !deja) await ajouterDepuisOffre(donnees.offres.find(o => o.lien === lien));
 });
-["f-pays", "f-entreprise", "f-contrat", "f-niveau", "f-statut", "f-tri"].forEach(id => $(id).addEventListener("change", afficherOffres));
+["f-pays", "f-metier", "f-contrat", "f-niveau", "f-statut", "f-tri"].forEach(id => $(id).addEventListener("change", afficherOffres));
 
 // ---------- Mes candidatures (Google Sheet) ----------
 let connexion = lireLocal("google_sheet", null);
