@@ -136,8 +136,14 @@
    "levee_le": "2026-11-09",
    "outil": "page",
    "page": "https://qru.pet/offre-emploi-barf/",
-   "offres": [],
-   "empreinte": "b696353d9381a355a6dbe3640a10e59d14db6dfa"
+   "offres": [
+    {
+     "titre": "Agent commercial terrain (H/F)",
+     "lien": "https://qru.pet/offre-emploi-barf/",
+     "lieu": "Plusieurs secteurs ouverts en France"
+    }
+   ],
+   "empreinte": "ccc40b8027c5e96a24e65180ebf0d5cc0d8282e7"
   },
   "Gimii": {
    "site": "https://gimii.fr/",
@@ -1082,7 +1088,7 @@
    "outil": "page",
    "page": "http://www.helloaria.me/careers/",
    "offres": [],
-   "empreinte": "42e3ea57c55d3daf806d984b18f28c474bce63ba"
+   "empreinte": "f9f7f1a71779593429a3ec55d1d4dffb09eadc89"
   },
   "En Carta Diagnostics": {
    "site": "http://www.encarta.bio/",
