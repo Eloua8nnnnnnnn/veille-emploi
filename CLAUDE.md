@@ -68,11 +68,12 @@ Je cherche un poste **interne**, au cœur d'une structure entrepreneuriale en cr
 ### Sources d'offres
 - **États-Unis** : les offres publiques de Y Combinator (ycombinator.com/jobs ; Work at a Startup bloque les robots).
 - **Fonds d'investissement** : les job boards publics (Getro) de Accel, General Catalyst, Insight, Khosla, Thrive, Craft, Techstars, Antler (Asie du Sud-Est) et MEVP (Moyen-Orient), limités aux startups jusqu'à la série C. Les fonds sur Consider (Peak XV, Monk's Hill, a16z, Sequoia…) ne sont pas encore lus. Aussi : le fil mensuel « Who is hiring? » de Hacker News.
-- **LinkedIn** (partout) : recherche publique sans connexion, offres de la semaine, « Chief of Staff / Founder's Associate / Founder's Office » et « Strategy & Operations / Business Operations », à Singapour, Hong Kong, Dubaï, Tokyo, New York, San Francisco, Londres, Berlin, Paris et Amsterdam. Une pause entre chaque requête ; si LinkedIn freine le robot, il s'arrête pour la journée. Claude ne garde que les startups et scale-ups.
-- **France** : les sites carrières des entreprises de la promotion en cours du French Tech Next40/120. Le robot lit les 53 entreprises (sur 120, promotion 2026) dont l'outil de recrutement a une interface publique (Lever, Ashby, Greenhouse, Teamtailor, Workable, Recruitee, SmartRecruiters). Les autres utilisent Welcome to the Jungle ou leur propre site : pas encore lues.
+- **LinkedIn** (partout) : recherche publique sans connexion, offres de la semaine, « Chief of Staff / Founder's Associate / Founder's Office » et « Strategy & Operations / Business Operations », à Singapour, Hong Kong, Dubaï, Abu Dhabi, Riyad, Tokyo, Séoul, Jakarta, Bangalore, New York, San Francisco, Londres, Berlin, Munich, Stockholm, Barcelone, Paris et Amsterdam. Une pause entre chaque requête ; si LinkedIn freine le robot, il s'arrête pour la journée. Claude ne garde que les startups et scale-ups.
+- **France** : les sites carrières des entreprises de la promotion en cours du French Tech Next40/120. Le robot lit les 53 entreprises (sur 120, promotion 2026) dont l'outil de recrutement a une interface publique (Lever, Ashby, Greenhouse, Teamtailor, Workable, Recruitee, SmartRecruiters). Les autres utilisent Welcome to the Jungle (lu par la recherche WTTJ ci-dessous) ou leur propre site.
 - **Asie et Moyen-Orient** : Tech in Asia refuse tout ce qui n'est pas un vrai navigateur (non lu). Le robot lit à la place une liste de scale-ups (Grab, Airwallex, Coupang, Careem, Tamara…) dont l'outil de recrutement a une interface publique.
 - **Afrique** : une liste de scale-ups africaines (Jumia, Moniepoint, M-KOPA, Kuda, Yassir…) lues de la même façon.
-- **Adzuna** : prévu, mais pas encore branché (il faut créer une clé gratuite sur developer.adzuna.com).
+- **Welcome to the Jungle** (France et étranger) : moteur de recherche public du site, offres des 30 derniers jours, entreprises de 3 000 salariés au plus (Chief of Staff, Founder's Associate, bras droit, CEO office, Strategy & Operations, Business Operations, chargé de mission direction générale).
+- **Adzuna** : abandonné le 21/11/2026 (la clé gratuite ne donne que 25 appels d'essai ; l'accès quotidien est payant).
 - **Alertes e-mail** : le robot lit en lecture seule (Gmail, IMAP) les alertes emploi reçues ces 4 derniers jours (LinkedIn, Welcome to the Jungle, sites carrières…). Claude en extrait les offres et choisit l'onglet. Le robot ne visite pas les sites d'origine.
 - N'utilise que des sources accessibles publiquement. Si une source ne peut pas être consultée automatiquement, signale-le-moi.
 
@@ -94,7 +95,7 @@ Rassembler les offres qui sortent des volets 1 et 2 mais qui m'intéressent : le
   - ne faire aucune promotion publique du tableau de bord (le dépôt public et docs/offres.json sont acceptés).
 - Postes VIE retenus : ceux des volets 1 et 2, et les postes proches (chef de projet digital ou transformation, stratégie, innovation, IA, marketing digital ou stratégique).
 - VIE en Europe : écartés, sauf si le poste me correspond très bien (score de Claude d'au moins 7/10). Les pays nordiques (Suède, Norvège, Danemark, Finlande, Islande) ne sont pas concernés. Ils restent repêchables dans « Écartées par Claude ».
-- Autres sources : à définir (Adzuna en priorité, car son interface est officielle).
+- Autres sources : à définir.
 
 (L'ancien volet « startups à contacter » a été abandonné le 17/11/2026.)
 

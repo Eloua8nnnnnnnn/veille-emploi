@@ -911,7 +911,9 @@ def fonds_investissement():
 RECHERCHES_LINKEDIN = ['"Chief of Staff" OR "Founder\'s Associate" OR "Founders Associate" OR "Founder\'s Office"',
                        '"Strategy & Operations" OR "Strategy and Operations" OR "Business Operations" OR "BizOps"']
 VILLES_LINKEDIN = ["Singapore", "Hong Kong", "Dubai, United Arab Emirates", "Tokyo, Japan", "New York, United States",
-                   "San Francisco Bay Area", "London, United Kingdom", "Berlin, Germany", "Paris, France", "Amsterdam, Netherlands"]
+                   "San Francisco Bay Area", "London, United Kingdom", "Berlin, Germany", "Paris, France", "Amsterdam, Netherlands",
+                   "Seoul, South Korea", "Jakarta, Indonesia", "Bengaluru, India", "Riyadh, Saudi Arabia", "Abu Dhabi, United Arab Emirates",
+                   "Stockholm, Sweden", "Munich, Germany", "Barcelona, Spain"]
 
 
 def linkedin():
@@ -953,6 +955,52 @@ def linkedin():
                 time.sleep(5)
                 if len(cartes) < 10:
                     break
+    return list(offres.values())
+
+
+# ---------- Welcome to the Jungle : moteur de recherche public du site (Algolia, clé publique du navigateur) ----------
+
+RECHERCHES_WTTJ = ["chief of staff", "founder associate", "founders associate", "bras droit", "ceo office",
+                   "strategy operations", "business operations", "chargé de mission direction générale"]
+TAILLE_MAX_WTTJ = 3000  # au-delà, ce n'est plus une startup ni une scale-up
+
+
+def welcome_to_the_jungle():
+    """Offres des 30 derniers jours sur Welcome to the Jungle (France et étranger), entreprises de 3 000 salariés au plus.
+    La clé de recherche est celle que le site publie pour les navigateurs (welcometothejungle.com/api/env)."""
+    config = lire("https://www.welcometothejungle.com/api/env").text
+    appli = re.search(r'"PUBLIC_ALGOLIA_APPLICATION_ID":"(\w+)"', config).group(1)
+    cle = re.search(r'"PUBLIC_ALGOLIA_API_KEY_CLIENT":"(\w+)"', config).group(1)
+    depuis = int((datetime.now(timezone.utc) - timedelta(days=30)).timestamp())
+    contrats = {"full_time": "CDI", "temporary": "CDD", "internship": "Stage", "apprenticeship": "Alternance", "vie": "VIE"}
+    offres = {}
+    for recherche in RECHERCHES_WTTJ:
+        reponse = requests.post(f"https://{appli}-dsn.algolia.net/1/indexes/wttj_jobs_production_fr/query",
+                                headers={**EN_TETES, "X-Algolia-Application-Id": appli, "X-Algolia-API-Key": cle,
+                                         "Referer": "https://www.welcometothejungle.com/"},
+                                json={"query": recherche, "hitsPerPage": 100, "numericFilters": [f"published_at_timestamp>{depuis}"]},
+                                timeout=30)
+        reponse.raise_for_status()
+        for o in reponse.json()["hits"]:
+            org = o.get("organization") or {}
+            if (org.get("nb_employees") or 0) > TAILLE_MAX_WTTJ or not org.get("slug"):
+                continue
+            bureaux = o.get("offices") or [{}]
+            lien = f"https://www.welcometothejungle.com/fr/companies/{org['slug']}/jobs/{o['slug']}"
+            offres.setdefault(lien, {
+                "entreprise": org.get("name", ""),
+                "titre": o["name"],
+                "lieu": ", ".join(filter(None, [bureaux[0].get("city"), bureaux[0].get("country")])),
+                "date_publication": (o.get("published_at") or "")[:10],
+                "lien": lien,
+                # le texte de l'annonce est déjà dans la réponse : pas besoin d'ouvrir la page
+                "texte": nettoyer(" ".join([
+                    f"Entreprise : {org.get('name', '')}, {org.get('nb_employees') or '?'} salariés, créée en {org.get('creation_year') or '?'}. {org.get('summary') or ''}",
+                    f"Contrat : {contrats.get(o.get('contract_type'), o.get('contract_type') or 'non précisé')}.",
+                    f"Expérience minimum : {o.get('experience_level_minimum') or 'non précisée'}.",
+                    o.get("summary") or "", " ".join(o.get("key_missions") or []), o.get("profile") or ""])),
+            })
+        time.sleep(2)
     return list(offres.values())
 
 
@@ -1092,9 +1140,11 @@ SOURCES = {"Etihad Airways": etihad, "Lufthansa": lufthansa,
            "French Tech 120": french_tech, "Asie / Moyen-Orient": asie_moyen_orient,
            "Afrique": afrique, "Jeunes startups (levées de fonds)": jeunes_startups,
            "Fonds d'investissement (US)": fonds_investissement, "Hacker News (US)": who_is_hiring, "LinkedIn": linkedin,
+           "Welcome to the Jungle": welcome_to_the_jungle,
            "Alertes e-mail": alertes_email}
 VOLETS = {"Business France (VIE)": "autres", "Y Combinator": "startups", "French Tech 120": "startups", "Asie / Moyen-Orient": "startups", "Afrique": "startups", "Jeunes startups (levées de fonds)": "startups",
-          "Fonds d'investissement (US)": "startups", "Hacker News (US)": "startups", "LinkedIn": "startups"}  # les autres sources vont dans le volet « compagnies »
+          "Fonds d'investissement (US)": "startups", "Hacker News (US)": "startups", "LinkedIn": "startups",
+          "Welcome to the Jungle": "startups"}  # les autres sources vont dans le volet « compagnies »
 SANS_VERIFICATION = {"Alertes e-mail", "LinkedIn"}  # e-mails, et LinkedIn qui ne montre que la semaine : on ne peut pas vérifier qu'elles sont toujours en ligne
 
 
