@@ -414,10 +414,11 @@ function afficherOffres() {
   const postes = visibles.filter(o => retenue(o) && !STAGES.includes(o.type_contrat) && !afrique.includes(o));
   const stages = visibles.filter(o => retenue(o) && STAGES.includes(o.type_contrat) && !afrique.includes(o));
   const ecartees = visibles.filter(o => !retenue(o));
-  // Les offres marquées « Pas pour moi » quittent la liste et vont dans une section repliée
-  const deCote = o => statuts[o.lien] === "ignoree";
-  const miseDeCote = visibles.filter(deCote);
-  [postes, stages, afrique, ecartees].forEach(l => { for (let i = l.length - 1; i >= 0; i--) if (deCote(l[i])) l.splice(i, 1); });
+  // Les offres « J'ai postulé » et « Pas pour moi » quittent la liste et vont dans des sections repliées
+  const postulees = visibles.filter(o => statuts[o.lien] === "postule");
+  const miseDeCote = visibles.filter(o => statuts[o.lien] === "ignoree");
+  const rangee = o => ["postule", "ignoree"].includes(statuts[o.lien]);
+  [postes, stages, afrique, ecartees].forEach(l => { for (let i = l.length - 1; i >= 0; i--) if (rangee(l[i])) l.splice(i, 1); });
   const ouvertes = [...document.querySelectorAll("#liste-offres details[open]")].map(d => d.id);
   const section = (id, titre, liste) => liste.length
     ? `<details id="${id}" ${ouvertes.includes(id) ? "open" : ""}><summary>${titre} (${liste.length})</summary>${liste.map(carteOffre).join("")}</details>` : "";
@@ -426,6 +427,7 @@ function afficherOffres() {
     (postes.length ? postes.map(carteOffre).join("") : `<p class="vide">Aucun poste ne correspond à ces filtres.</p>`) +
     (stages.length ? `<h2>Stages (${stages.length})</h2>` + stages.map(carteOffre).join("") : "") +
     (afrique.length ? `<h2>Afrique, à juger vous-même (${afrique.length})</h2>` + afrique.map(carteOffre).join("") : "") +
+    section("sec-postulees", "Candidatures envoyées", postulees) +
     section("sec-de-cote", "Mises de côté par vous", miseDeCote) +
     section("sec-ecartees", "Écartées par Claude", ecartees);
 }
