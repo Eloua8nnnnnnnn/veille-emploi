@@ -105,7 +105,8 @@ def texte_annonce(lien):
     with sync_playwright() as p:
         navigateur = p.chromium.launch()
         page = navigateur.new_page(user_agent="Mozilla/5.0 (compatible; veille-emploi-personnelle)")
-        page.goto(lien, timeout=60000, wait_until="networkidle")
+        page.goto(lien, timeout=60000, wait_until="load")
+        page.wait_for_timeout(5000)  # laisse le JavaScript afficher l'annonce
         texte = page.locator("body").inner_text()
         navigateur.close()
     return texte

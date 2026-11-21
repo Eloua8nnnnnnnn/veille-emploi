@@ -67,10 +67,12 @@ Je cherche un poste **interne**, au cœur d'une structure entrepreneuriale en cr
 
 ### Sources d'offres
 - **États-Unis** : les offres publiques de Y Combinator (ycombinator.com/jobs ; Work at a Startup bloque les robots).
+- **Fonds d'investissement** : les job boards publics (Getro) de Accel, General Catalyst, Insight, Khosla, Thrive, Craft, Techstars, Antler (Asie du Sud-Est) et MEVP (Moyen-Orient), limités aux startups jusqu'à la série C. Les fonds sur Consider (Peak XV, Monk's Hill, a16z, Sequoia…) ne sont pas encore lus. Aussi : le fil mensuel « Who is hiring? » de Hacker News.
+- **LinkedIn** (partout) : recherche publique sans connexion, offres de la semaine, « Chief of Staff / Founder's Associate / Founder's Office » et « Strategy & Operations / Business Operations », à Singapour, Hong Kong, Dubaï, Tokyo, New York, San Francisco, Londres, Berlin, Paris et Amsterdam. Une pause entre chaque requête ; si LinkedIn freine le robot, il s'arrête pour la journée. Claude ne garde que les startups et scale-ups.
 - **France** : les sites carrières des entreprises de la promotion en cours du French Tech Next40/120. Le robot lit les 53 entreprises (sur 120, promotion 2026) dont l'outil de recrutement a une interface publique (Lever, Ashby, Greenhouse, Teamtailor, Workable, Recruitee, SmartRecruiters). Les autres utilisent Welcome to the Jungle ou leur propre site : pas encore lues.
 - **Asie et Moyen-Orient** : Tech in Asia refuse tout ce qui n'est pas un vrai navigateur (non lu). Le robot lit à la place une liste de scale-ups (Grab, Airwallex, Coupang, Careem, Tamara…) dont l'outil de recrutement a une interface publique.
 - **Afrique** : une liste de scale-ups africaines (Jumia, Moniepoint, M-KOPA, Kuda, Yassir…) lues de la même façon.
-- **Partout** : l'interface Adzuna en complément.
+- **Adzuna** : prévu, mais pas encore branché (il faut créer une clé gratuite sur developer.adzuna.com).
 - **Alertes e-mail** : le robot lit en lecture seule (Gmail, IMAP) les alertes emploi reçues ces 4 derniers jours (LinkedIn, Welcome to the Jungle, sites carrières…). Claude en extrait les offres et choisit l'onglet. Le robot ne visite pas les sites d'origine.
 - N'utilise que des sources accessibles publiquement. Si une source ne peut pas être consultée automatiquement, signale-le-moi.
 

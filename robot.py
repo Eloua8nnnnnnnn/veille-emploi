@@ -23,7 +23,7 @@ import imaplib
 import email
 import email.policy
 from email.utils import parsedate_to_datetime
-from urllib.parse import urljoin, urlparse
+from urllib.parse import unquote, urljoin, urlparse
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Literal
@@ -873,7 +873,9 @@ def jeunes_startups():
 
 # ---------- États-Unis : job boards de fonds d'investissement et « Who is hiring? » ----------
 
-FONDS_GETRO = ["jobs.accel.com", "jobs.generalcatalyst.com", "jobs.insightpartners.com", "jobs.khoslaventures.com"]
+FONDS_GETRO = ["jobs.accel.com", "jobs.generalcatalyst.com", "jobs.insightpartners.com", "jobs.khoslaventures.com",
+               "jobs.thrivecap.com", "jobs.craftventures.com", "jobs.techstars.com",  # États-Unis et monde
+               "careers.antler.co", "jobs.mevp.com"]  # Asie du Sud-Est (Antler) et Moyen-Orient (MEVP)
 RECHERCHES_GETRO = ["chief of staff", "founder associate", "founders associate", "bizops", "business operations",
                     "strategy operations", "special projects", "associate product manager", "product manager", "product owner"]
 STADES_GARDES = {"pre_seed", "seed", "series_a", "series_b", "series_c"}  # jeunes startups en forte croissance
@@ -901,6 +903,56 @@ def fonds_investissement():
                     "lien": o["url"],  # lien direct vers l'annonce sur le site de la startup
                 })
             time.sleep(1)
+    return list(offres.values())
+
+
+# ---------- LinkedIn : recherche publique (sans connexion), postes de Chief of Staff dans le monde ----------
+
+RECHERCHES_LINKEDIN = ['"Chief of Staff" OR "Founder\'s Associate" OR "Founders Associate" OR "Founder\'s Office"',
+                       '"Strategy & Operations" OR "Strategy and Operations" OR "Business Operations" OR "BizOps"']
+VILLES_LINKEDIN = ["Singapore", "Hong Kong", "Dubai, United Arab Emirates", "Tokyo, Japan", "New York, United States",
+                   "San Francisco Bay Area", "London, United Kingdom", "Berlin, Germany", "Paris, France", "Amsterdam, Netherlands"]
+
+
+def linkedin():
+    """Offres de la semaine sur LinkedIn (pages publiques), par mot-clé et par ville ; Claude ne garde que les startups.
+    Une pause entre chaque requête ; si LinkedIn freine le robot (erreur 429), on s'arrête là pour aujourd'hui."""
+    offres = {}
+    for ville in VILLES_LINKEDIN:
+        for recherche in RECHERCHES_LINKEDIN:
+            for debut in (0, 10):  # 2 pages : les 20 offres les plus récentes
+                for essai in (1, 2):
+                    reponse = requests.get("https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search",
+                                           params={"keywords": recherche, "location": ville, "f_TPR": "r604800", "start": debut},
+                                           headers=EN_TETES, timeout=30)
+                    if reponse.status_code != 429:
+                        break
+                    if essai == 1:
+                        time.sleep(60)  # LinkedIn demande de ralentir : on attend une minute, une seule fois
+                if reponse.status_code == 429:
+                    print(f"LinkedIn freine le robot : arrêt après {len(offres)} offres")
+                    return list(offres.values())
+                reponse.raise_for_status()
+                cartes = reponse.text.split('<li>')[1:]
+                for carte in cartes:
+                    numero = re.search(r"urn:li:jobPosting:(\d+)", carte)
+                    titre = re.search(r'base-search-card__title">\s*(.*?)\s*</h3>', carte, re.S)
+                    if not numero or not titre:
+                        continue
+                    entreprise = re.search(r'base-search-card__subtitle">.*?>\s*(.*?)\s*</a>', carte, re.S)
+                    lieu = re.search(r'job-search-card__location">\s*(.*?)\s*</span>', carte, re.S)
+                    date = re.search(r'datetime="([\d-]+)"', carte)
+                    lien = f"https://www.linkedin.com/jobs/view/{numero.group(1)}"
+                    offres.setdefault(lien, {
+                        "entreprise": html.unescape(entreprise.group(1)) if entreprise else "",
+                        "titre": html.unescape(titre.group(1)),
+                        "lieu": html.unescape(lieu.group(1)) if lieu else ville,
+                        "date_publication": date.group(1) if date else "",
+                        "lien": lien,
+                    })
+                time.sleep(5)
+                if len(cartes) < 10:
+                    break
     return list(offres.values())
 
 
@@ -1039,11 +1091,11 @@ SOURCES = {"Etihad Airways": etihad, "Lufthansa": lufthansa,
            "Business France (VIE)": business_france, "Y Combinator": y_combinator,
            "French Tech 120": french_tech, "Asie / Moyen-Orient": asie_moyen_orient,
            "Afrique": afrique, "Jeunes startups (levées de fonds)": jeunes_startups,
-           "Fonds d'investissement (US)": fonds_investissement, "Hacker News (US)": who_is_hiring,
+           "Fonds d'investissement (US)": fonds_investissement, "Hacker News (US)": who_is_hiring, "LinkedIn": linkedin,
            "Alertes e-mail": alertes_email}
 VOLETS = {"Business France (VIE)": "autres", "Y Combinator": "startups", "French Tech 120": "startups", "Asie / Moyen-Orient": "startups", "Afrique": "startups", "Jeunes startups (levées de fonds)": "startups",
-          "Fonds d'investissement (US)": "startups", "Hacker News (US)": "startups"}  # les autres sources vont dans le volet « compagnies »
-SANS_VERIFICATION = {"Alertes e-mail"}  # offres vues seulement dans un e-mail : on ne peut pas vérifier qu'elles sont toujours en ligne
+          "Fonds d'investissement (US)": "startups", "Hacker News (US)": "startups", "LinkedIn": "startups"}  # les autres sources vont dans le volet « compagnies »
+SANS_VERIFICATION = {"Alertes e-mail", "LinkedIn"}  # e-mails, et LinkedIn qui ne montre que la semaine : on ne peut pas vérifier qu'elles sont toujours en ligne
 
 
 def volet_de(offre):
@@ -1080,7 +1132,33 @@ def texte_annonce(offre):
         return nettoyer(" ".join(s.get("text", "") for s in sections.values()))
     if offre["source"] == "Business France (VIE)":  # l'annonce n'a pas pu être ouverte : on réessaiera demain
         raise requests.RequestException("texte de l'annonce indisponible")
-    return nettoyer(lire(offre["lien"]).text)
+    ashby = re.search(r"jobs\.ashbyhq\.com/([^/?#]+)/([0-9a-f-]{36})", offre["lien"])
+    if ashby:  # Ashby : page en JavaScript, mais son interface publique donne le texte
+        for o in lire(f"https://api.ashbyhq.com/posting-api/job-board/{unquote(ashby.group(1))}").json()["jobs"]:
+            if o["id"] == ashby.group(2):
+                return o.get("descriptionPlain") or nettoyer(o.get("descriptionHtml", ""))
+    linkedin = re.search(r"linkedin\.com/jobs/view/(\d+)", offre["lien"])
+    if linkedin:  # LinkedIn : version publique de l'annonce (sans connexion)
+        return nettoyer(lire(f"https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{linkedin.group(1)}").text)
+    texte = nettoyer(lire(offre["lien"]).text)
+    if len(texte) < 500:  # page vide sans JavaScript (Gem, Workable…) : on l'ouvre dans le navigateur automatisé
+        try:
+            texte = texte_navigateur(offre["lien"])
+        except Exception as erreur:
+            print(f"⚠️  {offre['titre']} : page illisible même avec le navigateur ({erreur})")
+    return texte
+
+
+def texte_navigateur(lien):
+    """Texte visible d'une page qui a besoin de JavaScript, lue avec le navigateur automatisé."""
+    with sync_playwright() as p:
+        navigateur = p.chromium.launch()
+        page = navigateur.new_page(user_agent=EN_TETES["User-Agent"])
+        page.goto(lien, timeout=60000, wait_until="load")
+        page.wait_for_timeout(5000)  # laisse le JavaScript afficher l'annonce
+        texte = page.locator("body").inner_text()
+        navigateur.close()
+    return re.sub(r"\s+", " ", texte).strip()
 
 
 # ---------- Analyse par Claude ----------
@@ -1112,6 +1190,8 @@ def consignes(volet="compagnies"):
      product manager peu expérimenté, associate product manager, product analyst. Écarte les assistants de direction
      traditionnels (secrétariat, agendas), les office managers purs, les consultants en cabinet
      externe, et les postes purement techniques ou commerciaux.
+     L'entreprise doit être une startup ou une scale-up en croissance : écarte les grands groupes établis
+     (banques, multinationales, grandes entreprises tech cotées, cabinets de conseil ou de recrutement).
      Écarte les offres au Brésil qui exigent le portugais. Écarte les offres qui exigent la
      nationalité du pays ou un visa déjà obtenu (« US citizen », « must be authorized to work in
      the US », « no visa sponsorship »). « US citizenship/visa not required » n'est PAS un motif de refus."""
