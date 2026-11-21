@@ -454,12 +454,21 @@ function carteOffre(o) {
     <div class="actions">
       ${bouton("vue", "Vue")}${bouton("interessante", "Intéressante")}${bouton("postule", "J'ai postulé")}
       ${statut === "ignoree" ? `<button class="bouton" data-lien="${echapper(o.lien)}" data-statut="ignoree">Remettre dans la liste</button>` : bouton("ignoree", "Pas pour moi")}
+      <button class="bouton" data-candidature="${echapper(o.lien)}" title="Copie une commande à coller dans Claude">Préparer ma candidature</button>
       ${o.pertinente ? "" : `<button class="bouton" data-repecher="${echapper(o.lien)}">${repechees[o.lien] ? "Retirer de la liste" : "Remettre dans la liste"}</button>`}
     </div>
   </div>`;
 }
 
 $("liste-offres").addEventListener("click", async e => {
+  const candidature = e.target.closest("button[data-candidature]");
+  if (candidature) {  // copie la commande à coller dans Claude, qui prépare le CV et la lettre
+    const commande = `/candidature ${candidature.dataset.candidature}`;
+    try { await navigator.clipboard.writeText(commande); candidature.textContent = "Commande copiée ✓"; }
+    catch { prompt("Copiez cette commande et collez-la dans Claude :", commande); }
+    setTimeout(() => candidature.textContent = "Préparer ma candidature", 2500);
+    return;
+  }
   const repecher = e.target.closest("button[data-repecher]");
   if (repecher) {
     const lien = repecher.dataset.repecher;
