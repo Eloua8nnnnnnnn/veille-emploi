@@ -91,6 +91,7 @@ Rassembler les offres qui sortent des volets 1 et 2 mais qui m'intéressent : le
   - une à deux synchronisations par jour au maximum, avec une pause entre les pages ;
   - ne faire aucune promotion publique du tableau de bord (le dépôt public et docs/offres.json sont acceptés).
 - Postes VIE retenus : ceux des volets 1 et 2, et les postes proches (chef de projet digital ou transformation, stratégie, innovation, IA, marketing digital ou stratégique).
+- VIE en Europe : écartés, sauf si le poste me correspond très bien (score de Claude d'au moins 7/10). Les pays nordiques (Suède, Norvège, Danemark, Finlande, Islande) ne sont pas concernés. Ils restent repêchables dans « Écartées par Claude ».
 - Autres sources : à définir (Adzuna en priorité, car son interface est officielle).
 
 (L'ancien volet « startups à contacter » a été abandonné le 17/11/2026.)

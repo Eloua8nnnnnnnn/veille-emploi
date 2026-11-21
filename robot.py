@@ -436,6 +436,13 @@ def tap_portugal():
 
 
 JOURS_MAX = 60  # au-delà de 60 jours, une offre n'est plus analysée (ni affichée sur le tableau de bord)
+# Les VIE en Europe (hors pays nordiques) ne sont gardés que si le poste est très bon pour le candidat (score de Claude d'au moins 7/10)
+PAYS_EUROPE = {"France", "Allemagne", "Autriche", "Belgique", "Bulgarie", "Chypre", "Croatie", "Espagne",
+               "Estonie", "Grèce", "Hongrie", "Irlande", "Italie", "Lettonie", "Lituanie", "Luxembourg",
+               "Malte", "Pays-Bas", "Pologne", "Portugal", "République tchèque", "Tchéquie", "Roumanie", "Slovaquie",
+               "Slovénie", "Royaume-Uni", "Suisse", "Monaco", "Serbie", "Ukraine",
+               "Bosnie-Herzégovine", "Albanie", "Macédoine du Nord", "Monténégro", "Moldavie", "Liechtenstein"}
+SCORE_VIE_EUROPE = 7  # pays nordiques (Suède, Norvège, Danemark, Finlande, Islande) non concernés
 JOURS_VIE = 14  # le robot ne lit que les offres VIE publiées depuis moins de 14 jours
 
 
@@ -1315,6 +1322,13 @@ def main():
                 analyse = resultats[i]
                 enregistrer(offre, analyse, volet_de(offre))
                 print(f"  {'✅' if analyse.pertinente else '❌'} [{analyse.score}/10] {offre['entreprise']} – {offre['titre']}")
+
+    # VIE en Europe (hors pays nordiques) : écartés sauf si le poste est très bon (repêchables depuis le tableau de bord)
+    for offre in connues.values():
+        if (offre["source"] == "Business France (VIE)" and offre["pertinente"]
+                and offre.get("pays") in PAYS_EUROPE and offre["score"] < SCORE_VIE_EUROPE):
+            offre["pertinente"] = False
+            offre["raison"] = f"VIE en Europe, gardé seulement s'il vous correspond très bien ({SCORE_VIE_EUROPE}/10 minimum). " + offre["raison"]
 
     donnees = {"derniere_mise_a_jour": maintenant,
                "offres": sorted(connues.values(), key=lambda o: o["date_publication"], reverse=True)}
