@@ -117,6 +117,10 @@
   button.bouton { padding: 7px 16px; border: 0; border-radius: 999px; background: var(--surface); cursor: pointer; font-size: 13px; color: var(--discret);
     box-shadow: var(--ombre-petite); transition: box-shadow .15s; }
   button.bouton:hover { color: var(--texte); }
+  #message { position: fixed; left: 16px; right: 16px; bottom: 20px; max-width: 520px; margin: 0 auto; padding: 14px 18px; border-radius: 16px;
+    background: var(--sombre); color: var(--sombre-texte); font-size: 14px; box-shadow: var(--ombre-petite); z-index: 10;
+    opacity: 0; transform: translateY(10px); transition: opacity .2s, transform .2s; pointer-events: none; }
+  #message.visible { opacity: 1; transform: none; }
   button.bouton.choisi, button.bouton:active { color: var(--accent); font-weight: 500; box-shadow: var(--ombre-creux); }
   .bouton-sombre { background: var(--sombre) !important; color: var(--sombre-texte) !important; box-shadow: var(--ombre-petite) !important; }
 
@@ -223,9 +227,8 @@
       <select id="f-niveau"></select>
       <select id="f-statut">
         <option value="">Tous les statuts</option>
-        <option value="aucun">Pas encore vues</option>
-        <option value="vue">Vues</option>
-        <option value="interessante">Intéressantes</option>
+        <option value="aucun">Sans marquage</option>
+        <option value="interessante">À regarder plus tard</option>
         <option value="postule">Candidature envoyée</option>
         <option value="ignoree">Pas pour moi</option>
       </select>
@@ -408,9 +411,10 @@ function afficherOffres() {
   const stages = visibles.filter(o => retenue(o) && STAGES.includes(o.type_contrat) && !afrique.includes(o));
   const ecartees = visibles.filter(o => !retenue(o));
   // Les offres « J'ai postulé » et « Pas pour moi » quittent la liste et vont dans des sections repliées
+  const aRegarder = visibles.filter(o => statuts[o.lien] === "interessante");
   const postulees = visibles.filter(o => statuts[o.lien] === "postule");
   const miseDeCote = visibles.filter(o => statuts[o.lien] === "ignoree");
-  const rangee = o => ["postule", "ignoree"].includes(statuts[o.lien]);
+  const rangee = o => ["interessante", "postule", "ignoree"].includes(statuts[o.lien]);
   [postes, stages, afrique, ecartees].forEach(l => { for (let i = l.length - 1; i >= 0; i--) if (rangee(l[i])) l.splice(i, 1); });
   const ouvertes = [...document.querySelectorAll("#liste-offres details[open]")].map(d => d.id);
   const section = (id, titre, liste) => liste.length
@@ -420,6 +424,7 @@ function afficherOffres() {
     (postes.length ? postes.map(carteOffre).join("") : `<p class="vide">Aucun poste ne correspond à ces filtres.</p>`) +
     (stages.length ? `<h2>Stages (${stages.length})</h2>` + stages.map(carteOffre).join("") : "") +
     (afrique.length ? `<h2>Afrique, à juger vous-même (${afrique.length})</h2>` + afrique.map(carteOffre).join("") : "") +
+    section("sec-a-regarder", "Intéressantes, à regarder plus tard", aRegarder) +
     section("sec-postulees", "Candidatures envoyées", postulees) +
     section("sec-de-cote", "Mises de côté par vous", miseDeCote) +
     section("sec-ecartees", "Écartées par Claude", ecartees);
@@ -447,7 +452,7 @@ function carteOffre(o) {
     <div>${echapper(o.missions)}</div>
     <div class="avis">Avis de Claude : ${echapper(o.raison)}</div>
     <div class="actions">
-      ${bouton("vue", "Vue")}${bouton("interessante", "Intéressante")}${bouton("postule", "J'ai postulé")}
+      ${bouton("interessante", "Intéressante")}${bouton("postule", "J'ai postulé")}
       ${statut === "ignoree" ? `<button class="bouton" data-lien="${echapper(o.lien)}" data-statut="ignoree">Remettre dans la liste</button>` : bouton("ignoree", "Pas pour moi")}
       <button class="bouton" data-candidature="${echapper(o.lien)}" title="Copie une commande à coller dans Claude">Préparer ma candidature</button>
       ${o.pertinente ? "" : `<button class="bouton" data-repecher="${echapper(o.lien)}">${repechees[o.lien] ? "Retirer de la liste" : "Remettre dans la liste"}</button>`}
@@ -455,13 +460,29 @@ function carteOffre(o) {
   </div>`;
 }
 
+function afficherMessage(texte) {  // bandeau en bas de l'écran, quelques secondes
+  let bandeau = $("message");
+  if (!bandeau) {
+    bandeau = document.createElement("div");
+    bandeau.id = "message";
+    document.body.appendChild(bandeau);
+  }
+  bandeau.textContent = texte;
+  bandeau.classList.add("visible");
+  clearTimeout(bandeau.minuteur);
+  bandeau.minuteur = setTimeout(() => bandeau.classList.remove("visible"), 6000);
+}
+
 $("liste-offres").addEventListener("click", async e => {
   const candidature = e.target.closest("button[data-candidature]");
   if (candidature) {  // copie la commande à coller dans Claude, qui prépare le CV et la lettre
     const commande = `/candidature ${candidature.dataset.candidature}`;
-    try { await navigator.clipboard.writeText(commande); candidature.textContent = "Commande copiée ✓"; }
-    catch { prompt("Copiez cette commande et collez-la dans Claude :", commande); }
-    setTimeout(() => candidature.textContent = "Préparer ma candidature", 2500);
+    try {
+      await navigator.clipboard.writeText(commande);
+      candidature.textContent = "Commande copiée ✓";
+      afficherMessage("Commande copiée. Colle-la dans ta conversation Claude (onglet Code) : Claude prépare le CV et la lettre.");
+    } catch { prompt("Copiez cette commande et collez-la dans votre conversation Claude :", commande); }
+    setTimeout(() => candidature.textContent = "Préparer ma candidature", 4000);
     return;
   }
   const repecher = e.target.closest("button[data-repecher]");
