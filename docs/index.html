@@ -141,8 +141,9 @@
   .disposition button { border: 0; background: none; width: 38px; height: 32px; border-radius: 999px; display: grid; place-items: center; color: var(--discret); cursor: pointer; }
   .disposition button svg { width: 20px; height: 20px; }
   .disposition button.choisi { background: var(--accent-fond); color: var(--accent); }
-  .integre .disposition { background: var(--plat); box-shadow: none; }
-  .integre .disposition button.choisi { background: var(--pastel-violet); color: var(--pastel-violet-texte); }
+  .integre .disposition { background: transparent; border: 1px solid var(--ligne); box-shadow: none; }
+  .integre .disposition button { color: var(--doux); }
+  .integre .disposition button.choisi { background: var(--fonce); color: var(--fonce-texte); }
   @media (max-width: 760px) { .grille { grid-template-columns: 1fr; } .disposition { display: none; } }
   .ligne-titre { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
   .titre { font-weight: 500; font-size: 16px; color: var(--texte); text-decoration: none; }
@@ -203,13 +204,16 @@
   /* ---------- Mode intégré (module Emploi du dashboard) : style de la page d'accueil ---------- */
   .integre { --plat: #f4f4f9; --ligne: #ececf2; --pastel-violet: #eeedfe; --pastel-violet-texte: #3c3489; --pastel-violet-moyen: #534ab7;
     --pastel-bleu: #e6f1fb; --pastel-bleu-texte: #0c447c; --pastel-bleu-moyen: #185fa5; --pastel-vert: #e1f5ee; --pastel-vert-texte: #085041;
-    --pastel-vert-moyen: #0f6e56; --pastel-creme: #faeeda; --pastel-creme-texte: #633806; --pastel-creme-moyen: #854f0b; }
+    --pastel-vert-moyen: #0f6e56; --pastel-creme: #faeeda; --pastel-creme-texte: #633806; --pastel-creme-moyen: #854f0b;
+    --fonce: #26215c; --fonce-texte: #ffffff; --doux: #4a4a55; }
   @media (prefers-color-scheme: dark) {
     .integre { --plat: #22212c; --ligne: #2a2935; --pastel-violet: #2c2768; --pastel-violet-texte: #cecbf6; --pastel-violet-moyen: #afa9ec;
       --pastel-bleu: #0c2f52; --pastel-bleu-texte: #b5d4f4; --pastel-bleu-moyen: #85b7eb; --pastel-vert: #0b3d31; --pastel-vert-texte: #9fe1cb;
-      --pastel-vert-moyen: #5dcaa5; --pastel-creme: #4a2c05; --pastel-creme-texte: #fac775; --pastel-creme-moyen: #ef9f27; }
+      --pastel-vert-moyen: #5dcaa5; --pastel-creme: #4a2c05; --pastel-creme-texte: #fac775; --pastel-creme-moyen: #ef9f27;
+      --fonce: #cecbf6; --fonce-texte: #1c1940; --doux: #c9c8d2; }
   }
-  .integre body { background: transparent; overflow: hidden; }
+  .integre, .integre body { background: #ffffff; overflow: hidden; }
+  @media (prefers-color-scheme: dark) { .integre, .integre body { background: #17161f; } }
   .integre body::before, .integre header, .integre #a-consulter > h2 + p { display: none; }
   .integre main { max-width: none; padding: 0 0 8px; }
   .integre .relief, .integre .carte, .integre .creux, .integre nav button.actif { -webkit-backdrop-filter: none; backdrop-filter: none; }
@@ -221,13 +225,19 @@
   .p-bleu { background: var(--pastel-bleu); color: var(--pastel-bleu-texte); } .p-bleu span, .p-bleu small { color: var(--pastel-bleu-moyen); }
   .p-vert { background: var(--pastel-vert); color: var(--pastel-vert-texte); } .p-vert span, .p-vert small { color: var(--pastel-vert-moyen); }
   .p-creme { background: var(--pastel-creme); color: var(--pastel-creme-texte); } .p-creme span, .p-creme small { color: var(--pastel-creme-moyen); }
-  .integre nav { margin: 0 0 18px; background: var(--plat); box-shadow: none; padding: 5px; }
-  .integre nav button.actif { background: var(--pastel-violet); color: var(--pastel-violet-texte); box-shadow: none; }
-  .integre select, .integre input, .integre textarea { background-color: var(--plat); border: 0; box-shadow: none; }
+  .integre nav { margin: 0 0 18px; background: transparent; border: 1px solid var(--ligne); box-shadow: none; padding: 5px; }
+  .integre nav button { color: var(--doux); font-weight: 500; }
+  .integre nav button:hover { color: var(--texte); }
+  .integre nav button.actif { background: var(--fonce); color: var(--fonce-texte); box-shadow: none; }
+  .integre select, .integre input, .integre textarea { background-color: transparent; border: 1px solid var(--ligne); box-shadow: none; color: var(--texte); }
   .integre .carte { background: transparent; border: 1px solid var(--ligne); box-shadow: none; border-radius: 20px; }
-  .integre .avis, .integre .preparation { background: var(--plat); box-shadow: none; }
-  .integre button.bouton, .integre .liens a, .integre .compteur { background: var(--plat); box-shadow: none; }
-  .integre button.bouton.choisi, .integre button.bouton:active { background: var(--pastel-violet); color: var(--pastel-violet-texte); box-shadow: none; }
+  .integre .avis { background: none; box-shadow: none; border-radius: 0; border-left: 3px solid var(--pastel-violet-moyen); padding: 2px 0 2px 14px; color: var(--doux); }
+  .integre .preparation { background: var(--pastel-vert); color: var(--pastel-vert-texte); box-shadow: none; }
+  .integre .preparation a { color: var(--pastel-vert-texte); text-decoration: underline; }
+  .integre button.bouton, .integre .liens a, .integre .compteur { background: transparent; border: 1px solid var(--ligne); box-shadow: none; color: var(--doux); }
+  .integre button.bouton:hover { border-color: var(--pastel-violet-moyen); color: var(--pastel-violet-texte); }
+  .integre button.bouton.choisi, .integre button.bouton:active { background: var(--fonce); border-color: var(--fonce); color: var(--fonce-texte); box-shadow: none; }
+  .integre .meta { color: var(--doux); }
   .integre .score { box-shadow: none; background: var(--plat); font-family: "Poppins", sans-serif; font-weight: 600; font-size: 14px; }
   .integre .bon .score { background: var(--pastel-violet); color: var(--pastel-violet-texte); }
   .integre .bon .score small { color: var(--pastel-violet-moyen); opacity: 1; }
