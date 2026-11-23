@@ -136,8 +136,14 @@
    "levee_le": "2026-11-09",
    "outil": "page",
    "page": "https://qru.pet/offre-emploi-barf/",
-   "offres": [],
-   "empreinte": "0f8255201ce782ea17bb09bc9a70be0ae409c1e6"
+   "offres": [
+    {
+     "titre": "Agent commercial terrain (H/F)",
+     "lien": "https://qru.pet/offre-emploi-barf/",
+     "lieu": "Plusieurs secteurs ouverts en France (Île-de-France mentionnée)"
+    }
+   ],
+   "empreinte": "0cd51e4359d60d7f146ffd32c2a0068021f11f0e"
   },
   "Gimii": {
    "site": "https://gimii.fr/",
@@ -1082,7 +1088,7 @@
    "outil": "page",
    "page": "http://www.helloaria.me/careers/",
    "offres": [],
-   "empreinte": "c0f797a3fbe4ca5d826742bde0415df22ce78c2b"
+   "empreinte": "b89ccf6f8d5006bbceb6dc936e6f977a9be59480"
   },
   "En Carta Diagnostics": {
    "site": "http://www.encarta.bio/",
@@ -1092,7 +1098,7 @@
    "outil": "page",
    "page": "https://www.encarta.bio/home",
    "offres": [],
-   "empreinte": "6a331d883d640a962d8ad3ed5aca62f33e1c7ace"
+   "empreinte": "dc5f6c6aa6233a81e1357223745adbe10d3fcbdf"
   },
   "Stracker": {
    "site": "http://www.stracker.tech/",
