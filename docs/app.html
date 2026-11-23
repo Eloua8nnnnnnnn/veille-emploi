@@ -108,6 +108,9 @@
   .social { display: grid; grid-template-columns: 1fr 1.3fr; gap: 26px; align-items: start; }
   .initiales { width: 34px; height: 34px; flex: none; border-radius: 50%; background: var(--vert-fond); color: var(--vert); display: grid; place-items: center; font-size: 13px; font-weight: 600; }
   .detail-contact { font-size: 12px; color: var(--discret); }
+  .activite { border: 0; margin-left: 6px; font-size: 11px; padding: 2px 9px; border-radius: 999px; background: var(--vert-fond); color: var(--vert); vertical-align: 1px; }
+  .activite.vide-activite { background: none; color: var(--discret); padding: 2px 4px; }
+  .ajout .champ-court { flex: 0.8; }
   .badge-relance { font-size: 11px; padding: 3px 10px; border-radius: 999px; white-space: nowrap; background: var(--creme-fond); color: var(--creme); }
   .badge-ok { background: var(--vert-fond); color: var(--vert); }
   .petit-bouton { border: 1px solid var(--bord); background: none; border-radius: 999px; padding: 5px 12px; font-size: 12px; white-space: nowrap; }
@@ -213,6 +216,7 @@
           <div id="contacts"><div class="vide">Chargement…</div></div>
           <form class="ajout" id="ajout-contact">
             <input id="nom-contact" placeholder="Prénom ou nom" maxlength="60">
+            <input id="activite-contact" class="champ-court" placeholder="Activité (facultatif), ex. running" maxlength="60">
             <select id="frequence-contact" aria-label="Fréquence">
               <option value="0" selected>Juste y penser</option>
               <option value="7">Chaque semaine</option><option value="14">Toutes les 2 semaines</option>
@@ -299,7 +303,11 @@ const FICTIF = {
   changerPiece: (id, champs) => { Object.assign(FAUX_THEATRE.find(p => p.id === id), champs); return fauxTheatre(); },
   supprimerPiece: (id) => { FAUX_THEATRE = FAUX_THEATRE.filter(p => p.id !== id); return fauxTheatre(); },
   social: (date) => fauxSocial(date),
-  ajouterContact: (nom, frequence, note, date) => { FAUX_SOCIAL.contacts.push({ nom, frequence: Number(frequence), dernier: "", note }); return fauxSocial(date); },
+  ajouterContact: (nom, frequence, note, date) => {
+    const c = FAUX_SOCIAL.contacts.find(x => x.nom === nom);
+    if (c) { c.frequence = Number(frequence); c.note = note || c.note; } else FAUX_SOCIAL.contacts.push({ nom, frequence: Number(frequence), dernier: "", note });
+    return fauxSocial(date);
+  },
   contacte: (nom, date) => { FAUX_SOCIAL.contacts.find(c => c.nom === nom).dernier = date; return fauxSocial(date); },
   supprimerContact: (nom, date) => { FAUX_SOCIAL.contacts = FAUX_SOCIAL.contacts.filter(c => c.nom !== nom); return fauxSocial(date); },
   ajouterActivites: (liste, date) => { liste.forEach((a, i) => FAUX_SOCIAL.activites.push({ id: String(Date.now() + i), faite: "", ...a })); return fauxSocial(date); },
@@ -620,7 +628,9 @@ function afficherSocial(d) {
   $("contacts").innerHTML = d.contacts.length ? d.contacts.map(c => `
     <div class="ligne">
       <span class="initiales">${echapper(initiales(c.nom))}</span>
-      <span class="nom">${echapper(c.nom)}<br><span class="detail-contact">${texteContact(c)}</span></span>
+      <span class="nom">${echapper(c.nom)}
+        <button class="activite ${c.note?.trim() ? "" : "vide-activite"}" data-activite="${echapper(c.nom)}" data-frequence="${c.frequence}" title="Modifier l'activité">${c.note?.trim() ? echapper(c.note.trim()) : "+ activité"}</button>
+        <br><span class="detail-contact">${texteContact(c)}</span></span>
       ${c.retard >= 0 ? `<span class="badge-relance">${c.frequence ? "À relancer" : "À contacter"}</span>`
         : c.frequence ? `<span class="badge-relance badge-ok">dans ${-c.retard} j</span>` : `<span class="badge-relance badge-ok">Fait</span>`}
       ${c.frequence || c.retard >= 0 ? `<button class="petit-bouton" data-contacte="${echapper(c.nom)}">Contacté</button>` : ""}
@@ -665,6 +675,13 @@ const chargerSocial = () => actionSocial("social");
 
 $("contacts").addEventListener("click", e => {
   const c = e.target.closest("[data-contacte]"), s = e.target.closest("[data-supprimer-contact]");
+  const a = e.target.closest("[data-activite]");
+  if (a) {
+    const actuelle = a.classList.contains("vide-activite") ? "" : a.textContent.trim();
+    const nouvelle = prompt(`Activité avec ${a.dataset.activite} (ex. running, ciné, verre) :`, actuelle);
+    if (nouvelle !== null && nouvelle.trim() !== actuelle) actionSocial("ajouterContact", a.dataset.activite, a.dataset.frequence, nouvelle.trim() || " ");
+    return;
+  }
   if (c) actionSocial("contacte", c.dataset.contacte);
   if (s && confirm(`Retirer ${s.dataset.supprimerContact} de ta liste ?`)) actionSocial("supprimerContact", s.dataset.supprimerContact);
 });
@@ -681,7 +698,10 @@ $("categories").addEventListener("click", e => {
 $("ajout-contact").addEventListener("submit", e => {
   e.preventDefault();
   const nom = $("nom-contact").value.trim();
-  if (nom) { $("nom-contact").value = ""; actionSocial("ajouterContact", nom, $("frequence-contact").value, ""); }
+  if (nom) {
+    actionSocial("ajouterContact", nom, $("frequence-contact").value, $("activite-contact").value.trim());
+    $("nom-contact").value = ""; $("activite-contact").value = "";
+  }
 });
 $("ajout-activite").addEventListener("submit", e => {
   e.preventDefault();
