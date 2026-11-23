@@ -14,6 +14,8 @@ Utilisation :
   .venv/bin/python cv_onglet.py annonce LIEN                      → texte d'une annonce (navigateur automatisé, pour les sites en JavaScript)
   python3 cv_onglet.py file                                       → offres de la file d'attente « À préparer » (Google Sheet)
   python3 cv_onglet.py maj LIEN ETAT [CV] [LETTRE] [NOTE]         → note l'avancement d'une offre dans la file
+  python3 cv_onglet.py idees IDEES.json                           → ajoute des idées de sorties à la page Social du dashboard
+                                                                    ([{titre, categorie, lieu, lien, quand, fin}], doublons ignorés)
 La file d'attente utilise SHEET_ADRESSE et SHEET_CLE du fichier .env (adresse et mot de passe du script Google Sheet).
 """
 import json
@@ -179,6 +181,9 @@ if __name__ == "__main__":
     elif commande == "maj" and len(sys.argv) >= 4:
         valeurs = dict(zip(["Etat", "CV", "Lettre", "Note"], sys.argv[3:]))
         print(appel_file({"action": "maj_file", "lien": sys.argv[2], "valeurs": valeurs}))
+    elif commande == "idees" and len(sys.argv) == 3:
+        with open(sys.argv[2], encoding="utf-8") as fichier:
+            print(appel_file({"action": "ajouter_activites", "activites": json.load(fichier)}))
     elif commande == "lettre" and len(sys.argv) == 6:
         with open(sys.argv[2], encoding="utf-8") as fichier:
             document = json.load(fichier)

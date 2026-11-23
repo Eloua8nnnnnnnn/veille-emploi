@@ -94,6 +94,36 @@
   .ajout input { flex: 1; min-width: 0; font: inherit; font-size: 14px; color: var(--texte); background: none; border: 1px solid var(--bord); border-radius: 999px; padding: 9px 14px; outline: none; }
   .ajout input:focus { border-color: var(--violet-moyen); }
   .ajout button { border: 0; border-radius: 999px; padding: 0 16px; background: var(--barre); color: #fff; font-size: 13px; }
+  .social { display: grid; grid-template-columns: 1fr 1.3fr; gap: 26px; align-items: start; }
+  .initiales { width: 34px; height: 34px; flex: none; border-radius: 50%; background: var(--vert-fond); color: var(--vert); display: grid; place-items: center; font-size: 13px; font-weight: 600; }
+  .detail-contact { font-size: 12px; color: var(--discret); }
+  .badge-relance { font-size: 11px; padding: 3px 10px; border-radius: 999px; white-space: nowrap; background: var(--creme-fond); color: var(--creme); }
+  .badge-ok { background: var(--vert-fond); color: var(--vert); }
+  .petit-bouton { border: 1px solid var(--bord); background: none; border-radius: 999px; padding: 5px 12px; font-size: 12px; white-space: nowrap; }
+  .petit-bouton:hover { border-color: var(--violet-moyen); color: var(--violet-moyen); }
+  .ajout select { font: inherit; font-size: 13px; color: var(--texte); background: none; border: 1px solid var(--bord); border-radius: 999px; padding: 0 12px; }
+  .ajout-activite { flex-wrap: wrap; }
+  .ajout-activite #titre-activite { flex-basis: 100%; }
+  .filtres-cat { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
+  .filtres-cat button { border: 1px solid var(--bord); background: none; border-radius: 999px; padding: 5px 12px; font-size: 12px; color: var(--discret); }
+  .filtres-cat button.actif { background: var(--barre); border-color: var(--barre); color: #fff; }
+  .idees { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+  .idee { border: 1px solid var(--bord); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+  .idee .titre-idee { font-size: 14px; font-weight: 500; }
+  .idee .actions-idee { display: flex; gap: 6px; align-items: center; margin-top: auto; }
+  .idee a { font-size: 12px; color: var(--violet-moyen); }
+  .cat { font-size: 11px; padding: 2px 9px; border-radius: 999px; align-self: flex-start; }
+  details.faites summary { cursor: pointer; font-size: 13px; color: var(--discret); margin: 14px 0 8px; }
+  @media (max-width: 1100px) { .social { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) {
+    #contacts .ligne { flex-wrap: wrap; row-gap: 8px; }
+    #contacts .nom { flex-basis: calc(100% - 46px); }
+    #contacts .badge-relance { margin-left: 46px; }
+    .ajout { flex-wrap: wrap; }
+    .ajout input { flex-basis: 100%; }
+    .ajout select { flex: 1; min-height: 38px; }
+    .ajout button { min-height: 38px; }
+  }
   @media (max-width: 1100px) { .bas { grid-template-columns: 1fr 1fr; } .bas .sombre { grid-column: 1 / -1; } }
   .ligne { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--bord); font-size: 14px; }
   .ligne .badge { margin-left: auto; font-size: 11px; padding: 3px 10px; border-radius: 999px; }
@@ -163,6 +193,35 @@
     </section>
 
     <section class="page" id="page-emploi"><iframe id="cadre-emploi" title="Offres d'emploi" loading="lazy"></iframe></section>
+    <section class="page" id="page-social">
+      <div class="social">
+        <div class="bloc">
+          <div class="bloc-titre"><h2>À recontacter</h2><span class="discret" id="nb-relances"></span></div>
+          <div id="contacts"><div class="vide">Chargement…</div></div>
+          <form class="ajout" id="ajout-contact">
+            <input id="nom-contact" placeholder="Prénom ou nom" maxlength="60">
+            <select id="frequence-contact" aria-label="Fréquence">
+              <option value="7">Chaque semaine</option><option value="14">Toutes les 2 semaines</option>
+              <option value="30" selected>Chaque mois</option><option value="60">Tous les 2 mois</option>
+              <option value="90">Tous les 3 mois</option><option value="180">Tous les 6 mois</option>
+            </select>
+            <button>Ajouter</button>
+          </form>
+        </div>
+        <div class="bloc">
+          <div class="bloc-titre"><h2>Idées de sorties à Paris</h2></div>
+          <div class="filtres-cat" id="categories"></div>
+          <div id="activites"><div class="vide">Chargement…</div></div>
+          <form class="ajout ajout-activite" id="ajout-activite">
+            <input id="titre-activite" placeholder="Nouvelle idée, ex. expo à la Bourse de Commerce" maxlength="100">
+            <select id="categorie-activite" aria-label="Catégorie"></select>
+            <input id="lieu-activite" placeholder="Lieu (facultatif)" maxlength="60">
+            <button>Ajouter</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
     <section class="page" id="page-autre"><div class="bientot-page" id="bientot"></div></section>
   </main>
 </div>
@@ -182,7 +241,22 @@ function fauxJour(date) {
     return { nom, faite: !!FAUX.journal[date + "|" + nom], serie, quinzaine: Array.from({ length: 14 }, (_, k) => !!FAUX.journal[avant(13 - k) + "|" + nom] || (i === 0 && k > 8 && k < 13)) };
   }), taches: FAUX.taches.filter(t => !t.faite || t.faite === date) };
 }
+const FAUX_SOCIAL = { contacts: [
+    { nom: "Paul", frequence: 30, dernier: "2026-10-08", note: "" }, { nom: "Léa", frequence: 14, dernier: "2026-11-18", note: "" },
+    { nom: "Mamie", frequence: 7, dernier: "2026-11-10", note: "" } ], activites: [] };
+function fauxSocial(date) {
+  const ecart = d => d ? Math.round((new Date(date) - new Date(d)) / 86400000) : null;
+  return { contacts: FAUX_SOCIAL.contacts.map(c => ({ ...c, ecart: ecart(c.dernier), retard: c.dernier ? ecart(c.dernier) - c.frequence : c.frequence }))
+    .sort((a, b) => b.retard - a.retard), activites: FAUX_SOCIAL.activites };
+}
 const FICTIF = {
+  social: (date) => fauxSocial(date),
+  ajouterContact: (nom, frequence, note, date) => { FAUX_SOCIAL.contacts.push({ nom, frequence: Number(frequence), dernier: "", note }); return fauxSocial(date); },
+  contacte: (nom, date) => { FAUX_SOCIAL.contacts.find(c => c.nom === nom).dernier = date; return fauxSocial(date); },
+  supprimerContact: (nom, date) => { FAUX_SOCIAL.contacts = FAUX_SOCIAL.contacts.filter(c => c.nom !== nom); return fauxSocial(date); },
+  ajouterActivites: (liste, date) => { liste.forEach((a, i) => FAUX_SOCIAL.activites.push({ id: String(Date.now() + i), faite: "", ...a })); return fauxSocial(date); },
+  activiteFaite: (id, faite, date) => { FAUX_SOCIAL.activites.find(a => a.id === id).faite = faite ? date : ""; return fauxSocial(date); },
+  supprimerActivite: (id, date) => { FAUX_SOCIAL.activites = FAUX_SOCIAL.activites.filter(a => a.id !== id); return fauxSocial(date); },
   journee: (date) => fauxJour(date),
   cocherHabitude: (date, nom, faite) => { if (faite) FAUX.journal[date + "|" + nom] = true; else delete FAUX.journal[date + "|" + nom]; return fauxJour(date); },
   ajouterHabitude: (nom, date) => { if (!FAUX.habitudes.includes(nom)) FAUX.habitudes.push(nom); return fauxJour(date); },
@@ -231,6 +305,7 @@ function ouvrir(id) {
   $("titre").textContent = module.nom;
   document.querySelectorAll(".page").forEach(p => p.classList.remove("visible"));
   if (module.id === "accueil") $("page-accueil").classList.add("visible");
+  else if (module.id === "social") { $("page-social").classList.add("visible"); chargerSocial(); }
   else if (module.id === "emploi") {
     // « v » change à chaque ouverture : le navigateur charge toujours la dernière version (sinon il la garde 10 minutes)
     if (!$("cadre-emploi").src) $("cadre-emploi").src = (DANS_GOOGLE ? SITE : "index.html") + "?integre&v=" + Date.now();
@@ -266,7 +341,7 @@ async function chargerAccueil() {
   $("cartes").innerHTML =
     carte("c-bleu", "accueil", "Ma journée", "…", "Chargement") +
     carte("c-violet", "emploi", "Candidatures", String(donnees?.candidatures ?? "?"), `${nouvelles} nouvelle${nouvelles === 1 ? "" : "s"} offre${nouvelles === 1 ? "" : "s"} au dernier passage du robot`) +
-    carte("c-vert", "social", "Social", "", "Relances et sorties") +
+    carte("c-vert", "social", "Social", "…", "Chargement") +
     carte("c-creme", "sante", "Santé", "", "Rappels et rendez-vous");
   $("cartes").onclick = e => { const b = e.target.closest("button[data-page]"); if (b && b.dataset.page !== "accueil") ouvrir(b.dataset.page); };
 
@@ -387,9 +462,112 @@ $("ajout-tache").addEventListener("submit", e => {
   if (titre) { $("nouvelle-tache").value = ""; action("ajouterTache", titre, jourLocal(new Date())); }
 });
 
+// ---------- Social ----------
+const CATEGORIES = { "Culture": "c-violet", "Plein air": "c-vert", "Restaurants": "c-creme", "Sport": "c-bleu", "Soirée": "c-rose", "Balade": "c-vert", "Autre": "c-bleu" };
+$("categorie-activite").innerHTML = Object.keys(CATEGORIES).map(c => `<option>${c}</option>`).join("");
+// Idées de départ : des classiques parisiens, à supprimer ou compléter librement
+const IDEES_DE_DEPART = [
+  { titre: "Pique-nique au bord du canal Saint-Martin", categorie: "Plein air", lieu: "Paris 10e" },
+  { titre: "Coucher de soleil aux Buttes-Chaumont", categorie: "Plein air", lieu: "Paris 19e" },
+  { titre: "Nocturne du jeudi au musée d'Orsay", categorie: "Culture", lieu: "Paris 7e" },
+  { titre: "Concert à la Philharmonie de Paris", categorie: "Culture", lieu: "Paris 19e" },
+  { titre: "Expo à la Fondation Louis Vuitton", categorie: "Culture", lieu: "Bois de Boulogne" },
+  { titre: "Déjeuner au marché des Enfants-Rouges", categorie: "Restaurants", lieu: "Paris 3e" },
+  { titre: "Brunch puis balade dans le Marais", categorie: "Restaurants", lieu: "Paris 3e-4e" },
+  { titre: "Balade sur la Coulée verte René-Dumont", categorie: "Balade", lieu: "Paris 12e" },
+  { titre: "Chiner aux puces de Saint-Ouen", categorie: "Balade", lieu: "Saint-Ouen" },
+  { titre: "Séance de bloc en salle d'escalade", categorie: "Sport", lieu: "" },
+  { titre: "Verre en terrasse au bord de la Seine", categorie: "Soirée", lieu: "" },
+  { titre: "Cinéma en plein air à La Villette (l'été)", categorie: "Culture", lieu: "Paris 19e" },
+];
+let donneesSocial = null, categorieChoisie = "";
+const initiales = nom => nom.split(/\s+/).map(m => m[0]).join("").slice(0, 2).toUpperCase();
+function texteContact(c) {
+  if (c.ecart === null || c.ecart === undefined) return "Pas encore de contact noté";
+  const quand = c.ecart === 0 ? "aujourd'hui" : c.ecart === 1 ? "hier" : `il y a ${c.ecart} j`;
+  return `Dernier contact ${quand} · tous les ${c.frequence} j`;
+}
+
+function afficherSocial(d) {
+  donneesSocial = d;
+  const aRelancer = d.contacts.filter(c => c.retard >= 0).length;
+  $("nb-relances").textContent = aRelancer ? `${aRelancer} à relancer` : "";
+  $("contacts").innerHTML = d.contacts.length ? d.contacts.map(c => `
+    <div class="ligne">
+      <span class="initiales">${echapper(initiales(c.nom))}</span>
+      <span class="nom">${echapper(c.nom)}<br><span class="detail-contact">${texteContact(c)}</span></span>
+      ${c.retard >= 0 ? `<span class="badge-relance">À relancer</span>` : `<span class="badge-relance badge-ok">dans ${-c.retard} j</span>`}
+      <button class="petit-bouton" data-contacte="${echapper(c.nom)}">Contacté</button>
+      <button class="retirer" data-supprimer-contact="${echapper(c.nom)}" aria-label="Supprimer ${echapper(c.nom)}">×</button>
+    </div>`).join("") : `<div class="vide">Ajoute les personnes avec qui tu veux garder le lien, et à quelle fréquence.</div>`;
+
+  const categories = [...new Set(d.activites.map(a => a.categorie))];
+  $("categories").innerHTML = categories.length > 1 ? ["", ...categories].map(c =>
+    `<button data-categorie="${echapper(c)}" class="${c === categorieChoisie ? "actif" : ""}">${c ? echapper(c) : "Toutes"}</button>`).join("") : "";
+  const visibles = d.activites.filter(a => !categorieChoisie || a.categorie === categorieChoisie);
+  const idee = a => `<div class="idee">
+      <span class="cat ${CATEGORIES[a.categorie] || "c-bleu"}">${echapper(a.categorie)}</span>
+      <span class="titre-idee">${echapper(a.titre)}</span>
+      ${a.lieu || a.quand ? `<span class="detail-contact">${echapper([a.lieu, a.quand].filter(Boolean).join(" · "))}</span>` : ""}
+      <div class="actions-idee">
+        <button class="petit-bouton" data-faite="${echapper(a.id)}" data-etat="${a.faite ? 1 : 0}">${a.faite ? "Refaire" : "C'est fait"}</button>
+        ${a.lien ? `<a href="${echapper(a.lien)}" target="_blank" rel="noopener">Voir</a>` : ""}
+        <button class="retirer" data-supprimer-activite="${echapper(a.id)}" aria-label="Supprimer">×</button>
+      </div></div>`;
+  const aFaire = visibles.filter(a => !a.faite), faites = visibles.filter(a => a.faite);
+  $("activites").innerHTML = d.activites.length
+    ? (aFaire.length ? `<div class="idees">${aFaire.map(idee).join("")}</div>` : `<div class="vide">Toutes les idées de cette catégorie sont faites.</div>`)
+      + (faites.length ? `<details class="faites"><summary>Déjà faites (${faites.length})</summary><div class="idees">${faites.map(idee).join("")}</div></details>` : "")
+    : `<div class="vide">Aucune idée pour l'instant. <button class="lien" id="idees-depart">Ajouter des idées de départ</button></div>`;
+  majCarteSocial();
+}
+
+function majCarteSocial() {
+  const carteSocial = document.querySelector('.carte[data-page="social"]');
+  if (!carteSocial || !donneesSocial) return;
+  const enRetard = donneesSocial.contacts.filter(c => c.retard >= 0);
+  carteSocial.outerHTML = carte("c-vert", "social", "Social",
+    enRetard.length ? `${enRetard.length} à relancer` : (donneesSocial.contacts.length ? "À jour" : "0"),
+    enRetard.length ? `En premier : ${echapper(enRetard[0].nom)}` : (donneesSocial.contacts.length ? "Personne à relancer" : "Ajoute tes proches"));
+}
+
+async function actionSocial(fonction, ...parametres) {
+  try { afficherSocial(await serveur(fonction, ...parametres, jourLocal(new Date()))); }
+  catch (erreur) { $("contacts").insertAdjacentHTML("afterbegin", `<div class="vide">Enregistrement impossible : ${echapper(erreur.message || erreur)}</div>`); }
+}
+const chargerSocial = () => actionSocial("social");
+
+$("contacts").addEventListener("click", e => {
+  const c = e.target.closest("[data-contacte]"), s = e.target.closest("[data-supprimer-contact]");
+  if (c) actionSocial("contacte", c.dataset.contacte);
+  if (s && confirm(`Retirer ${s.dataset.supprimerContact} de ta liste ?`)) actionSocial("supprimerContact", s.dataset.supprimerContact);
+});
+$("activites").addEventListener("click", e => {
+  const f = e.target.closest("[data-faite]"), s = e.target.closest("[data-supprimer-activite]");
+  if (f) actionSocial("activiteFaite", f.dataset.faite, f.dataset.etat !== "1");
+  if (s) actionSocial("supprimerActivite", s.dataset.supprimerActivite);
+  if (e.target.id === "idees-depart") actionSocial("ajouterActivites", IDEES_DE_DEPART);
+});
+$("categories").addEventListener("click", e => {
+  const b = e.target.closest("[data-categorie]");
+  if (b) { categorieChoisie = b.dataset.categorie; afficherSocial(donneesSocial); }
+});
+$("ajout-contact").addEventListener("submit", e => {
+  e.preventDefault();
+  const nom = $("nom-contact").value.trim();
+  if (nom) { $("nom-contact").value = ""; actionSocial("ajouterContact", nom, $("frequence-contact").value, ""); }
+});
+$("ajout-activite").addEventListener("submit", e => {
+  e.preventDefault();
+  const titre = $("titre-activite").value.trim();
+  if (!titre) return;
+  actionSocial("ajouterActivites", [{ titre, categorie: $("categorie-activite").value, lieu: $("lieu-activite").value.trim() }]);
+  $("titre-activite").value = ""; $("lieu-activite").value = "";
+});
+
 const depart = (location.hash || "").slice(1);
 ouvrir(MODULES.some(m => m.id === depart) ? depart : "accueil");
-chargerAccueil().then(chargerJournee);
+chargerAccueil().then(chargerJournee).then(() => serveur("social", jourLocal(new Date())).then(d => { donneesSocial = d; majCarteSocial(); }).catch(() => {}));
 </script>
 </body>
 </html>

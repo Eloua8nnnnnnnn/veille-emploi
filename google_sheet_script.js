@@ -198,6 +198,79 @@ function supprimerTache(id, date) {
   return journee(date);
 }
 
+// ---------- Social : personnes à recontacter et idées de sorties ----------
+const contacts = () => onglet("Contacts", ["Nom", "Tous les (jours)", "Dernier contact", "Note"]);
+// « Quand » : texte libre (ex. « jusqu'au 4 janv. ») ; « Fin » : date AAAA-MM-JJ après laquelle l'idée n'est plus proposée
+const activites = () => onglet("Activités", ["Id", "Activité", "Catégorie", "Lieu", "Lien", "Faite le", "Quand", "Fin"]);
+
+function joursEntre(debut, fin) {
+  return Math.round((new Date(fin + "T12:00:00") - new Date(debut + "T12:00:00")) / 86400000);
+}
+
+function social(date) {
+  verifierProprietaire();
+  const liste = lignes(contacts()).filter(l => l.valeurs[0]).map(l => {
+    const frequence = Number(l.valeurs[1]) || 30, dernier = l.valeurs[2];
+    const ecart = dernier ? joursEntre(dernier, date) : null;
+    return { nom: l.valeurs[0], frequence: frequence, dernier: dernier, note: l.valeurs[3],
+             ecart: ecart, retard: ecart === null ? frequence : ecart - frequence };  // retard > 0 : à relancer
+  }).sort((a, b) => b.retard - a.retard);
+  const idees = lignes(activites()).filter(l => l.valeurs[1] && (l.valeurs[5] || !l.valeurs[7] || l.valeurs[7] >= date)).map(l =>
+    ({ id: l.valeurs[0], titre: l.valeurs[1], categorie: l.valeurs[2], lieu: l.valeurs[3], lien: l.valeurs[4], faite: l.valeurs[5],
+       quand: l.valeurs[6] || "", fin: l.valeurs[7] || "" }));
+  return { contacts: liste, activites: idees };
+}
+
+function ajouterContact(nom, frequence, note, date) {
+  verifierProprietaire();
+  const existant = lignes(contacts()).find(l => l.valeurs[0] === nom);
+  if (existant) contacts().getRange(existant.ligne, 2, 1, 3).setValues([[String(frequence), existant.valeurs[2], note || existant.valeurs[3]]]);
+  else if (nom) contacts().appendRow([nom, String(frequence), "", note || ""]);
+  return social(date);
+}
+
+function contacte(nom, date) {  // « Contacté aujourd'hui »
+  verifierProprietaire();
+  const l = lignes(contacts()).find(x => x.valeurs[0] === nom);
+  if (l) contacts().getRange(l.ligne, 3).setValue(date);
+  return social(date);
+}
+
+function supprimerContact(nom, date) {
+  verifierProprietaire();
+  const l = lignes(contacts()).find(x => x.valeurs[0] === nom);
+  if (l) contacts().deleteRow(l.ligne);
+  return social(date);
+}
+
+function enregistrerActivites(liste) {  // [{ titre, categorie, lieu, lien, quand, fin }] ; ignore les doublons
+  const deja = lignes(activites()).map(l => l.valeurs[1].toLowerCase());
+  const nouvelles = liste.filter(a => a.titre && !deja.includes(a.titre.toLowerCase()));
+  nouvelles.forEach((a, i) => activites().appendRow([String(Date.now() + i), a.titre, a.categorie || "Autre", a.lieu || "", a.lien || "", "",
+    a.quand || "", a.fin || ""]));
+  return nouvelles.length;
+}
+
+function ajouterActivites(liste, date) {
+  verifierProprietaire();
+  enregistrerActivites(liste);
+  return social(date);
+}
+
+function activiteFaite(id, faite, date) {
+  verifierProprietaire();
+  const l = lignes(activites()).find(x => x.valeurs[0] === id);
+  if (l) activites().getRange(l.ligne, 6).setValue(faite ? date : "");
+  return social(date);
+}
+
+function supprimerActivite(id, date) {
+  verifierProprietaire();
+  const l = lignes(activites()).find(x => x.valeurs[0] === id);
+  if (l) activites().deleteRow(l.ligne);
+  return social(date);
+}
+
 // ---------- 2. Entrée protégée par une clé (ancien tableau de bord, Claude) ----------
 function reponse(donnees) {
   return ContentService.createTextOutput(JSON.stringify(donnees)).setMimeType(ContentService.MimeType.JSON);
@@ -232,6 +305,7 @@ function doPost(e) {
   if (!cleValide(demande.cle)) return reponse({ erreur: "Mot de passe incorrect (ou trop d'essais : réessayez dans 15 minutes)" });
   if (demande.action === "lire") return reponse({ lignes: lignesCandidatures(), etats: choix("Etat"), contrats: choix("Contrat") });
   if (demande.action === "file") return reponse({ file: lignesFile() });
+  if (demande.action === "ajouter_activites") return reponse({ ok: true, ajoutees: enregistrerActivites(demande.activites || []) });
   const f = feuille();
   const noms = colonnes();
   if (demande.action === "ajouter") {
