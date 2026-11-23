@@ -15,7 +15,8 @@
 // Le tableur doit avoir en ligne 1 les colonnes : Poste, Entreprise, Date, Contrat, Pays, Etat, Lien, Description.
 // L'onglet « À préparer » (file d'attente des candidatures) est créé automatiquement.
 
-const PAGE_DASHBOARD = "https://raw.githubusercontent.com/Eloua8nnnnnnnn/veille-emploi/main/docs/app.html";
+// Page publiée par GitHub Pages : mise à jour environ 1 minute après chaque « git push »
+const PAGE_DASHBOARD = "https://eloua8nnnnnnnn.github.io/veille-emploi/app.html";
 
 function feuille() {
   return SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
@@ -88,8 +89,8 @@ function doGet() {
   const cache = CacheService.getScriptCache();
   let page = cache.get("page");
   if (!page) {
-    page = UrlFetchApp.fetch(PAGE_DASHBOARD).getContentText();
-    try { cache.put("page", page, 300); } catch (e) {}  // gardée 5 minutes
+    page = UrlFetchApp.fetch(PAGE_DASHBOARD + "?t=" + Date.now()).getContentText();  // « t » évite une copie périmée
+    try { cache.put("page", page, 60); } catch (e) {}  // gardée 1 minute
   }
   return HtmlService.createHtmlOutput(page)
     .setTitle("Mon dashboard")
