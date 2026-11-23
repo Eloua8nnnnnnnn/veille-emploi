@@ -80,7 +80,11 @@ function doPost(e) {
   if (demande.action === "ajouter") {
     const ligne = noms.map(nom => nom === "Date" && demande.valeurs.Date ? new Date(demande.valeurs.Date) : demande.valeurs[nom] || "");
     f.appendRow(ligne);
-    return reponse({ ok: true, ligne: f.getLastRow() });
+    const derniere = f.getLastRow();
+    // Candidature envoyée : l'offre n'a plus rien à faire dans la file « À préparer »
+    const enFile = demande.valeurs.Lien && lignesFile().find(l => l.Lien === demande.valeurs.Lien);
+    if (enFile) file().deleteRow(enFile.ligne);
+    return reponse({ ok: true, ligne: derniere });
   }
   if (demande.action === "modifier") {
     const index = noms.indexOf(demande.colonne);

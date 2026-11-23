@@ -687,6 +687,10 @@ async function ajouterDepuisOffre(o) {
     Poste: o.titre, Entreprise: o.entreprise, Date: new Date().toISOString().slice(0, 10),
     Contrat: contrat === "Non précisé" ? "" : contrat, Pays: o.pays, Lien: o.lien, Description: o.missions,
   }).catch(() => ({ erreur: "réseau" }));
+  if (!resultat.erreur && fileAttente[o.lien]) {  // le script l'a aussi retirée de la file « À préparer »
+    delete fileAttente[o.lien];
+    afficherOffres();
+  }
   alert(resultat.erreur ? "L'ajout à vos candidatures a échoué (" + resultat.erreur + ")." : "Ajouté à vos candidatures.");
 }
 
