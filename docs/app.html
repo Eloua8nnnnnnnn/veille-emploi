@@ -119,6 +119,8 @@
   .idee .actions-idee { flex-wrap: wrap; }
   .avec.choisi { background: var(--violet-fond); border-color: transparent; color: var(--violet); }
   .theatre { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; align-items: start; }
+  .barre-idees { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+  .bouton-idees { border: 0; border-radius: 999px; padding: 10px 18px; background: var(--violet-fond); color: var(--violet); font-size: 14px; font-weight: 500; }
   .theatre h3 { font-size: 15px; font-weight: 600; margin: 0; }
   .piece { border: 1px solid var(--bord); border-radius: 16px; padding: 12px 14px; margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
   .piece .titre-idee { font-size: 15px; font-weight: 500; }
@@ -234,7 +236,6 @@
       <div class="onglets-social" id="choix-social">
         <button data-vue="personnes" class="actif">Personnes <span class="compteur-onglet" id="nb-relances"></span></button>
         <button data-vue="sorties">Sorties</button>
-        <button data-vue="theatre">Théâtre</button>
       </div>
 
       <div id="vue-personnes">
@@ -255,6 +256,10 @@
       </div>
 
       <div id="vue-sorties" hidden>
+        <div class="barre-idees">
+          <button class="bouton-idees" id="plus-idees">Plus d'idées avec Claude</button>
+          <span class="discret">Nouvelles idées chaque lundi, pièces de théâtre le 1er et le 15.</span>
+        </div>
         <details class="carte-ajout"><summary>+ Ajouter une idée de sortie</summary>
           <form class="formulaire-ajout" id="ajout-activite">
             <label>Idée<input id="titre-activite" placeholder="Ex. expo à la Bourse de Commerce" maxlength="100"></label>
@@ -265,8 +270,6 @@
         </details>
         <div class="filtres-cat" id="categories"></div>
         <div id="activites"><div class="vide">Chargement…</div></div>
-      </div>
-
       <div class="theatre" id="vue-theatre" hidden>
         <div>
           <div class="bloc-titre"><h3>À voir</h3><span class="discret" id="nb-a-voir"></span></div>
@@ -286,6 +289,8 @@
           <div id="vues"></div>
         </div>
       </div>
+      </div>
+
     </section>
 
     <section class="page" id="page-autre"><div class="bientot-page" id="bientot"></div></section>
@@ -616,7 +621,7 @@ $("choix-social").addEventListener("click", e => {
   const b = e.target.closest("button[data-vue]");
   if (!b) return;
   document.querySelectorAll("#choix-social button").forEach(x => x.classList.toggle("actif", x === b));
-  ["personnes", "sorties", "theatre"].forEach(v => $("vue-" + v).hidden = b.dataset.vue !== v);
+  ["personnes", "sorties"].forEach(v => $("vue-" + v).hidden = b.dataset.vue !== v);
 });
 
 // ---------- Social ----------
@@ -668,8 +673,12 @@ function afficherSocial(d) {
   }).join("") : `<div class="vide">Ajoute les personnes que tu veux voir ou recontacter, et l'activité à faire ensemble.</div>`;
 
   const categories = [...new Set(d.activites.map(a => a.categorie))];
-  $("categories").innerHTML = categories.length > 1 ? ["", ...categories].map(c =>
-    `<button data-categorie="${echapper(c)}" class="${c === categorieChoisie ? "actif" : ""}">${c ? echapper(c) : "Toutes"}</button>`).join("") : "";
+  $("categories").innerHTML = ["", ...categories, "Théâtre"].map(c =>
+    `<button data-categorie="${echapper(c)}" class="${c === categorieChoisie ? "actif" : ""}">${c ? echapper(c) : "Toutes"}</button>`).join("");
+  const theatre = categorieChoisie === "Théâtre";
+  $("vue-theatre").hidden = !theatre;
+  $("activites").hidden = theatre;
+  $("ajout-activite").closest("details").hidden = theatre;
   const visibles = d.activites.filter(a => !categorieChoisie || a.categorie === categorieChoisie);
   const idee = a => `<div class="idee">
       <span class="cat ${CATEGORIES[a.categorie] || "c-bleu"}">${echapper(a.categorie)}</span>
@@ -724,6 +733,19 @@ $("activites").addEventListener("click", e => {
   if (s) actionSocial("supprimerActivite", s.dataset.supprimerActivite);
   if (e.target.id === "idees-depart") actionSocial("ajouterActivites", IDEES_DE_DEPART);
 });
+$("plus-idees").addEventListener("click", async () => {
+  const theatre = categorieChoisie === "Théâtre";
+  const commande = theatre ? "/sorties théâtre" : "/sorties" + (categorieChoisie ? " " + categorieChoisie.toLowerCase() : "");
+  let copie = true;
+  try { await navigator.clipboard.writeText(commande); } catch { copie = false; }
+  const message = copie ? `Commande « ${commande} » copiée : colle-la dans ta conversation Claude. Tu peux ajouter une envie, ex. « ce week-end, en extérieur ».`
+    : `Tape « ${commande} » dans ta conversation Claude.`;
+  let bandeau = $("message");
+  if (!bandeau) { bandeau = document.createElement("div"); bandeau.id = "message"; document.body.appendChild(bandeau); }
+  bandeau.textContent = message; bandeau.classList.add("visible");
+  clearTimeout(bandeau.minuteur); bandeau.minuteur = setTimeout(() => bandeau.classList.remove("visible"), 8000);
+});
+
 $("activites").addEventListener("change", e => {
   const choix = e.target.closest("select[data-avec]");
   if (choix) actionSocial("lierActivite", choix.dataset.avec, choix.value);
