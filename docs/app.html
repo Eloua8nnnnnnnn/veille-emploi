@@ -139,7 +139,7 @@
 const SITE = "https://eloua8nnnnnnnn.github.io/veille-emploi/";
 const DANS_GOOGLE = !!(window.google && google.script && google.script.run);
 const FICTIF = {
-  accueil: () => ({ candidatures: 12, file: [
+  accueil: () => ({ candidatures: 12, parEtat: { "Envoyé": 7, "Entretien": 2, "Refusé": 3 }, file: [
     { Entreprise: "Coast", Poste: "Business Operations Associate", Etat: "Prêt", CV: "#", Lettre: "#", Note: "CV et lettre en anglais" },
   ] }),
 };
@@ -214,6 +214,11 @@ async function chargerAccueil() {
     carte("c-creme", "sante", "Santé", "", "Rappels et rendez-vous");
   $("cartes").onclick = e => { const b = e.target.closest("button[data-page]"); if (b && b.dataset.page !== "accueil") ouvrir(b.dataset.page); };
 
+  if (donnees && !donnees.erreur) {
+    const etats = donnees.parEtat || {};
+    compteurs = { total: donnees.candidatures, envoyees: Object.entries(etats).filter(([etat]) => /envoy/i.test(etat)).reduce((n, [, v]) => n + v, 0) };
+    envoyerCompteurs();
+  }
   const file = donnees?.file || [];
   const prete = file.find(l => l.Etat === "Prêt");
   const enCours = file.filter(l => l.Etat === "En attente" || l.Etat === "En préparation").length;
@@ -226,9 +231,18 @@ async function chargerAccueil() {
        <div class="petit">Clique sur « Préparer ma candidature » dans Emploi.</div></div>`;
 }
 
+// Chiffres des candidatures transmis au module Emploi (il n'a pas d'accès direct au Google Sheet)
+let compteurs = null;
+function envoyerCompteurs() {
+  if (compteurs && $("cadre-emploi").contentWindow) $("cadre-emploi").contentWindow.postMessage({ compteursCandidatures: compteurs }, "*");
+}
+
 // Messages du module Emploi : sa hauteur (pour éviter une barre de défilement en double) et ses bandeaux
 window.addEventListener("message", e => {
-  if (e.data && e.data.hauteurEmploi) $("cadre-emploi").style.height = e.data.hauteurEmploi + "px";
+  if (e.data && e.data.hauteurEmploi) {
+    $("cadre-emploi").style.height = e.data.hauteurEmploi + "px";
+    envoyerCompteurs();
+  }
   if (e.data && e.data.message) {
     let bandeau = $("message");
     if (!bandeau) { bandeau = document.createElement("div"); bandeau.id = "message"; document.body.appendChild(bandeau); }

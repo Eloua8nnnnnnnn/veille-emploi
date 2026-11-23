@@ -100,7 +100,10 @@ function doGet() {
 // Fonctions appelées par la page (google.script.run) : chacune vérifie d'abord que c'est vous.
 function accueil() {
   verifierProprietaire();
-  return { candidatures: lignesCandidatures().length, file: lignesFile() };
+  const lignes = lignesCandidatures();
+  const parEtat = {};  // nombre de candidatures par état (Envoyé, Entretien…)
+  lignes.forEach(l => parEtat[l.Etat || "Sans état"] = (parEtat[l.Etat || "Sans état"] || 0) + 1);
+  return { candidatures: lignes.length, parEtat: parEtat, file: lignesFile() };
 }
 
 // ---------- 2. Entrée protégée par une clé (ancien tableau de bord, Claude) ----------
