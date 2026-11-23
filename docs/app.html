@@ -209,7 +209,7 @@ async function chargerAccueil() {
   const nouvelles = offres ? offres.offres.filter(o => o.pertinente && o.premiere_vue === offres.derniere_mise_a_jour).length : "?";
   $("cartes").innerHTML =
     carte("c-bleu", "accueil", "Ma journée", "", "La checklist arrive à la prochaine étape") +
-    carte("c-violet", "emploi", "Emploi", String(nouvelles), `nouvelles offres · ${donnees?.candidatures ?? "?"} candidatures`) +
+    carte("c-violet", "emploi", "Candidatures", String(donnees?.candidatures ?? "?"), `${nouvelles} nouvelle${nouvelles === 1 ? "" : "s"} offre${nouvelles === 1 ? "" : "s"} au dernier passage du robot`) +
     carte("c-vert", "social", "Social", "", "Relances et sorties") +
     carte("c-creme", "sante", "Santé", "", "Rappels et rendez-vous");
   $("cartes").onclick = e => { const b = e.target.closest("button[data-page]"); if (b && b.dataset.page !== "accueil") ouvrir(b.dataset.page); };
