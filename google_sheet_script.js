@@ -118,6 +118,19 @@ function cleValide(cle) {
   return false;
 }
 
+// En cas de souci de mot de passe : ouvrez ce script, choisissez « verifierMotDePasse » dans la liste en haut,
+// cliquez sur Exécuter, puis lisez le journal d'exécution. Le mot de passe n'est jamais affiché : seulement sa
+// longueur et son empreinte, à comparer avec celles que Claude calcule pour le fichier .env. Le blocage est levé.
+function verifierMotDePasse() {
+  const valeur = PropertiesService.getScriptProperties().getProperty("MOT_DE_PASSE") || "";
+  const empreinte = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, valeur, Utilities.Charset.UTF_8)
+    .map(o => ((o + 256) % 256).toString(16).padStart(2, "0")).join("").slice(0, 12);
+  const cache = CacheService.getScriptCache();
+  const echecs = cache.get("echecs") || 0;
+  cache.remove("echecs");
+  Logger.log("MOT_DE_PASSE : " + valeur.length + " caractères, empreinte " + empreinte + ". Essais ratés récents : " + echecs + " (remis à zéro).");
+}
+
 function doPost(e) {
   const demande = JSON.parse(e.postData.contents);
   if (!cleValide(demande.cle)) return reponse({ erreur: "Mot de passe incorrect (ou trop d'essais : réessayez dans 15 minutes)" });
