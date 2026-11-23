@@ -16,6 +16,9 @@ Utilisation :
   python3 cv_onglet.py maj LIEN ETAT [CV] [LETTRE] [NOTE]         → note l'avancement d'une offre dans la file
   python3 cv_onglet.py idees IDEES.json                           → ajoute des idées de sorties à la page Social du dashboard
                                                                     ([{titre, categorie, lieu, lien, quand, fin}], doublons ignorés)
+  python3 cv_onglet.py pieces                                     → pièces de théâtre (vues, à voir, recommandées, écartées)
+  python3 cv_onglet.py ajouter_pieces PIECES.json                 → ajoute des pièces ([{titre, statut, lieu, lien, vue, note,
+                                                                    pourquoi, jusqua}] ; statut « vue », « a_voir » ou « reco »)
 La file d'attente utilise SHEET_ADRESSE et SHEET_CLE du fichier .env (adresse et mot de passe du script Google Sheet).
 """
 import json
@@ -184,6 +187,12 @@ if __name__ == "__main__":
     elif commande == "idees" and len(sys.argv) == 3:
         with open(sys.argv[2], encoding="utf-8") as fichier:
             print(appel_file({"action": "ajouter_activites", "activites": json.load(fichier)}))
+    elif commande == "pieces":
+        print(json.dumps(appel_file({"action": "pieces"}).get("pieces", []), ensure_ascii=False, indent=1))
+    elif commande == "ajouter_pieces" and len(sys.argv) == 3:
+        with open(sys.argv[2], encoding="utf-8") as fichier:
+            pieces = json.load(fichier)
+        print(appel_file({"action": "ajouter_pieces", "pieces": pieces, "date": __import__("datetime").date.today().isoformat()}))
     elif commande == "lettre" and len(sys.argv) == 6:
         with open(sys.argv[2], encoding="utf-8") as fichier:
             document = json.load(fichier)

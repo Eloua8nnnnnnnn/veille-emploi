@@ -271,6 +271,56 @@ function supprimerActivite(id, date) {
   return social(date);
 }
 
+// ---------- Théâtre : pièces vues, à voir, et recommandations de Claude ----------
+// Statut : « vue », « a_voir », « reco » (proposée par Claude) ou « ecartee » (reco refusée : plus jamais reproposée)
+const pieces = () => onglet("Théâtre", ["Id", "Pièce", "Statut", "Théâtre", "Lien", "Vue le", "Note", "Pourquoi", "Jusqu'au", "Ajoutée le"]);
+const COLONNES_PIECES = ["id", "titre", "statut", "lieu", "lien", "vue", "note", "pourquoi", "jusqua", "ajoutee"];
+
+function listePieces() {
+  return lignes(pieces()).filter(l => l.valeurs[1]).map(l => {
+    const p = { ligne: l.ligne };
+    COLONNES_PIECES.forEach((nom, i) => p[nom] = l.valeurs[i] || "");
+    return p;
+  });
+}
+
+function theatre(date) {
+  verifierProprietaire();
+  // une recommandation dont la dernière date est passée n'est plus proposée
+  return { pieces: listePieces().filter(p => p.statut !== "ecartee" && !(p.statut === "reco" && p.jusqua && p.jusqua < date)) };
+}
+
+function enregistrerPieces(liste, date) {  // [{ titre, statut, lieu, lien, vue, pourquoi, jusqua }] ; ignore les doublons
+  const deja = listePieces().map(p => p.titre.toLowerCase());
+  const nouvelles = liste.filter(p => p.titre && !deja.includes(p.titre.toLowerCase()));
+  nouvelles.forEach((p, i) => pieces().appendRow([String(Date.now() + i), p.titre, p.statut || "a_voir", p.lieu || "", p.lien || "",
+    p.vue || "", p.note ? String(p.note) : "", p.pourquoi || "", p.jusqua || "", date || ""]));
+  return nouvelles.length;
+}
+
+function ajouterPiece(piece, date) {
+  verifierProprietaire();
+  enregistrerPieces([piece], date);
+  return theatre(date);
+}
+
+function changerPiece(id, champs, date) {  // champs : { statut, vue, note }
+  verifierProprietaire();
+  const p = listePieces().find(x => x.id === id);
+  if (p) Object.entries(champs).forEach(([nom, valeur]) => {
+    const i = COLONNES_PIECES.indexOf(nom);
+    if (i > 1) pieces().getRange(p.ligne, i + 1).setValue(String(valeur));
+  });
+  return theatre(date);
+}
+
+function supprimerPiece(id, date) {
+  verifierProprietaire();
+  const p = listePieces().find(x => x.id === id);
+  if (p) pieces().deleteRow(p.ligne);
+  return theatre(date);
+}
+
 // ---------- 2. Entrée protégée par une clé (ancien tableau de bord, Claude) ----------
 function reponse(donnees) {
   return ContentService.createTextOutput(JSON.stringify(donnees)).setMimeType(ContentService.MimeType.JSON);
@@ -306,6 +356,8 @@ function doPost(e) {
   if (demande.action === "lire") return reponse({ lignes: lignesCandidatures(), etats: choix("Etat"), contrats: choix("Contrat") });
   if (demande.action === "file") return reponse({ file: lignesFile() });
   if (demande.action === "ajouter_activites") return reponse({ ok: true, ajoutees: enregistrerActivites(demande.activites || []) });
+  if (demande.action === "pieces") return reponse({ pieces: listePieces() });  // pour les recommandations de Claude
+  if (demande.action === "ajouter_pieces") return reponse({ ok: true, ajoutees: enregistrerPieces(demande.pieces || [], demande.date || "") });
   const f = feuille();
   const noms = colonnes();
   if (demande.action === "ajouter") {
