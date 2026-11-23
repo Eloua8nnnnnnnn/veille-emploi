@@ -39,4 +39,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/offres.json startups_suivies.json
           git diff --staged --quiet || git commit -m "Mise à jour des offres du $(date +%d/%m/%Y)"
-          git push
+          # Si des changements ont été envoyés pendant que le robot travaillait, on les récupère avant d'envoyer
+          for essai in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            sleep 10
+          done
+          exit 1  # trois échecs : le passage est marqué en erreur sur GitHub
