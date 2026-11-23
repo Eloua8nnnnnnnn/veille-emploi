@@ -8,10 +8,19 @@ et les marges dans l'onglet cible. Claude envoie ensuite ces modifications à Go
 Utilisation :
   python3 cv_onglet.py dernier DOCUMENT.json                      → identifiant et nom du dernier onglet (le CV le plus récent)
   python3 cv_onglet.py copier DOCUMENT.json SOURCE CIBLE > r.json → requêtes qui recopient l'onglet SOURCE dans CIBLE
+  python3 cv_onglet.py lettre DOCUMENT.json SOURCE CIBLE TEXTE.txt → requêtes qui écrivent la lettre TEXTE.txt dans l'onglet CIBLE,
+                                                                    avec la mise en page de la lettre SOURCE (paragraphes séparés par
+                                                                    une ligne vide ; un simple retour à la ligne reste dans le paragraphe)
   .venv/bin/python cv_onglet.py annonce LIEN                      → texte d'une annonce (navigateur automatisé, pour les sites en JavaScript)
+  python3 cv_onglet.py file                                       → offres de la file d'attente « À préparer » (Google Sheet)
+  python3 cv_onglet.py maj LIEN ETAT [CV] [LETTRE] [NOTE]         → note l'avancement d'une offre dans la file
+La file d'attente utilise SHEET_ADRESSE et SHEET_CLE du fichier .env (adresse et mot de passe du script Google Sheet).
 """
 import json
+import os
 import sys
+import urllib.parse
+import urllib.request
 
 
 def trouver_onglet(onglets, identifiant):
@@ -100,6 +109,57 @@ def requetes_copie(document, source, cible):
     return requetes
 
 
+def requetes_lettre(document, source, cible, texte):
+    """Écrit une nouvelle lettre dans l'onglet cible, avec l'espacement, les marges et les liens de la lettre source."""
+    document = document.get("content", document)
+    onglet = trouver_onglet(document["tabs"], source)
+    if not onglet:
+        sys.exit(f"Onglet {source} introuvable")
+    paragraphes = [e["paragraph"] for e in onglet["documentTab"]["body"]["content"] if "paragraph" in e]
+    blocs = [b.strip().replace("\n", "\u000b") for b in texte.strip().split("\n\n") if b.strip()]
+    contenu = "\n".join(blocs)
+    fin = 1 + len(contenu.encode("utf-16-le")) // 2
+    plage = {"startIndex": 1, "endIndex": fin + 1, "tabId": cible}
+    style = {k: v for k, v in paragraphes[0]["paragraphStyle"].items() if k not in ("headingId", "direction", "tabStops", "namedStyleType")}
+    requetes = [{"insertText": {"location": {"index": 1, "tabId": cible}, "text": contenu}}]
+    if style:
+        requetes.append({"updateParagraphStyle": {"range": plage, "paragraphStyle": style, "fields": ",".join(style)}})
+    # Les morceaux de texte qui portent un lien dans la lettre source (ex. LinkedIn) gardent leur lien
+    for p in paragraphes:
+        for m in p["elements"]:
+            morceau = m.get("textRun", {})
+            if morceau.get("textStyle", {}).get("link") and morceau["content"].strip() in contenu:
+                debut = 1 + len(contenu[:contenu.index(morceau["content"].strip())].encode("utf-16-le")) // 2
+                longueur = len(morceau["content"].strip().encode("utf-16-le")) // 2
+                requetes.append({"updateTextStyle": {"range": {"startIndex": debut, "endIndex": debut + longueur, "tabId": cible},
+                                                     "textStyle": morceau["textStyle"], "fields": ",".join(morceau["textStyle"])}})
+    page = onglet["documentTab"].get("documentStyle", {})
+    champs = [c for c in ("marginTop", "marginBottom", "marginLeft", "marginRight", "pageSize") if c in page]
+    if champs:
+        requetes.append({"updateDocumentStyle": {"tabId": cible, "documentStyle": {c: page[c] for c in champs}, "fields": ",".join(champs)}})
+    return requetes
+
+
+def appel_file(donnees=None):
+    """Lit (sans données) ou modifie (avec données) la file d'attente du script Google Sheet."""
+    cles = {}
+    chemin = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if os.path.exists(chemin):
+        for ligne in open(chemin, encoding="utf-8"):
+            if "=" in ligne and not ligne.startswith("#"):
+                cle, valeur = ligne.split("=", 1)
+                cles[cle.strip()] = valeur.strip()
+    adresse, mot_de_passe = cles.get("SHEET_ADRESSE"), cles.get("SHEET_CLE")
+    if not adresse or not mot_de_passe:
+        sys.exit("Ajoute SHEET_ADRESSE et SHEET_CLE dans le fichier .env")
+    if donnees is None:
+        requete = urllib.request.Request(adresse + "?" + urllib.parse.urlencode({"cle": mot_de_passe, "action": "file"}))
+    else:
+        requete = urllib.request.Request(adresse, data=json.dumps({"cle": mot_de_passe, **donnees}).encode(), method="POST")
+    with urllib.request.urlopen(requete, timeout=60) as reponse:
+        return json.loads(reponse.read().decode())
+
+
 def texte_annonce(lien):
     from playwright.sync_api import sync_playwright
     with sync_playwright() as p:
@@ -114,7 +174,21 @@ def texte_annonce(lien):
 
 if __name__ == "__main__":
     commande = sys.argv[1] if len(sys.argv) > 1 else ""
-    if commande == "annonce" and len(sys.argv) == 3:
+    if commande == "file":
+        resultat = appel_file()
+        if "file" not in resultat:  # mot de passe refusé, ou ancienne version du script Google
+            sys.exit(f"File d'attente illisible : {resultat.get('erreur', 'le script Google n est pas à jour (nouvelle version à déployer)')}")
+        print(json.dumps(resultat["file"], ensure_ascii=False, indent=1))
+    elif commande == "maj" and len(sys.argv) >= 4:
+        valeurs = dict(zip(["Etat", "CV", "Lettre", "Note"], sys.argv[3:]))
+        print(appel_file({"action": "maj_file", "lien": sys.argv[2], "valeurs": valeurs}))
+    elif commande == "lettre" and len(sys.argv) == 6:
+        with open(sys.argv[2], encoding="utf-8") as fichier:
+            document = json.load(fichier)
+        with open(sys.argv[5], encoding="utf-8") as fichier:
+            texte = fichier.read()
+        print(json.dumps(requetes_lettre(document, sys.argv[3], sys.argv[4], texte), ensure_ascii=False, separators=(",", ":")))
+    elif commande == "annonce" and len(sys.argv) == 3:
         print(texte_annonce(sys.argv[2]))
     elif commande in ("dernier", "copier") and len(sys.argv) >= 3:
         with open(sys.argv[2], encoding="utf-8") as fichier:

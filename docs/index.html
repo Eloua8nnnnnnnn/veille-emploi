@@ -132,6 +132,8 @@
   .titre { font-weight: 500; font-size: 16px; color: var(--texte); text-decoration: none; }
   .titre:hover { text-decoration: underline; }
   .meta { color: var(--discret); font-size: 13px; margin: 6px 0 10px; }
+  .preparation { font-size: 13px; margin: -4px 0 14px; padding: 10px 16px; border-radius: 18px; background: var(--surface); color: var(--texte); }
+  .preparation a { color: var(--accent); font-weight: 500; }
   .avis { color: var(--discret); font-size: 13px; margin: 8px 0 14px; padding: 12px 16px; border-radius: 18px;
           box-shadow: var(--ombre-creux); }
   .actions { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -376,6 +378,30 @@ async function chargerOffres() {
   $("h-retenues").textContent = donnees.offres.filter(o => o.pertinente && joursDepuis(o.date_publication) <= JOURS_MAX).length;
   $("h-nouvelles").textContent = nouvelles;
   afficherOffres();
+  chargerFile();
+}
+
+// ---------- File d'attente « Préparer ma candidature » (onglet « À préparer » du Google Sheet) ----------
+let fileAttente = {};  // lien de l'offre → ligne de la file (Etat, CV, Lettre)
+async function chargerFile() {
+  if (!connexion) return;
+  try {
+    const resultat = await appelSheet("GET", { action: "file" });
+    if (resultat.file) {
+      fileAttente = Object.fromEntries(resultat.file.map(l => [l.Lien, l]));
+      afficherOffres();
+    }
+  } catch {}
+}
+
+function etatPreparation(o) {
+  const l = fileAttente[o.lien];
+  if (!l) return "";
+  const liens = [l.CV && `<a href="${echapper(l.CV)}" target="_blank" rel="noopener">CV</a>`,
+                 l.Lettre && `<a href="${echapper(l.Lettre)}" target="_blank" rel="noopener">Lettre</a>`].filter(Boolean).join(" · ");
+  const texte = l.Etat === "Prêt" ? `✓ Candidature prête : ${liens}` : l.Etat === "Erreur" ? `Préparation impossible : ${echapper(l.Note)}`
+    : l.Etat === "En préparation" ? "Claude prépare le CV et la lettre…" : "En attente : Claude s'en occupe à son prochain passage (toutes les heures).";
+  return `<div class="preparation">${texte}${l.Etat === "Prêt" && l.Note ? `<br><small>${echapper(l.Note)}</small>` : ""}</div>`;
 }
 
 function offresDuVolet() {
@@ -451,6 +477,7 @@ function carteOffre(o) {
     <div class="meta">${[o.entreprise, o.lieu, "Expérience : " + o.experience_demandee, "publiée le " + dateFr(o.date_publication)].map(echapper).join(" · ")}</div>
     <div>${echapper(o.missions)}</div>
     <div class="avis">Avis de Claude : ${echapper(o.raison)}</div>
+    ${etatPreparation(o)}
     <div class="actions">
       ${bouton("interessante", "Intéressante")}${bouton("postule", "J'ai postulé")}
       ${statut === "ignoree" ? `<button class="bouton" data-lien="${echapper(o.lien)}" data-statut="ignoree">Remettre dans la liste</button>` : bouton("ignoree", "Pas pour moi")}
@@ -476,12 +503,26 @@ function afficherMessage(texte) {  // bandeau en bas de l'écran, quelques secon
 $("liste-offres").addEventListener("click", async e => {
   const candidature = e.target.closest("button[data-candidature]");
   if (candidature) {  // copie la commande à coller dans Claude, qui prépare le CV et la lettre
-    const commande = `/candidature ${candidature.dataset.candidature}`;
-    try {
-      await navigator.clipboard.writeText(commande);
-      candidature.textContent = "Commande copiée ✓";
-      afficherMessage("Commande copiée. Colle-la dans ta conversation Claude (onglet Code) : Claude prépare le CV et la lettre.");
-    } catch { prompt("Copiez cette commande et collez-la dans votre conversation Claude :", commande); }
+    const lien = candidature.dataset.candidature;
+    const commande = `/candidature ${lien}`;
+    let copie = true;
+    try { await navigator.clipboard.writeText(commande); } catch { copie = false; }
+    candidature.textContent = "Demande envoyée ✓";
+    if (connexion) {  // ajoute l'offre à la file : Claude la préparera à son prochain passage
+      const o = donnees.offres.find(x => x.lien === lien);
+      const pays = o.pays || "";
+      const resultat = await appelSheet("POST", { action: "preparer", offre: {
+        Entreprise: o.entreprise, Poste: o.titre, Lien: o.lien, Volet: o.volet, Pays: pays, Contrat: o.type_contrat } }).catch(() => ({ erreur: "réseau" }));
+      if (!resultat.erreur) {
+        fileAttente[lien] = fileAttente[lien] || { Lien: lien, Etat: "En attente" };
+        afficherOffres();
+      }
+      afficherMessage(resultat.erreur ? "La file d'attente n'a pas répondu (" + resultat.erreur + "). " + (copie ? "La commande est copiée : colle-la dans Claude." : "")
+        : "C'est noté : Claude le préparera dans l'heure. Pressé ? " + (copie ? "Colle la commande copiée dans ta conversation Claude." : "Tape " + commande + " dans Claude."));
+    } else {
+      afficherMessage("Commande copiée. Colle-la dans ta conversation Claude. (Relie ton Google Sheet dans « Mes candidatures » pour que Claude le fasse tout seul.)");
+      if (!copie) prompt("Copiez cette commande et collez-la dans votre conversation Claude :", commande);
+    }
     setTimeout(() => candidature.textContent = "Préparer ma candidature", 4000);
     return;
   }
@@ -509,7 +550,8 @@ let connexion = lireLocal("google_sheet", null);
 
 async function appelSheet(methode, contenu) {
   if (methode === "GET") {
-    const reponse = await fetch(`${connexion.adresse}?cle=${encodeURIComponent(connexion.cle)}`);
+    const parametres = new URLSearchParams({ cle: connexion.cle, ...(contenu || {}) });
+    const reponse = await fetch(`${connexion.adresse}?${parametres}`);
     return reponse.json();
   }
   // Envoi en texte brut : c'est ce qu'accepte Google Apps Script depuis une autre page
