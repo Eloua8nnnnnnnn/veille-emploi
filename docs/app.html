@@ -94,7 +94,31 @@
   .ajout input { flex: 1; min-width: 0; font: inherit; font-size: 14px; color: var(--texte); background: none; border: 1px solid var(--bord); border-radius: 999px; padding: 9px 14px; outline: none; }
   .ajout input:focus { border-color: var(--violet-moyen); }
   .ajout button { border: 0; border-radius: 999px; padding: 0 16px; background: var(--barre); color: #fff; font-size: 13px; }
-  .theatre { display: flex; flex-direction: column; gap: 22px; margin-top: 8px; }
+  .onglets-social { display: flex; gap: 4px; padding: 5px; border: 1px solid var(--bord); border-radius: 999px; margin-bottom: 20px; }
+  .onglets-social button { flex: 1; border: 0; background: none; border-radius: 999px; padding: 10px 12px; font-size: 14px; font-weight: 500; color: var(--discret); }
+  .onglets-social button.actif { background: var(--barre); color: #fff; }
+  .compteur-onglet:not(:empty) { margin-left: 4px; font-size: 11px; padding: 1px 7px; border-radius: 999px; background: var(--creme-fond); color: var(--creme); }
+  .carte-ajout { border: 1px dashed var(--bord); border-radius: 18px; padding: 12px 16px; margin-bottom: 16px; }
+  .carte-ajout summary { cursor: pointer; font-size: 14px; font-weight: 500; color: var(--violet-moyen); list-style: none; }
+  .carte-ajout summary::-webkit-details-marker { display: none; }
+  .formulaire-ajout { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr auto; gap: 10px; align-items: end; margin-top: 12px; }
+  .formulaire-ajout label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: var(--discret); }
+  .formulaire-ajout input, .formulaire-ajout select { font: inherit; font-size: 14px; color: var(--texte); background: none; border: 1px solid var(--bord);
+    border-radius: 12px; padding: 9px 12px; outline: none; }
+  .formulaire-ajout input:focus, .formulaire-ajout select:focus { border-color: var(--violet-moyen); }
+  .formulaire-ajout button { border: 0; border-radius: 999px; padding: 11px 20px; background: var(--barre); color: #fff; font-size: 14px; }
+  .grille-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
+  .personne { border: 1px solid var(--bord); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .personne .haut { display: flex; align-items: center; gap: 12px; }
+  .personne .nom-personne { font-size: 15px; font-weight: 600; }
+  .personne .haut .badge-relance { margin-left: auto; }
+  .personne .rangee { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--discret); flex-wrap: wrap; }
+  .personne .prevue { font-size: 13px; background: var(--violet-fond); color: var(--violet); border-radius: 12px; padding: 8px 12px; }
+  .personne .actions-idee { margin-top: auto; }
+  .avec { font: inherit; font-size: 12px; color: var(--texte); background: none; border: 1px solid var(--bord); border-radius: 999px; padding: 6px 10px; flex-basis: 100%; }
+  .idee .actions-idee { flex-wrap: wrap; }
+  .avec.choisi { background: var(--violet-fond); border-color: transparent; color: var(--violet); }
+  .theatre { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; align-items: start; }
   .theatre h3 { font-size: 15px; font-weight: 600; margin: 0; }
   .piece { border: 1px solid var(--bord); border-radius: 16px; padding: 12px 14px; margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
   .piece .titre-idee { font-size: 15px; font-weight: 500; }
@@ -105,12 +129,11 @@
   .etoiles { display: flex; gap: 2px; }
   .etoiles button { border: 0; background: none; padding: 0 1px; font-size: 18px; line-height: 1; color: var(--bord); }
   .etoiles button.pleine { color: #ef9f27; }
-  .social { display: grid; grid-template-columns: 1fr 1.3fr; gap: 26px; align-items: start; }
   .initiales { width: 34px; height: 34px; flex: none; border-radius: 50%; background: var(--vert-fond); color: var(--vert); display: grid; place-items: center; font-size: 13px; font-weight: 600; }
   .detail-contact { font-size: 12px; color: var(--discret); }
   .activite { border: 0; margin-left: 6px; font-size: 11px; padding: 2px 9px; border-radius: 999px; background: var(--vert-fond); color: var(--vert); vertical-align: 1px; }
   .activite.vide-activite { background: none; color: var(--discret); padding: 2px 4px; }
-  .ajout .champ-court { flex: 0.8; }
+  .activite { font-size: 12px; padding: 3px 10px; }
   .badge-relance { font-size: 11px; padding: 3px 10px; border-radius: 999px; white-space: nowrap; background: var(--creme-fond); color: var(--creme); }
   .badge-ok { background: var(--vert-fond); color: var(--vert); }
   .petit-bouton { border: 1px solid var(--bord); background: none; border-radius: 999px; padding: 5px 12px; font-size: 12px; white-space: nowrap; }
@@ -128,11 +151,9 @@
   .idee a { font-size: 12px; color: var(--violet-moyen); }
   .cat { font-size: 11px; padding: 2px 9px; border-radius: 999px; align-self: flex-start; }
   details.faites summary { cursor: pointer; font-size: 13px; color: var(--discret); margin: 14px 0 8px; }
-  @media (max-width: 1100px) { .social { grid-template-columns: 1fr; } }
+  @media (max-width: 1100px) { .theatre { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) { .formulaire-ajout { grid-template-columns: 1fr; } .onglets-social button { padding: 9px 6px; font-size: 13px; } }
   @media (max-width: 760px) {
-    #contacts .ligne { flex-wrap: wrap; row-gap: 8px; }
-    #contacts .nom { flex-basis: calc(100% - 46px); }
-    #contacts .badge-relance { margin-left: 46px; }
     .ajout { flex-wrap: wrap; }
     .ajout input { flex-basis: 100%; }
     .ajout select { flex: 1; min-height: 38px; }
@@ -210,37 +231,43 @@
 
     <section class="page" id="page-emploi"><iframe id="cadre-emploi" title="Offres d'emploi" loading="lazy"></iframe></section>
     <section class="page" id="page-social">
-      <div class="social">
-        <div class="bloc">
-          <div class="bloc-titre"><h2>À recontacter</h2><span class="discret" id="nb-relances"></span></div>
-          <div id="contacts"><div class="vide">Chargement…</div></div>
-          <form class="ajout" id="ajout-contact">
-            <input id="nom-contact" placeholder="Prénom ou nom" maxlength="60">
-            <input id="activite-contact" class="champ-court" placeholder="Activité (facultatif), ex. running" maxlength="60">
-            <select id="frequence-contact" aria-label="Fréquence">
+      <div class="onglets-social" id="choix-social">
+        <button data-vue="personnes" class="actif">Personnes <span class="compteur-onglet" id="nb-relances"></span></button>
+        <button data-vue="sorties">Sorties</button>
+        <button data-vue="theatre">Théâtre</button>
+      </div>
+
+      <div id="vue-personnes">
+        <details class="carte-ajout"><summary>+ Ajouter une personne</summary>
+          <form class="formulaire-ajout" id="ajout-contact">
+            <label>Nom<input id="nom-contact" placeholder="Ex. Benjamin France TV" maxlength="60"></label>
+            <label>Activité à faire ensemble<input id="activite-contact" placeholder="Ex. running, ciné, un verre" maxlength="60"></label>
+            <label>Rappel<select id="frequence-contact">
               <option value="0" selected>Juste y penser</option>
               <option value="7">Chaque semaine</option><option value="14">Toutes les 2 semaines</option>
               <option value="30">Chaque mois</option><option value="60">Tous les 2 mois</option>
               <option value="90">Tous les 3 mois</option><option value="180">Tous les 6 mois</option>
-            </select>
+            </select></label>
             <button>Ajouter</button>
           </form>
-        </div>
-        <div class="bloc">
-          <div class="bloc-titre"><h2>Sorties à Paris</h2>
-            <div class="segments" id="choix-sorties"><button data-vue="sorties" class="actif">Sorties</button><button data-vue="theatre">Théâtre</button></div>
-          </div>
-          <div id="vue-sorties">
-          <div class="filtres-cat" id="categories"></div>
-          <div id="activites"><div class="vide">Chargement…</div></div>
-          <form class="ajout ajout-activite" id="ajout-activite">
-            <input id="titre-activite" placeholder="Nouvelle idée, ex. expo à la Bourse de Commerce" maxlength="100">
-            <select id="categorie-activite" aria-label="Catégorie"></select>
-            <input id="lieu-activite" placeholder="Lieu (facultatif)" maxlength="60">
+        </details>
+        <div class="grille-cartes" id="contacts"><div class="vide">Chargement…</div></div>
+      </div>
+
+      <div id="vue-sorties" hidden>
+        <details class="carte-ajout"><summary>+ Ajouter une idée de sortie</summary>
+          <form class="formulaire-ajout" id="ajout-activite">
+            <label>Idée<input id="titre-activite" placeholder="Ex. expo à la Bourse de Commerce" maxlength="100"></label>
+            <label>Catégorie<select id="categorie-activite"></select></label>
+            <label>Lieu (facultatif)<input id="lieu-activite" placeholder="Ex. Paris 1er" maxlength="60"></label>
             <button>Ajouter</button>
           </form>
-          </div>
-          <div class="theatre" id="vue-theatre" hidden>
+        </details>
+        <div class="filtres-cat" id="categories"></div>
+        <div id="activites"><div class="vide">Chargement…</div></div>
+      </div>
+
+      <div class="theatre" id="vue-theatre" hidden>
         <div>
           <div class="bloc-titre"><h3>À voir</h3><span class="discret" id="nb-a-voir"></span></div>
           <div id="a-voir"></div>
@@ -257,8 +284,6 @@
         <div>
           <div class="bloc-titre"><h3>Déjà vues</h3><span class="discret" id="nb-vues"></span></div>
           <div id="vues"></div>
-        </div>
-
         </div>
       </div>
     </section>
@@ -312,6 +337,7 @@ const FICTIF = {
   supprimerContact: (nom, date) => { FAUX_SOCIAL.contacts = FAUX_SOCIAL.contacts.filter(c => c.nom !== nom); return fauxSocial(date); },
   ajouterActivites: (liste, date) => { liste.forEach((a, i) => FAUX_SOCIAL.activites.push({ id: String(Date.now() + i), faite: "", ...a })); return fauxSocial(date); },
   activiteFaite: (id, faite, date) => { FAUX_SOCIAL.activites.find(a => a.id === id).faite = faite ? date : ""; return fauxSocial(date); },
+  lierActivite: (id, nom, date) => { FAUX_SOCIAL.activites.find(a => a.id === id).avec = nom; return fauxSocial(date); },
   supprimerActivite: (id, date) => { FAUX_SOCIAL.activites = FAUX_SOCIAL.activites.filter(a => a.id !== id); return fauxSocial(date); },
   journee: (date) => fauxJour(date),
   cocherHabitude: (date, nom, faite) => { if (faite) FAUX.journal[date + "|" + nom] = true; else delete FAUX.journal[date + "|" + nom]; return fauxJour(date); },
@@ -586,12 +612,11 @@ $("ajout-piece").addEventListener("submit", e => {
   $("titre-piece").value = "";
 });
 
-$("choix-sorties").addEventListener("click", e => {
+$("choix-social").addEventListener("click", e => {
   const b = e.target.closest("button[data-vue]");
   if (!b) return;
-  document.querySelectorAll("#choix-sorties button").forEach(x => x.classList.toggle("actif", x === b));
-  $("vue-sorties").hidden = b.dataset.vue !== "sorties";
-  $("vue-theatre").hidden = b.dataset.vue !== "theatre";
+  document.querySelectorAll("#choix-social button").forEach(x => x.classList.toggle("actif", x === b));
+  ["personnes", "sorties", "theatre"].forEach(v => $("vue-" + v).hidden = b.dataset.vue !== v);
 });
 
 // ---------- Social ----------
@@ -624,18 +649,23 @@ function texteContact(c) {
 function afficherSocial(d) {
   donneesSocial = d;
   const aRelancer = d.contacts.filter(c => c.retard >= 0).length;
-  $("nb-relances").textContent = aRelancer ? `${aRelancer} à relancer` : "";
-  $("contacts").innerHTML = d.contacts.length ? d.contacts.map(c => `
-    <div class="ligne">
-      <span class="initiales">${echapper(initiales(c.nom))}</span>
-      <span class="nom">${echapper(c.nom)}
-        <button class="activite ${c.note?.trim() ? "" : "vide-activite"}" data-activite="${echapper(c.nom)}" data-frequence="${c.frequence}" title="Modifier l'activité">${c.note?.trim() ? echapper(c.note.trim()) : "+ activité"}</button>
-        <br><span class="detail-contact">${texteContact(c)}</span></span>
-      ${c.retard >= 0 ? `<span class="badge-relance">${c.frequence ? "À relancer" : "À contacter"}</span>`
-        : c.frequence ? `<span class="badge-relance badge-ok">dans ${-c.retard} j</span>` : `<span class="badge-relance badge-ok">Fait</span>`}
-      ${c.frequence || c.retard >= 0 ? `<button class="petit-bouton" data-contacte="${echapper(c.nom)}">Contacté</button>` : ""}
-      <button class="retirer" data-supprimer-contact="${echapper(c.nom)}" aria-label="Supprimer ${echapper(c.nom)}">×</button>
-    </div>`).join("") : `<div class="vide">Ajoute les personnes avec qui tu veux garder le lien, et à quelle fréquence.</div>`;
+  $("nb-relances").textContent = aRelancer ? String(aRelancer) : "";
+  $("contacts").innerHTML = d.contacts.length ? d.contacts.map(c => {
+    const prevues = d.activites.filter(a => a.avec === c.nom && !a.faite);
+    const activite = c.note?.trim() || "";
+    return `<div class="personne">
+      <div class="haut"><span class="initiales">${echapper(initiales(c.nom))}</span>
+        <div><div class="nom-personne">${echapper(c.nom)}</div><div class="detail-contact">${texteContact(c)}</div></div>
+        ${c.retard >= 0 ? `<span class="badge-relance">${c.frequence ? "À relancer" : "À contacter"}</span>`
+          : `<span class="badge-relance badge-ok">${c.frequence ? "dans " + (-c.retard) + " j" : "Fait"}</span>`}</div>
+      <div class="rangee">Activité :
+        <button class="activite ${activite ? "" : "vide-activite"}" data-activite="${echapper(c.nom)}" data-frequence="${c.frequence}">${activite ? echapper(activite) : "+ ajouter"}</button></div>
+      ${prevues.map(a => `<div class="prevue">Prévu ensemble : ${echapper(a.titre)}${a.quand ? " · " + echapper(a.quand) : ""}</div>`).join("")}
+      <div class="actions-idee">
+        ${c.frequence || c.retard >= 0 ? `<button class="petit-bouton" data-contacte="${echapper(c.nom)}">Contacté</button>` : ""}
+        <button class="retirer" data-supprimer-contact="${echapper(c.nom)}" aria-label="Supprimer ${echapper(c.nom)}">×</button>
+      </div></div>`;
+  }).join("") : `<div class="vide">Ajoute les personnes que tu veux voir ou recontacter, et l'activité à faire ensemble.</div>`;
 
   const categories = [...new Set(d.activites.map(a => a.categorie))];
   $("categories").innerHTML = categories.length > 1 ? ["", ...categories].map(c =>
@@ -646,6 +676,9 @@ function afficherSocial(d) {
       <span class="titre-idee">${echapper(a.titre)}</span>
       ${a.lieu || a.quand ? `<span class="detail-contact">${echapper([a.lieu, a.quand].filter(Boolean).join(" · "))}</span>` : ""}
       <div class="actions-idee">
+        <select class="avec ${a.avec ? "choisi" : ""}" data-avec="${echapper(a.id)}" aria-label="Avec qui ?">
+          <option value="">Avec qui ?</option>${d.contacts.map(c => `<option ${c.nom === a.avec ? "selected" : ""}>${echapper(c.nom)}</option>`).join("")}
+        </select>
         <button class="petit-bouton" data-faite="${echapper(a.id)}" data-etat="${a.faite ? 1 : 0}">${a.faite ? "Refaire" : "C'est fait"}</button>
         ${a.lien ? `<a href="${echapper(a.lien)}" target="_blank" rel="noopener">Voir</a>` : ""}
         <button class="retirer" data-supprimer-activite="${echapper(a.id)}" aria-label="Supprimer">×</button>
@@ -691,6 +724,10 @@ $("activites").addEventListener("click", e => {
   if (s) actionSocial("supprimerActivite", s.dataset.supprimerActivite);
   if (e.target.id === "idees-depart") actionSocial("ajouterActivites", IDEES_DE_DEPART);
 });
+$("activites").addEventListener("change", e => {
+  const choix = e.target.closest("select[data-avec]");
+  if (choix) actionSocial("lierActivite", choix.dataset.avec, choix.value);
+});
 $("categories").addEventListener("click", e => {
   const b = e.target.closest("[data-categorie]");
   if (b) { categorieChoisie = b.dataset.categorie; afficherSocial(donneesSocial); }
@@ -700,6 +737,7 @@ $("ajout-contact").addEventListener("submit", e => {
   const nom = $("nom-contact").value.trim();
   if (nom) {
     actionSocial("ajouterContact", nom, $("frequence-contact").value, $("activite-contact").value.trim());
+    $("ajout-contact").closest("details").open = false;
     $("nom-contact").value = ""; $("activite-contact").value = "";
   }
 });
@@ -708,6 +746,7 @@ $("ajout-activite").addEventListener("submit", e => {
   const titre = $("titre-activite").value.trim();
   if (!titre) return;
   actionSocial("ajouterActivites", [{ titre, categorie: $("categorie-activite").value, lieu: $("lieu-activite").value.trim() }]);
+  $("ajout-activite").closest("details").open = false;
   $("titre-activite").value = ""; $("lieu-activite").value = "";
 });
 

@@ -201,7 +201,8 @@ function supprimerTache(id, date) {
 // ---------- Social : personnes à recontacter et idées de sorties ----------
 const contacts = () => onglet("Contacts", ["Nom", "Tous les (jours)", "Dernier contact", "Note"]);
 // « Quand » : texte libre (ex. « jusqu'au 4 janv. ») ; « Fin » : date AAAA-MM-JJ après laquelle l'idée n'est plus proposée
-const activites = () => onglet("Activités", ["Id", "Activité", "Catégorie", "Lieu", "Lien", "Faite le", "Quand", "Fin"]);
+// « Avec » : la personne avec qui faire cette sortie (nom tel qu'il est dans l'onglet Contacts)
+const activites = () => onglet("Activités", ["Id", "Activité", "Catégorie", "Lieu", "Lien", "Faite le", "Quand", "Fin", "Avec"]);
 
 function joursEntre(debut, fin) {
   return Math.round((new Date(fin + "T12:00:00") - new Date(debut + "T12:00:00")) / 86400000);
@@ -218,7 +219,7 @@ function social(date) {
   }).sort((a, b) => b.retard - a.retard);
   const idees = lignes(activites()).filter(l => l.valeurs[1] && (l.valeurs[5] || !l.valeurs[7] || l.valeurs[7] >= date)).map(l =>
     ({ id: l.valeurs[0], titre: l.valeurs[1], categorie: l.valeurs[2], lieu: l.valeurs[3], lien: l.valeurs[4], faite: l.valeurs[5],
-       quand: l.valeurs[6] || "", fin: l.valeurs[7] || "" }));
+       quand: l.valeurs[6] || "", fin: l.valeurs[7] || "", avec: l.valeurs[8] || "" }));
   return { contacts: liste, activites: idees };
 }
 
@@ -262,6 +263,13 @@ function activiteFaite(id, faite, date) {
   verifierProprietaire();
   const l = lignes(activites()).find(x => x.valeurs[0] === id);
   if (l) activites().getRange(l.ligne, 6).setValue(faite ? date : "");
+  return social(date);
+}
+
+function lierActivite(id, nom, date) {  // « Avec qui ? » : nom vide pour retirer le lien
+  verifierProprietaire();
+  const l = lignes(activites()).find(x => x.valeurs[0] === id);
+  if (l) activites().getRange(l.ligne, 9).setValue(nom || "");
   return social(date);
 }
 
