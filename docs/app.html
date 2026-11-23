@@ -84,7 +84,10 @@
   .page { display: none; }
   .page.visible { display: block; }
   .bientot-page { border-radius: 20px; padding: 28px; text-align: center; }
-  iframe { width: 100%; height: calc(100vh - 150px); border: 0; border-radius: 18px; }
+  iframe { width: 100%; height: 900px; border: 0; display: block; }
+  #message { position: fixed; left: 16px; right: 16px; bottom: 24px; max-width: 520px; margin: 0 auto; padding: 14px 18px; border-radius: 16px; z-index: 10;
+    background: var(--barre); color: #eeedfe; font-size: 14px; opacity: 0; transform: translateY(10px); transition: opacity .2s, transform .2s; pointer-events: none; }
+  #message.visible { opacity: 1; transform: none; }
 
   /* Téléphone : une colonne, barre de navigation en bas */
   @media (max-width: 760px) {
@@ -100,7 +103,7 @@
     .cartes { grid-template-columns: 1fr 1fr; gap: 10px; }
     .carte { min-height: 112px; padding: 14px; }
     .bas { grid-template-columns: 1fr; }
-    iframe { height: calc(100vh - 210px); }
+    #message { bottom: calc(96px + env(safe-area-inset-bottom)); }
   }
 </style>
 </head>
@@ -178,7 +181,7 @@ function ouvrir(id) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("visible"));
   if (module.id === "accueil") $("page-accueil").classList.add("visible");
   else if (module.id === "emploi") {
-    if (!$("cadre-emploi").src) $("cadre-emploi").src = DANS_GOOGLE ? SITE : "index.html";
+    if (!$("cadre-emploi").src) $("cadre-emploi").src = (DANS_GOOGLE ? SITE : "index.html") + "?integre";
     $("page-emploi").classList.add("visible");
   } else {
     $("bientot").innerHTML = `<h2>${echapper(module.nom)} arrive bientôt</h2><div class="discret">${echapper(module.texte)}</div>`;
@@ -221,6 +224,19 @@ async function chargerAccueil() {
     : `<div><div class="petit">Candidatures</div><div class="titre">${enCours ? enCours + " en préparation" : "Rien en préparation"}</div>
        <div class="petit">Clique sur « Préparer ma candidature » dans Emploi.</div></div>`;
 }
+
+// Messages du module Emploi : sa hauteur (pour éviter une barre de défilement en double) et ses bandeaux
+window.addEventListener("message", e => {
+  if (e.data && e.data.hauteurEmploi) $("cadre-emploi").style.height = e.data.hauteurEmploi + "px";
+  if (e.data && e.data.message) {
+    let bandeau = $("message");
+    if (!bandeau) { bandeau = document.createElement("div"); bandeau.id = "message"; document.body.appendChild(bandeau); }
+    bandeau.textContent = e.data.message;
+    bandeau.classList.add("visible");
+    clearTimeout(bandeau.minuteur);
+    bandeau.minuteur = setTimeout(() => bandeau.classList.remove("visible"), 6000);
+  }
+});
 
 const depart = (location.hash || "").slice(1);
 ouvrir(MODULES.some(m => m.id === depart) ? depart : "accueil");

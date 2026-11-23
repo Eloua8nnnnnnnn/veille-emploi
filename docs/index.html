@@ -10,7 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>
-  try { const theme = localStorage.getItem("theme"); if (theme) document.documentElement.dataset.theme = JSON.parse(theme); } catch {}
+  // Mode intégré : page affichée dans le module Emploi du dashboard (même style que l'accueil, thème de l'appareil)
+  if (/[?&]integre/.test(location.search)) document.documentElement.classList.add("integre");
+  else try { const theme = localStorage.getItem("theme"); if (theme) document.documentElement.dataset.theme = JSON.parse(theme); } catch {}
 </script>
 <style>
   /* Fond blanc, formes dégradées légères, cartes en « liquid glass » */
@@ -128,6 +130,20 @@
   .carte { border-radius: 26px; padding: 20px 22px; margin-bottom: 18px; background: var(--surface); border: 1px solid var(--lisere); -webkit-backdrop-filter: blur(22px) saturate(180%); backdrop-filter: blur(22px) saturate(180%);
            box-shadow: var(--ombre-grande); }
   .carte.ancienne { opacity: 0.5; }
+  /* Disposition des offres : le nombre choisi, réduit automatiquement sur les écrans étroits */
+  :root { --colonnes: 2; }
+  .grille { display: grid; grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr)); gap: 18px; align-items: start; }
+  .grille .carte { margin-bottom: 0; }
+  details .grille { margin-bottom: 8px; }
+  main:has(.grille) { max-width: 1500px; }
+  @media (max-width: 1180px) { .grille { grid-template-columns: repeat(min(var(--colonnes), 2), minmax(0, 1fr)); } }
+  .disposition { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--champ); box-shadow: var(--ombre-creux); justify-self: start; }
+  .disposition button { border: 0; background: none; width: 38px; height: 32px; border-radius: 999px; display: grid; place-items: center; color: var(--discret); cursor: pointer; }
+  .disposition button svg { width: 20px; height: 20px; }
+  .disposition button.choisi { background: var(--accent-fond); color: var(--accent); }
+  .integre .disposition { background: var(--plat); box-shadow: none; }
+  .integre .disposition button.choisi { background: var(--pastel-violet); color: var(--pastel-violet-texte); }
+  @media (max-width: 760px) { .grille { grid-template-columns: 1fr; } .disposition { display: none; } }
   .ligne-titre { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
   .titre { font-weight: 500; font-size: 16px; color: var(--texte); text-decoration: none; }
   .titre:hover { text-decoration: underline; }
@@ -183,6 +199,45 @@
   .message { font-size: 13px; margin: 8px 0; }
   .erreur { color: var(--rouge); }
   [hidden] { display: none !important; }
+
+  /* ---------- Mode intégré (module Emploi du dashboard) : style de la page d'accueil ---------- */
+  .integre { --plat: #f4f4f9; --ligne: #ececf2; --pastel-violet: #eeedfe; --pastel-violet-texte: #3c3489; --pastel-violet-moyen: #534ab7;
+    --pastel-bleu: #e6f1fb; --pastel-bleu-texte: #0c447c; --pastel-bleu-moyen: #185fa5; --pastel-vert: #e1f5ee; --pastel-vert-texte: #085041;
+    --pastel-vert-moyen: #0f6e56; --pastel-creme: #faeeda; --pastel-creme-texte: #633806; --pastel-creme-moyen: #854f0b; }
+  @media (prefers-color-scheme: dark) {
+    .integre { --plat: #22212c; --ligne: #2a2935; --pastel-violet: #2c2768; --pastel-violet-texte: #cecbf6; --pastel-violet-moyen: #afa9ec;
+      --pastel-bleu: #0c2f52; --pastel-bleu-texte: #b5d4f4; --pastel-bleu-moyen: #85b7eb; --pastel-vert: #0b3d31; --pastel-vert-texte: #9fe1cb;
+      --pastel-vert-moyen: #5dcaa5; --pastel-creme: #4a2c05; --pastel-creme-texte: #fac775; --pastel-creme-moyen: #ef9f27; }
+  }
+  .integre body { background: transparent; overflow: hidden; }
+  .integre body::before, .integre header, .integre #a-consulter > h2 + p { display: none; }
+  .integre main { max-width: none; padding: 0 0 8px; }
+  .integre .relief, .integre .carte, .integre .creux, .integre nav button.actif { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .cartes-emploi { display: none; }
+  .integre .cartes-emploi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+  .pastel { border-radius: 20px; padding: 16px 18px; min-height: 112px; display: flex; flex-direction: column; justify-content: space-between; }
+  .pastel span { font-size: 13px; } .pastel b { font-size: 24px; font-weight: 600; } .pastel small { font-size: 12px; }
+  .p-violet { background: var(--pastel-violet); color: var(--pastel-violet-texte); } .p-violet span, .p-violet small { color: var(--pastel-violet-moyen); }
+  .p-bleu { background: var(--pastel-bleu); color: var(--pastel-bleu-texte); } .p-bleu span, .p-bleu small { color: var(--pastel-bleu-moyen); }
+  .p-vert { background: var(--pastel-vert); color: var(--pastel-vert-texte); } .p-vert span, .p-vert small { color: var(--pastel-vert-moyen); }
+  .p-creme { background: var(--pastel-creme); color: var(--pastel-creme-texte); } .p-creme span, .p-creme small { color: var(--pastel-creme-moyen); }
+  .integre nav { margin: 0 0 18px; background: var(--plat); box-shadow: none; padding: 5px; }
+  .integre nav button.actif { background: var(--pastel-violet); color: var(--pastel-violet-texte); box-shadow: none; }
+  .integre select, .integre input, .integre textarea { background-color: var(--plat); border: 0; box-shadow: none; }
+  .integre .carte { background: transparent; border: 1px solid var(--ligne); box-shadow: none; border-radius: 20px; }
+  .integre .avis, .integre .preparation { background: var(--plat); box-shadow: none; }
+  .integre button.bouton, .integre .liens a, .integre .compteur { background: var(--plat); box-shadow: none; }
+  .integre button.bouton.choisi, .integre button.bouton:active { background: var(--pastel-violet); color: var(--pastel-violet-texte); box-shadow: none; }
+  .integre .score { box-shadow: none; background: var(--plat); font-family: "Poppins", sans-serif; font-weight: 600; font-size: 14px; }
+  .integre .bon .score { background: var(--pastel-violet); color: var(--pastel-violet-texte); }
+  .integre .bon .score small { color: var(--pastel-violet-moyen); opacity: 1; }
+  .integre .compteur b { font-family: "Poppins", sans-serif; font-weight: 600; }
+  .integre h2 { text-transform: none; letter-spacing: 0; font-size: 17px; font-weight: 600; color: var(--texte); margin: 26px 2px 12px; }
+  .integre details > summary.bouton-plus { background: var(--pastel-violet); color: var(--pastel-violet-texte); box-shadow: none; }
+  @media (max-width: 760px) {
+    .integre .cartes-emploi { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .pastel { min-height: 96px; padding: 14px; }
+  }
   @media (max-width: 600px) {
     header { padding: 22px 70px 22px 20px; border-radius: 26px; }
     .grand { font-size: 30px; }
@@ -208,6 +263,13 @@
     <blockquote class="citation" id="citation"></blockquote>
     <button class="theme" id="theme" aria-label="Passer en mode sombre ou clair"></button>
   </header>
+
+  <div class="cartes-emploi">
+    <div class="pastel p-violet"><span>Offres retenues</span><b id="e-retenues">–</b><small>moins de 60 jours</small></div>
+    <div class="pastel p-bleu"><span>Nouvelles</span><b id="e-nouvelles">–</b><small>depuis hier</small></div>
+    <div class="pastel p-creme"><span>À regarder plus tard</span><b id="e-a-regarder">–</b><small>marquées « Intéressante »</small></div>
+    <div class="pastel p-vert"><span>Mise à jour</span><b id="e-maj">–</b><small id="e-maj-heure"></small></div>
+  </div>
 
   <nav class="creux">
     <button data-onglet="compagnies" class="actif">Compagnies aériennes</button>
@@ -238,6 +300,11 @@
         <option value="date">Plus récentes d'abord</option>
         <option value="score">Meilleur score d'abord</option>
       </select>
+      <div class="disposition" id="disposition" aria-label="Nombre d'offres par ligne">
+        <button type="button" data-colonnes="1" aria-label="Une offre par ligne"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.0" y="5" width="18.0" height="14" rx="2"/></svg></button>
+        <button type="button" data-colonnes="2" aria-label="Deux offres par ligne"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.0" y="5" width="7.0" height="14" rx="2"/><rect x="13.0" y="5" width="7.0" height="14" rx="2"/></svg></button>
+        <button type="button" data-colonnes="3" aria-label="Trois offres par ligne"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.0" y="5" width="4.0" height="14" rx="2"/><rect x="10.0" y="5" width="4.0" height="14" rx="2"/><rect x="16.0" y="5" width="4.0" height="14" rx="2"/></svg></button>
+      </div>
     </div>
     <div id="liste-offres"></div>
     <div id="a-consulter" hidden>
@@ -377,6 +444,10 @@ async function chargerOffres() {
   $("maj").textContent = "Dernière mise à jour à " + quand.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
   $("h-retenues").textContent = donnees.offres.filter(o => o.pertinente && joursDepuis(o.date_publication) <= JOURS_MAX).length;
   $("h-nouvelles").textContent = nouvelles;
+  $("e-retenues").textContent = $("h-retenues").textContent;
+  $("e-nouvelles").textContent = nouvelles;
+  $("e-maj").textContent = quand.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+  $("e-maj-heure").textContent = "à " + quand.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
   afficherOffres();
   chargerFile();
 }
@@ -438,23 +509,38 @@ function afficherOffres() {
   const ecartees = visibles.filter(o => !retenue(o));
   // Les offres « J'ai postulé » et « Pas pour moi » quittent la liste et vont dans des sections repliées
   const aRegarder = visibles.filter(o => statuts[o.lien] === "interessante");
+  $("e-a-regarder").textContent = donnees.offres.filter(o => statuts[o.lien] === "interessante" && joursDepuis(o.date_publication) <= JOURS_MAX).length;
   const postulees = visibles.filter(o => statuts[o.lien] === "postule");
   const miseDeCote = visibles.filter(o => statuts[o.lien] === "ignoree");
   const rangee = o => ["interessante", "postule", "ignoree"].includes(statuts[o.lien]);
   [postes, stages, afrique, ecartees].forEach(l => { for (let i = l.length - 1; i >= 0; i--) if (rangee(l[i])) l.splice(i, 1); });
   const ouvertes = [...document.querySelectorAll("#liste-offres details[open]")].map(d => d.id);
   const section = (id, titre, liste) => liste.length
-    ? `<details id="${id}" ${ouvertes.includes(id) ? "open" : ""}><summary>${titre} (${liste.length})</summary>${liste.map(carteOffre).join("")}</details>` : "";
+    ? `<details id="${id}" ${ouvertes.includes(id) ? "open" : ""}><summary>${titre} (${liste.length})</summary>${grille(liste)}</details>` : "";
 
   $("liste-offres").innerHTML =
-    (postes.length ? postes.map(carteOffre).join("") : `<p class="vide">Aucun poste ne correspond à ces filtres.</p>`) +
-    (stages.length ? `<h2>Stages (${stages.length})</h2>` + stages.map(carteOffre).join("") : "") +
-    (afrique.length ? `<h2>Afrique, à juger vous-même (${afrique.length})</h2>` + afrique.map(carteOffre).join("") : "") +
+    (postes.length ? grille(postes) : `<p class="vide">Aucun poste ne correspond à ces filtres.</p>`) +
+    (stages.length ? `<h2>Stages (${stages.length})</h2>` + grille(stages) : "") +
+    (afrique.length ? `<h2>Afrique, à juger vous-même (${afrique.length})</h2>` + grille(afrique) : "") +
     section("sec-a-regarder", "Intéressantes, à regarder plus tard", aRegarder) +
     section("sec-postulees", "Candidatures envoyées", postulees) +
     section("sec-de-cote", "Mises de côté par vous", miseDeCote) +
     section("sec-ecartees", "Écartées par Claude", ecartees);
 }
+
+const grille = liste => `<div class="grille">${liste.map(carteOffre).join("")}</div>`;
+
+// ---------- Disposition : 1, 2 ou 3 offres par ligne (choix gardé dans le navigateur) ----------
+function appliquerDisposition(colonnes) {
+  document.documentElement.style.setProperty("--colonnes", colonnes);
+  document.querySelectorAll("#disposition button").forEach(b => b.classList.toggle("choisi", Number(b.dataset.colonnes) === colonnes));
+  ecrireLocal("colonnes", colonnes);
+}
+$("disposition").addEventListener("click", e => {
+  const b = e.target.closest("button[data-colonnes]");
+  if (b) appliquerDisposition(Number(b.dataset.colonnes));
+});
+appliquerDisposition(lireLocal("colonnes", 2));
 
 function carteOffre(o) {
   const statut = statuts[o.lien];
@@ -488,6 +574,10 @@ function carteOffre(o) {
 }
 
 function afficherMessage(texte) {  // bandeau en bas de l'écran, quelques secondes
+  if (document.documentElement.classList.contains("integre") && window.parent !== window) {
+    window.parent.postMessage({ message: texte }, "*");
+    return;
+  }
   let bandeau = $("message");
   if (!bandeau) {
     bandeau = document.createElement("div");
@@ -740,6 +830,11 @@ $("theme").addEventListener("click", () => {
 
 afficherCitation();
 majBoutonTheme();
+if (document.documentElement.classList.contains("integre") && window.parent !== window) {
+  const signalerHauteur = () => window.parent.postMessage({ hauteurEmploi: document.documentElement.scrollHeight }, "*");
+  new ResizeObserver(signalerHauteur).observe(document.body);
+  signalerHauteur();
+}
 chargerOffres();
 </script>
 </body>
