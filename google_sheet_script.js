@@ -106,6 +106,98 @@ function accueil() {
   return { candidatures: lignes.length, parEtat: parEtat, file: lignesFile() };
 }
 
+// ---------- Ma journée : habitudes cochées chaque soir, et tâches « à ne pas oublier » ----------
+// Trois onglets créés automatiquement : « Habitudes » (la liste fixe), « Journal » (une ligne par habitude faite),
+// « Tâches » (les choses à ne pas oublier). Les dates sont rangées en texte AAAA-MM-JJ.
+function onglet(nom, entetes) {
+  const classeur = SpreadsheetApp.getActiveSpreadsheet();
+  let f = classeur.getSheetByName(nom);
+  if (!f) {
+    f = classeur.insertSheet(nom);
+    f.appendRow(entetes);
+    f.setFrozenRows(1);
+    f.getRange("A:Z").setNumberFormat("@");  // tout en texte : pas de conversion automatique des dates
+  }
+  return f;
+}
+function lignes(f) {
+  if (f.getLastRow() < 2) return [];
+  return f.getRange(2, 1, f.getLastRow() - 1, f.getLastColumn()).getValues().map((l, i) =>
+    ({ ligne: i + 2, valeurs: l.map(v => v instanceof Date ? Utilities.formatDate(v, "Europe/Paris", "yyyy-MM-dd") : String(v)) }));
+}
+const habitudes = () => onglet("Habitudes", ["Habitude", "Active"]);
+const journal = () => onglet("Journal", ["Date", "Habitude"]);
+const taches = () => onglet("Tâches", ["Id", "Tâche", "Créée le", "Faite le"]);
+
+function jourAvant(date, n) {
+  const d = new Date(date + "T12:00:00");
+  d.setDate(d.getDate() - n);
+  return Utilities.formatDate(d, "Europe/Paris", "yyyy-MM-dd");
+}
+
+function journee(date) {
+  verifierProprietaire();
+  const liste = lignes(habitudes()).filter(l => l.valeurs[0] && l.valeurs[1] !== "non").map(l => l.valeurs[0]);
+  const faites = {};  // « date|habitude » → vrai
+  lignes(journal()).forEach(l => faites[l.valeurs[0] + "|" + l.valeurs[1]] = true);
+  const suivi = liste.map(nom => {
+    // série : jours d'affilée jusqu'à la date (la date elle-même peut encore être cochée ce soir)
+    let serie = 0, n = faites[date + "|" + nom] ? 0 : 1;
+    while (faites[jourAvant(date, n) + "|" + nom]) { serie++; n++; }
+    const quinzaine = [];
+    for (let k = 13; k >= 0; k--) quinzaine.push(!!faites[jourAvant(date, k) + "|" + nom]);
+    return { nom: nom, faite: !!faites[date + "|" + nom], serie: serie, quinzaine: quinzaine };
+  });
+  const listeTaches = lignes(taches()).map(l => ({ id: l.valeurs[0], titre: l.valeurs[1], creee: l.valeurs[2], faite: l.valeurs[3] }))
+    .filter(t => t.titre && (!t.faite || t.faite === date));  // les tâches finies disparaissent le lendemain
+  return { date: date, habitudes: suivi, taches: listeTaches };
+}
+
+function cocherHabitude(date, nom, faite) {
+  verifierProprietaire();
+  const f = journal();
+  const existante = lignes(f).find(l => l.valeurs[0] === date && l.valeurs[1] === nom);
+  if (faite && !existante) f.appendRow([date, nom]);
+  if (!faite && existante) f.deleteRow(existante.ligne);
+  return journee(date);
+}
+
+function ajouterHabitude(nom, date) {
+  verifierProprietaire();
+  const f = habitudes();
+  const existante = lignes(f).find(l => l.valeurs[0] === nom);
+  if (existante) f.getRange(existante.ligne, 2).setValue("oui");
+  else if (nom) f.appendRow([nom, "oui"]);
+  return journee(date);
+}
+
+function retirerHabitude(nom, date) {  // l'historique est gardé : l'habitude est seulement désactivée
+  verifierProprietaire();
+  const existante = lignes(habitudes()).find(l => l.valeurs[0] === nom);
+  if (existante) habitudes().getRange(existante.ligne, 2).setValue("non");
+  return journee(date);
+}
+
+function ajouterTache(titre, date) {
+  verifierProprietaire();
+  if (titre) taches().appendRow([String(Date.now()), titre, date, ""]);
+  return journee(date);
+}
+
+function cocherTache(id, faite, date) {
+  verifierProprietaire();
+  const l = lignes(taches()).find(x => x.valeurs[0] === id);
+  if (l) taches().getRange(l.ligne, 4).setValue(faite ? date : "");
+  return journee(date);
+}
+
+function supprimerTache(id, date) {
+  verifierProprietaire();
+  const l = lignes(taches()).find(x => x.valeurs[0] === id);
+  if (l) taches().deleteRow(l.ligne);
+  return journee(date);
+}
+
 // ---------- 2. Entrée protégée par une clé (ancien tableau de bord, Claude) ----------
 function reponse(donnees) {
   return ContentService.createTextOutput(JSON.stringify(donnees)).setMimeType(ContentService.MimeType.JSON);

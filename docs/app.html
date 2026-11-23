@@ -36,6 +36,7 @@
     }
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   body { margin: 0; background: var(--fond); color: var(--texte); font-family: "Poppins", system-ui, sans-serif; font-size: 15px; }
   button { font: inherit; color: inherit; cursor: pointer; }
   .cadre { display: flex; gap: 14px; min-height: 100vh; padding: 14px; }
@@ -72,7 +73,28 @@
   .jauge { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.6); overflow: hidden; }
   .jauge div { height: 100%; background: currentColor; border-radius: 3px; }
 
-  .bas { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; }
+  .bas { display: grid; grid-template-columns: 1fr 1fr 0.9fr; gap: 18px; align-items: start; }
+  .bloc-titre { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .bloc-titre h2 { margin: 0; }
+  .segments { display: flex; gap: 2px; padding: 3px; border-radius: 999px; border: 1px solid var(--bord); }
+  .segments button { border: 0; background: none; font-size: 12px; padding: 5px 12px; border-radius: 999px; color: var(--discret); }
+  .segments button.actif { background: var(--barre); color: #fff; }
+  .case { width: 22px; height: 22px; flex: none; border-radius: 50%; border: 2px solid var(--violet-moyen); background: none; display: grid; place-items: center; padding: 0; }
+  .case.cochee { background: var(--violet-moyen); }
+  .case.cochee::after { content: ""; width: 9px; height: 5px; border: solid #fff; border-width: 0 0 2px 2px; transform: rotate(-45deg) translate(1px, -1px); }
+  .ligne .nom { flex: 1; min-width: 0; }
+  .ligne.faite .nom { text-decoration: line-through; color: var(--discret); }
+  .serie { font-size: 11px; color: var(--violet-moyen); white-space: nowrap; }
+  .points { display: flex; gap: 3px; }
+  .points i { width: 6px; height: 6px; border-radius: 50%; background: var(--bord); }
+  .points i.ok { background: var(--violet-moyen); }
+  .retirer { border: 0; background: none; color: var(--discret); font-size: 18px; line-height: 1; padding: 0 4px; }
+  .lien { border: 0; background: none; padding: 10px 0 0; font-size: 13px; color: var(--violet-moyen); }
+  .ajout { display: flex; gap: 8px; margin: 10px 0 4px; }
+  .ajout input { flex: 1; min-width: 0; font: inherit; font-size: 14px; color: var(--texte); background: none; border: 1px solid var(--bord); border-radius: 999px; padding: 9px 14px; outline: none; }
+  .ajout input:focus { border-color: var(--violet-moyen); }
+  .ajout button { border: 0; border-radius: 999px; padding: 0 16px; background: var(--barre); color: #fff; font-size: 13px; }
+  @media (max-width: 1100px) { .bas { grid-template-columns: 1fr 1fr; } .bas .sombre { grid-column: 1 / -1; } }
   .ligne { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--bord); font-size: 14px; }
   .ligne .badge { margin-left: auto; font-size: 11px; padding: 3px 10px; border-radius: 999px; }
   .vide { color: var(--discret); font-size: 14px; padding: 14px 0; border-top: 1px solid var(--bord); }
@@ -123,9 +145,18 @@
     <section class="page" id="page-accueil">
       <div class="cartes" id="cartes"></div>
       <div class="bas">
-        <div>
-          <h2>À faire aujourd'hui</h2>
-          <div class="vide">La checklist du jour arrive à la prochaine étape.</div>
+        <div class="bloc">
+          <div class="bloc-titre"><h2>Ma journée</h2>
+            <div class="segments" id="choix-jour"><button data-decalage="1">Hier</button><button data-decalage="0" class="actif">Aujourd'hui</button></div>
+          </div>
+          <div id="habitudes"><div class="vide">Chargement…</div></div>
+          <button class="lien" id="gerer">Modifier mes habitudes</button>
+          <form class="ajout" id="ajout-habitude" hidden><input id="nouvelle-habitude" placeholder="Nouvelle habitude, ex. Sport" maxlength="60"><button>Ajouter</button></form>
+        </div>
+        <div class="bloc">
+          <div class="bloc-titre"><h2>À ne pas oublier</h2></div>
+          <form class="ajout" id="ajout-tache"><input id="nouvelle-tache" placeholder="Ex. envoyer l'ordonnance à la mutuelle" maxlength="120"><button>Ajouter</button></form>
+          <div id="taches"></div>
         </div>
         <div class="sombre" id="preparation"></div>
       </div>
@@ -142,7 +173,23 @@
 // Ailleurs (aperçu sur l'ordinateur) : données fictives, pour tester l'affichage.
 const SITE = "https://eloua8nnnnnnnn.github.io/veille-emploi/";
 const DANS_GOOGLE = !!(window.google && google.script && google.script.run);
+const FAUX = { habitudes: ["Sport", "2 candidatures", "Travailler"], journal: {}, taches: [{ id: "1", titre: "Envoyer l'ordonnance à la mutuelle", faite: "" }] };
+function fauxJour(date) {
+  const avant = (n) => { const d = new Date(date + "T12:00:00"); d.setDate(d.getDate() - n); return jourLocal(d); };
+  return { date, habitudes: FAUX.habitudes.map((nom, i) => {
+    let serie = 0, n = FAUX.journal[date + "|" + nom] ? 0 : 1;
+    while (FAUX.journal[avant(n) + "|" + nom] || (i === 0 && n < 5 && n > 0)) { serie++; n++; }
+    return { nom, faite: !!FAUX.journal[date + "|" + nom], serie, quinzaine: Array.from({ length: 14 }, (_, k) => !!FAUX.journal[avant(13 - k) + "|" + nom] || (i === 0 && k > 8 && k < 13)) };
+  }), taches: FAUX.taches.filter(t => !t.faite || t.faite === date) };
+}
 const FICTIF = {
+  journee: (date) => fauxJour(date),
+  cocherHabitude: (date, nom, faite) => { if (faite) FAUX.journal[date + "|" + nom] = true; else delete FAUX.journal[date + "|" + nom]; return fauxJour(date); },
+  ajouterHabitude: (nom, date) => { if (!FAUX.habitudes.includes(nom)) FAUX.habitudes.push(nom); return fauxJour(date); },
+  retirerHabitude: (nom, date) => { FAUX.habitudes = FAUX.habitudes.filter(h => h !== nom); return fauxJour(date); },
+  ajouterTache: (titre, date) => { FAUX.taches.push({ id: String(Date.now()), titre, faite: "" }); return fauxJour(date); },
+  cocherTache: (id, faite, date) => { FAUX.taches.find(t => t.id === id).faite = faite ? date : ""; return fauxJour(date); },
+  supprimerTache: (id, date) => { FAUX.taches = FAUX.taches.filter(t => t.id !== id); return fauxJour(date); },
   accueil: () => ({ candidatures: 12, parEtat: { "Envoyé": 7, "Entretien": 2, "Refusé": 3 }, file: [
     { Entreprise: "Coast", Poste: "Business Operations Associate", Etat: "Prêt", CV: "#", Lettre: "#", Note: "CV et lettre en anglais" },
   ] }),
@@ -217,7 +264,7 @@ async function chargerAccueil() {
   }
   const nouvelles = offres ? offres.offres.filter(o => o.pertinente && o.premiere_vue === offres.derniere_mise_a_jour).length : "?";
   $("cartes").innerHTML =
-    carte("c-bleu", "accueil", "Ma journée", "", "La checklist arrive à la prochaine étape") +
+    carte("c-bleu", "accueil", "Ma journée", "…", "Chargement") +
     carte("c-violet", "emploi", "Candidatures", String(donnees?.candidatures ?? "?"), `${nouvelles} nouvelle${nouvelles === 1 ? "" : "s"} offre${nouvelles === 1 ? "" : "s"} au dernier passage du robot`) +
     carte("c-vert", "social", "Social", "", "Relances et sorties") +
     carte("c-creme", "sante", "Santé", "", "Rappels et rendez-vous");
@@ -262,9 +309,87 @@ window.addEventListener("message", e => {
   }
 });
 
+// ---------- Ma journée ----------
+function jourLocal(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+let decalage = 0, journeeActuelle = null, edition = false;
+const dateChoisie = () => { const d = new Date(); d.setDate(d.getDate() - decalage); return jourLocal(d); };
+
+function afficherJournee(j) {
+  journeeActuelle = j;
+  const h = j.habitudes;
+  $("habitudes").innerHTML = h.length ? h.map(x => `
+    <div class="ligne ${x.faite ? "faite" : ""}">
+      <button class="case ${x.faite ? "cochee" : ""}" data-habitude="${echapper(x.nom)}" aria-label="${x.faite ? "Décocher" : "Cocher"} ${echapper(x.nom)}"></button>
+      <span class="nom">${echapper(x.nom)}</span>
+      ${edition ? `<button class="retirer" data-retirer="${echapper(x.nom)}" aria-label="Retirer ${echapper(x.nom)}">×</button>`
+        : `<span class="points" title="14 derniers jours">${x.quinzaine.map(ok => `<i class="${ok ? "ok" : ""}"></i>`).join("")}</span>
+           <span class="serie">${x.serie ? x.serie + " j d'affilée" : ""}</span>`}
+    </div>`).join("") : `<div class="vide">Ajoute tes habitudes avec « Modifier mes habitudes ».</div>`;
+  $("taches").innerHTML = j.taches.length ? j.taches.map(t => `
+    <div class="ligne ${t.faite ? "faite" : ""}">
+      <button class="case ${t.faite ? "cochee" : ""}" data-tache="${echapper(t.id)}" data-faite="${t.faite ? 1 : 0}" aria-label="Cocher ${echapper(t.titre)}"></button>
+      <span class="nom">${echapper(t.titre)}</span>
+      <button class="retirer" data-supprimer="${echapper(t.id)}" aria-label="Supprimer ${echapper(t.titre)}">×</button>
+    </div>`).join("") : `<div class="vide">Rien à retenir pour l'instant.</div>`;
+  // Carte « Ma journée » de l'accueil
+  const faites = h.filter(x => x.faite).length, meilleure = h.reduce((m, x) => x.serie > (m?.serie || 0) ? x : m, null);
+  const carteJour = document.querySelector('.carte[data-page="accueil"]');
+  if (carteJour) carteJour.outerHTML = carte("c-bleu", "accueil", "Ma journée", h.length ? `${faites} / ${h.length}` : "0",
+    meilleure ? `Meilleure série : ${echapper(meilleure.nom)}, ${meilleure.serie} j` : (h.length ? (decalage ? "hier" : "aujourd'hui") : "Ajoute tes habitudes"),
+    h.length ? `<div class="jauge"><div style="width:${Math.round(100 * faites / h.length)}%"></div></div>` : "");
+}
+
+async function action(fonction, ...parametres) {
+  try { afficherJournee(await serveur(fonction, ...parametres)); }
+  catch (erreur) { $("habitudes").insertAdjacentHTML("afterbegin", `<div class="vide">Enregistrement impossible : ${echapper(erreur.message || erreur)}</div>`); }
+}
+const chargerJournee = () => action("journee", dateChoisie());
+
+$("choix-jour").addEventListener("click", e => {
+  const b = e.target.closest("button[data-decalage]");
+  if (!b) return;
+  decalage = Number(b.dataset.decalage);
+  document.querySelectorAll("#choix-jour button").forEach(x => x.classList.toggle("actif", x === b));
+  chargerJournee();
+});
+$("habitudes").addEventListener("click", e => {
+  const c = e.target.closest("button[data-habitude]"), r = e.target.closest("button[data-retirer]");
+  if (c) {
+    const faite = !c.classList.contains("cochee");
+    c.classList.toggle("cochee", faite); c.closest(".ligne").classList.toggle("faite", faite);  // affichage immédiat
+    action("cocherHabitude", dateChoisie(), c.dataset.habitude, faite);
+  }
+  if (r && confirm(`Retirer « ${r.dataset.retirer} » de tes habitudes ? Son historique est gardé.`)) action("retirerHabitude", r.dataset.retirer, dateChoisie());
+});
+$("taches").addEventListener("click", e => {
+  const c = e.target.closest("button[data-tache]"), s = e.target.closest("button[data-supprimer]");
+  if (c) {
+    const faite = c.dataset.faite !== "1";
+    c.classList.toggle("cochee", faite); c.closest(".ligne").classList.toggle("faite", faite);
+    action("cocherTache", c.dataset.tache, faite, jourLocal(new Date()));
+  }
+  if (s) action("supprimerTache", s.dataset.supprimer, dateChoisie());
+});
+$("gerer").addEventListener("click", () => {
+  edition = !edition;
+  $("ajout-habitude").hidden = !edition;
+  $("gerer").textContent = edition ? "Terminé" : "Modifier mes habitudes";
+  if (journeeActuelle) afficherJournee(journeeActuelle);
+});
+$("ajout-habitude").addEventListener("submit", e => {
+  e.preventDefault();
+  const nom = $("nouvelle-habitude").value.trim();
+  if (nom) { $("nouvelle-habitude").value = ""; action("ajouterHabitude", nom, dateChoisie()); }
+});
+$("ajout-tache").addEventListener("submit", e => {
+  e.preventDefault();
+  const titre = $("nouvelle-tache").value.trim();
+  if (titre) { $("nouvelle-tache").value = ""; action("ajouterTache", titre, jourLocal(new Date())); }
+});
+
 const depart = (location.hash || "").slice(1);
 ouvrir(MODULES.some(m => m.id === depart) ? depart : "accueil");
-chargerAccueil();
+chargerAccueil().then(chargerJournee);
 </script>
 </body>
 </html>
