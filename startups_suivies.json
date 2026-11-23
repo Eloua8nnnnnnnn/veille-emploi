@@ -140,10 +140,10 @@
     {
      "titre": "Agent commercial terrain (H/F)",
      "lien": "https://qru.pet/offre-emploi-barf/",
-     "lieu": "Plusieurs secteurs ouverts en France (Île-de-France mentionnée)"
+     "lieu": "Plusieurs secteurs ouverts en France"
     }
    ],
-   "empreinte": "0cd51e4359d60d7f146ffd32c2a0068021f11f0e"
+   "empreinte": "427ae29fbff157914226b6a1851b783ef5d4d4d5"
   },
   "Gimii": {
    "site": "https://gimii.fr/",
@@ -1088,7 +1088,7 @@
    "outil": "page",
    "page": "http://www.helloaria.me/careers/",
    "offres": [],
-   "empreinte": "b89ccf6f8d5006bbceb6dc936e6f977a9be59480"
+   "empreinte": "6b033dad560bc567190b8a9ddc1290d106822591"
   },
   "En Carta Diagnostics": {
    "site": "http://www.encarta.bio/",
@@ -1240,11 +1240,6 @@
      "lieu": "United kingdom - remote"
     },
     {
-     "titre": "Enterprise Sales Account Executive, Spain",
-     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDrsqnLV90589Il6gPoGLoQv-enterprise-sales-account-executive-spain",
-     "lieu": "Spain - remote"
-    },
-    {
      "titre": "Product Marketing Manager, USA",
      "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDrOPV1aG3tyBT62QxvjdHqo-product-marketing-manager-usa",
      "lieu": "United states - remote"
@@ -1275,7 +1270,7 @@
      "lieu": "United states - remote"
     }
    ],
-   "empreinte": "94e9382fbe74a68b037f1d90003183df085a0c6c"
+   "empreinte": "cb7aada080f806f97acb514da595da2cbece5f83"
   },
   "Wheere": {
    "site": "http://wheere.io/",
