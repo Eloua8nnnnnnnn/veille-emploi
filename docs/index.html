@@ -220,7 +220,7 @@
   .integre main { max-width: none; padding: 0 0 8px; }
   .integre .relief, .integre .carte, .integre .creux, .integre nav button.actif { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .cartes-emploi { display: none; }
-  .integre .cartes-emploi { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+  .integre .cartes-emploi { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
   @media (max-width: 1180px) { .integre .cartes-emploi { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .pastel { border-radius: 20px; padding: 16px 18px; min-height: 112px; display: flex; flex-direction: column; justify-content: space-between; }
   .pastel span { font-size: 13px; } .pastel b { font-size: 24px; font-weight: 600; } .pastel small { font-size: 12px; }
@@ -279,7 +279,6 @@
   </header>
 
   <div class="cartes-emploi">
-    <div class="pastel p-violet"><span>Offres retenues</span><b id="e-retenues">–</b><small>moins de 60 jours</small></div>
     <div class="pastel p-bleu"><span>Nouvelles</span><b id="e-nouvelles">–</b><small>depuis hier</small></div>
     <div class="pastel p-creme"><span>À regarder plus tard</span><b id="e-a-regarder">–</b><small>marquées « Intéressante »</small></div>
     <div class="pastel p-rose"><span>Candidatures</span><b id="e-candidatures">–</b><small id="e-candidatures-detail">au total</small></div>
@@ -460,7 +459,6 @@ async function chargerOffres() {
   $("maj").textContent = "Dernière mise à jour à " + quand.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
   $("h-retenues").textContent = donnees.offres.filter(o => o.pertinente && joursDepuis(o.date_publication) <= JOURS_MAX).length;
   $("h-nouvelles").textContent = nouvelles;
-  $("e-retenues").textContent = $("h-retenues").textContent;
   $("e-nouvelles").textContent = nouvelles;
   $("e-maj").textContent = quand.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
   $("e-maj-heure").textContent = "à " + quand.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
