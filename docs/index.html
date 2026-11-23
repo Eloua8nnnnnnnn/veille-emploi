@@ -220,8 +220,7 @@
   .integre main { max-width: none; padding: 0 0 8px; }
   .integre .relief, .integre .carte, .integre .creux, .integre nav button.actif { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .cartes-emploi { display: none; }
-  .integre .cartes-emploi { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
-  @media (max-width: 1180px) { .integre .cartes-emploi { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .integre .cartes-emploi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
   .pastel { border-radius: 20px; padding: 16px 18px; min-height: 112px; display: flex; flex-direction: column; justify-content: space-between; }
   .pastel span { font-size: 13px; } .pastel b { font-size: 24px; font-weight: 600; } .pastel small { font-size: 12px; }
   .p-violet { background: var(--pastel-violet); color: var(--pastel-violet-texte); } .p-violet span, .p-violet small { color: var(--pastel-violet-moyen); }
@@ -282,8 +281,7 @@
     <div class="pastel p-bleu"><span>Nouvelles</span><b id="e-nouvelles">–</b><small>depuis hier</small></div>
     <div class="pastel p-creme"><span>À regarder plus tard</span><b id="e-a-regarder">–</b><small>marquées « Intéressante »</small></div>
     <div class="pastel p-rose"><span>Candidatures</span><b id="e-candidatures">–</b><small id="e-candidatures-detail">au total</small></div>
-    <div class="pastel p-bleu"><span>En attente de réponse</span><b id="e-envoyees">–</b><small>statut « Envoyé »</small></div>
-    <div class="pastel p-vert"><span>Mise à jour</span><b id="e-maj">–</b><small id="e-maj-heure"></small></div>
+    <div class="pastel p-violet"><span>En attente de réponse</span><b id="e-envoyees">–</b><small>statut « Envoyé »</small></div>
   </div>
 
   <nav class="creux">
@@ -460,8 +458,6 @@ async function chargerOffres() {
   $("h-retenues").textContent = donnees.offres.filter(o => o.pertinente && joursDepuis(o.date_publication) <= JOURS_MAX).length;
   $("h-nouvelles").textContent = nouvelles;
   $("e-nouvelles").textContent = nouvelles;
-  $("e-maj").textContent = quand.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
-  $("e-maj-heure").textContent = "à " + quand.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
   afficherOffres();
   chargerFile();
   chargerCompteurs();

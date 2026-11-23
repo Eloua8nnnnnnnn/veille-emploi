@@ -53,6 +53,7 @@
   h1 { font-size: 26px; font-weight: 600; margin: 0; }
   h2 { font-size: 17px; font-weight: 600; margin: 0 0 10px; }
   .discret { color: var(--discret); font-size: 13px; }
+  .droite { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
   .pastille { font-size: 13px; padding: 7px 14px; border-radius: 999px; background: var(--fond); }
   .demo { font-size: 12px; padding: 6px 12px; border-radius: 999px; background: var(--creme-fond); color: var(--creme); }
 
@@ -113,7 +114,10 @@
   <main>
     <div class="entete">
       <div><h1 id="titre">Aujourd'hui</h1><div class="discret" id="date"></div></div>
-      <div style="display:flex; gap:8px; align-items:center"><span class="demo" id="demo" hidden>Aperçu : données fictives</span><span class="pastille">Elouan</span></div>
+      <div class="droite">
+        <div style="display:flex; gap:8px; align-items:center"><span class="demo" id="demo" hidden>Aperçu : données fictives</span><span class="pastille">Elouan</span></div>
+        <div class="discret" id="maj-offres"></div>
+      </div>
     </div>
 
     <section class="page" id="page-accueil">
@@ -206,6 +210,11 @@ async function chargerAccueil() {
   try { offres = await (await fetch((DANS_GOOGLE ? SITE : "") + "offres.json", { cache: "no-store" })).json(); } catch {}
   try { donnees = await serveur("accueil"); } catch (erreur) { donnees = { erreur: erreur.message || String(erreur) }; }
 
+  if (offres) {
+    const quand = new Date(offres.derniere_mise_a_jour);
+    $("maj-offres").textContent = "Offres mises à jour le " + quand.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })
+      + " à " + quand.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  }
   const nouvelles = offres ? offres.offres.filter(o => o.pertinente && o.premiere_vue === offres.derniere_mise_a_jour).length : "?";
   $("cartes").innerHTML =
     carte("c-bleu", "accueil", "Ma journée", "", "La checklist arrive à la prochaine étape") +
