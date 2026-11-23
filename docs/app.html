@@ -181,7 +181,8 @@ function ouvrir(id) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("visible"));
   if (module.id === "accueil") $("page-accueil").classList.add("visible");
   else if (module.id === "emploi") {
-    if (!$("cadre-emploi").src) $("cadre-emploi").src = (DANS_GOOGLE ? SITE : "index.html") + "?integre";
+    // « v » change à chaque ouverture : le navigateur charge toujours la dernière version (sinon il la garde 10 minutes)
+    if (!$("cadre-emploi").src) $("cadre-emploi").src = (DANS_GOOGLE ? SITE : "index.html") + "?integre&v=" + Date.now();
     $("page-emploi").classList.add("visible");
   } else {
     $("bientot").innerHTML = `<h2>${echapper(module.nom)} arrive bientôt</h2><div class="discret">${echapper(module.texte)}</div>`;
