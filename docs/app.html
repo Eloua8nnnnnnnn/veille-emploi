@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mon dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!--
+  Dashboard personnel. Servi par Google (Apps Script, accès réservé au compte d'Elouan) : les données
+  viennent du Google Sheet par google.script.run. Ouvert ailleurs (aperçu sur l'ordinateur), il affiche
+  des données fictives. Ce fichier est public sur GitHub : il ne doit contenir aucune donnée personnelle.
+-->
+<style>
+  :root {
+    --fond: #e9edf7; --panneau: #ffffff; --texte: #1f1f1e; --discret: #6e6d69; --bord: #ececf2;
+    --barre: #26215c; --barre-icone: #cecbf6; --barre-actif: #3c3489;
+    --bleu: #0c447c; --bleu-fond: #e6f1fb; --bleu-moyen: #185fa5;
+    --violet: #3c3489; --violet-fond: #eeedfe; --violet-moyen: #534ab7;
+    --vert: #085041; --vert-fond: #e1f5ee; --vert-moyen: #0f6e56;
+    --creme: #633806; --creme-fond: #faeeda; --creme-moyen: #854f0b;
+    --rose: #72243e; --rose-fond: #fbeaf0; --rose-moyen: #993556;
+    --ok: #3b6d11;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fond: #0f0e1a; --panneau: #17161f; --texte: #ececea; --discret: #a3a29e; --bord: #2a2935;
+      --barre: #1c1940; --barre-actif: #3c3489;
+      --bleu: #b5d4f4; --bleu-fond: #0c2f52; --bleu-moyen: #85b7eb;
+      --violet: #cecbf6; --violet-fond: #2c2768; --violet-moyen: #afa9ec;
+      --vert: #9fe1cb; --vert-fond: #0b3d31; --vert-moyen: #5dcaa5;
+      --creme: #fac775; --creme-fond: #4a2c05; --creme-moyen: #ef9f27;
+      --rose: #f4c0d1; --rose-fond: #561b2f; --rose-moyen: #ed93b1;
+      --ok: #97c459;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fond); color: var(--texte); font-family: "Poppins", system-ui, sans-serif; font-size: 15px; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  .cadre { display: flex; gap: 14px; min-height: 100vh; padding: 14px; }
+
+  /* Barre de navigation : à gauche sur ordinateur, en bas sur téléphone */
+  nav { background: var(--barre); border-radius: 26px; padding: 16px 10px; display: flex; flex-direction: column; align-items: center; gap: 10px; position: sticky; top: 14px; height: calc(100vh - 28px); }
+  nav .logo { width: 42px; height: 42px; border-radius: 13px; background: #faeeda; color: #633806; display: grid; place-items: center; font-weight: 600; margin-bottom: 14px; }
+  nav button { width: 46px; height: 46px; border: 0; border-radius: 14px; background: none; color: var(--barre-icone); display: grid; place-items: center; }
+  nav button svg { width: 22px; height: 22px; }
+  nav button.actif { background: var(--barre-actif); color: #fff; }
+  nav button span { display: none; }
+
+  main { flex: 1; min-width: 0; background: var(--panneau); border-radius: 26px; padding: 26px 28px 32px; }
+  .entete { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 22px; }
+  h1 { font-size: 26px; font-weight: 600; margin: 0; }
+  h2 { font-size: 17px; font-weight: 600; margin: 0 0 10px; }
+  .discret { color: var(--discret); font-size: 13px; }
+  .pastille { font-size: 13px; padding: 7px 14px; border-radius: 999px; background: var(--fond); }
+  .demo { font-size: 12px; padding: 6px 12px; border-radius: 999px; background: var(--creme-fond); color: var(--creme); }
+
+  /* Cartes de couleur */
+  .cartes { display: grid; grid-template-columns: 1.2fr repeat(3, 1fr); gap: 14px; margin-bottom: 26px; }
+  .carte { border: 0; text-align: left; border-radius: 20px; padding: 16px 18px; min-height: 128px; display: flex; flex-direction: column; justify-content: space-between; }
+  .carte .etiquette { font-size: 13px; }
+  .carte .valeur { font-size: 24px; font-weight: 600; margin: 4px 0; }
+  .carte .detail { font-size: 12px; }
+  .carte.bientot .valeur { font-size: 15px; font-weight: 500; }
+  .c-bleu { background: var(--bleu-fond); color: var(--bleu); } .c-bleu .etiquette, .c-bleu .detail { color: var(--bleu-moyen); }
+  .c-violet { background: var(--violet-fond); color: var(--violet); } .c-violet .etiquette, .c-violet .detail { color: var(--violet-moyen); }
+  .c-vert { background: var(--vert-fond); color: var(--vert); } .c-vert .etiquette, .c-vert .detail { color: var(--vert-moyen); }
+  .c-creme { background: var(--creme-fond); color: var(--creme); } .c-creme .etiquette, .c-creme .detail { color: var(--creme-moyen); }
+  .c-rose { background: var(--rose-fond); color: var(--rose); } .c-rose .etiquette, .c-rose .detail { color: var(--rose-moyen); }
+  .jauge { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.6); overflow: hidden; }
+  .jauge div { height: 100%; background: currentColor; border-radius: 3px; }
+
+  .bas { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; }
+  .ligne { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--bord); font-size: 14px; }
+  .ligne .badge { margin-left: auto; font-size: 11px; padding: 3px 10px; border-radius: 999px; }
+  .vide { color: var(--discret); font-size: 14px; padding: 14px 0; border-top: 1px solid var(--bord); }
+  .sombre { background: var(--barre); color: #eeedfe; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
+  .sombre .petit { font-size: 12px; color: #afa9ec; }
+  .sombre .titre { font-size: 17px; font-weight: 600; margin: 4px 0; }
+  .sombre a { font-size: 13px; padding: 8px 14px; border-radius: 999px; background: #cecbf6; color: #26215c; text-decoration: none; display: inline-block; margin: 4px 6px 0 0; }
+  .sombre a.contour { background: none; color: #eeedfe; border: 1px solid #7f77dd; }
+
+  .page { display: none; }
+  .page.visible { display: block; }
+  .bientot-page { border-radius: 20px; padding: 28px; text-align: center; }
+  iframe { width: 100%; height: calc(100vh - 150px); border: 0; border-radius: 18px; }
+
+  /* Téléphone : une colonne, barre de navigation en bas */
+  @media (max-width: 760px) {
+    .cadre { padding: 0; display: block; }
+    main { border-radius: 0; padding: 20px 16px 110px; min-height: 100vh; }
+    nav { position: fixed; z-index: 5; left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); top: auto; height: auto;
+      flex-direction: row; justify-content: space-around; padding: 8px; border-radius: 22px; }
+    nav .logo { display: none; }
+    nav button { width: auto; height: auto; padding: 6px 4px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; }
+    nav button span { display: block; font-size: 10px; }
+    h1 { font-size: 22px; }
+    .pastille { display: none; }
+    .cartes { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .carte { min-height: 112px; padding: 14px; }
+    .bas { grid-template-columns: 1fr; }
+    iframe { height: calc(100vh - 210px); }
+  }
+</style>
+</head>
+<body>
+<div class="cadre">
+  <nav id="navigation"></nav>
+  <main>
+    <div class="entete">
+      <div><h1 id="titre">Aujourd'hui</h1><div class="discret" id="date"></div></div>
+      <div style="display:flex; gap:8px; align-items:center"><span class="demo" id="demo" hidden>Aperçu : données fictives</span><span class="pastille">Elouan</span></div>
+    </div>
+
+    <section class="page" id="page-accueil">
+      <div class="cartes" id="cartes"></div>
+      <div class="bas">
+        <div>
+          <h2>À faire aujourd'hui</h2>
+          <div class="vide">La checklist du jour arrive à la prochaine étape.</div>
+        </div>
+        <div class="sombre" id="preparation"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-emploi"><iframe id="cadre-emploi" title="Offres d'emploi" loading="lazy"></iframe></section>
+    <section class="page" id="page-autre"><div class="bientot-page" id="bientot"></div></section>
+  </main>
+</div>
+
+<script>
+// ---------- Où sont les données ----------
+// Servi par Google : les fonctions du script Google Sheet sont appelées avec google.script.run.
+// Ailleurs (aperçu sur l'ordinateur) : données fictives, pour tester l'affichage.
+const SITE = "https://eloua8nnnnnnnn.github.io/veille-emploi/";
+const DANS_GOOGLE = !!(window.google && google.script && google.script.run);
+const FICTIF = {
+  accueil: () => ({ candidatures: 12, file: [
+    { Entreprise: "Coast", Poste: "Business Operations Associate", Etat: "Prêt", CV: "#", Lettre: "#", Note: "CV et lettre en anglais" },
+  ] }),
+};
+function serveur(fonction, ...parametres) {
+  return new Promise((ok, echec) => {
+    if (!DANS_GOOGLE) return setTimeout(() => ok(FICTIF[fonction](...parametres)), 150);
+    google.script.run.withSuccessHandler(ok).withFailureHandler(echec)[fonction](...parametres);
+  });
+}
+const $ = id => document.getElementById(id);
+const echapper = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+// ---------- Modules : un par page ----------
+const ICONES = {
+  accueil: '<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/>',
+  emploi: '<path d="M3 8h18v11H3zM8 8V5h8v3M3 13h18"/>',
+  social: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3.2-6 6.5-6s6 2 6.5 6M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.3c2 .8 3.3 2.7 3.5 5.7"/>',
+  sante: '<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10C19.5 15.4 12 20 12 20z"/><path d="M8 12h2.5l1.2-2.2 1.6 4 1.2-1.8H17"/>',
+  vetements: '<path d="M8.5 4 4 6.5 5.5 10l2-1V20h9V9l2 1L20 6.5 15.5 4a3.5 3.5 0 0 1-7 0z"/>',
+  recettes: '<path d="M7 20h10M8 20v-6.2A4.5 4.5 0 0 1 6.5 5.5 4.5 4.5 0 0 1 12 4a4.5 4.5 0 0 1 5.5 1.5 4.5 4.5 0 0 1-1.5 8.3V20"/>',
+};
+const MODULES = [
+  { id: "accueil", nom: "Aujourd'hui" },
+  { id: "emploi", nom: "Emploi" },
+  { id: "social", nom: "Social", texte: "Tes proches, les relances et les idées de sorties." },
+  { id: "sante", nom: "Santé", texte: "Rappels, rendez-vous et remboursements." },
+  { id: "vetements", nom: "Vêtements", texte: "Ton dressing et ta wishlist." },
+  { id: "recettes", nom: "Recettes", texte: "Tes recettes, ajoutées depuis un lien ou une photo." },
+];
+
+$("navigation").innerHTML = '<div class="logo">E</div>' + MODULES.map(m =>
+  `<button data-page="${m.id}" aria-label="${m.nom}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONES[m.id]}</svg><span>${m.nom}</span></button>`).join("");
+$("navigation").addEventListener("click", e => { const b = e.target.closest("button[data-page]"); if (b) ouvrir(b.dataset.page); });
+
+function ouvrir(id) {
+  const module = MODULES.find(m => m.id === id) || MODULES[0];
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("actif", b.dataset.page === module.id));
+  $("titre").textContent = module.nom;
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("visible"));
+  if (module.id === "accueil") $("page-accueil").classList.add("visible");
+  else if (module.id === "emploi") {
+    if (!$("cadre-emploi").src) $("cadre-emploi").src = DANS_GOOGLE ? SITE : "index.html";
+    $("page-emploi").classList.add("visible");
+  } else {
+    $("bientot").innerHTML = `<h2>${echapper(module.nom)} arrive bientôt</h2><div class="discret">${echapper(module.texte)}</div>`;
+    $("bientot").className = "bientot-page " + { social: "c-vert", sante: "c-creme", vetements: "c-rose", recettes: "c-violet" }[module.id];
+    $("page-autre").classList.add("visible");
+  }
+  try { history.replaceState(null, "", "#" + module.id); } catch {}
+  window.scrollTo(0, 0);
+}
+
+// ---------- Accueil ----------
+function carte(couleur, page, etiquette, valeur, detail, extra = "") {
+  return `<button class="carte ${couleur}${valeur ? "" : " bientot"}" data-page="${page}"><div class="etiquette">${etiquette}</div>
+    <div><div class="valeur">${valeur || "Bientôt"}</div>${extra}</div><div class="detail">${detail}</div></button>`;
+}
+
+async function chargerAccueil() {
+  $("date").textContent = new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  $("demo").hidden = DANS_GOOGLE;
+  let offres = null, donnees = null;
+  try { offres = await (await fetch((DANS_GOOGLE ? SITE : "") + "offres.json", { cache: "no-store" })).json(); } catch {}
+  try { donnees = await serveur("accueil"); } catch (erreur) { donnees = { erreur: erreur.message || String(erreur) }; }
+
+  const nouvelles = offres ? offres.offres.filter(o => o.pertinente && o.premiere_vue === offres.derniere_mise_a_jour).length : "?";
+  $("cartes").innerHTML =
+    carte("c-bleu", "accueil", "Ma journée", "", "La checklist arrive à la prochaine étape") +
+    carte("c-violet", "emploi", "Emploi", String(nouvelles), `nouvelles offres · ${donnees?.candidatures ?? "?"} candidatures`) +
+    carte("c-vert", "social", "Social", "", "Relances et sorties") +
+    carte("c-creme", "sante", "Santé", "", "Rappels et rendez-vous");
+  $("cartes").onclick = e => { const b = e.target.closest("button[data-page]"); if (b && b.dataset.page !== "accueil") ouvrir(b.dataset.page); };
+
+  const file = donnees?.file || [];
+  const prete = file.find(l => l.Etat === "Prêt");
+  const enCours = file.filter(l => l.Etat === "En attente" || l.Etat === "En préparation").length;
+  $("preparation").innerHTML = donnees?.erreur
+    ? `<div><div class="petit">Candidatures</div><div class="titre">Données indisponibles</div><div class="petit">${echapper(donnees.erreur)}</div></div>`
+    : prete
+    ? `<div><div class="petit">Candidature prête</div><div class="titre">${echapper(prete.Entreprise)} · ${echapper(prete.Poste)}</div><div class="petit">${echapper(prete.Note)}</div></div>
+       <div>${prete.CV ? `<a href="${echapper(prete.CV)}" target="_blank" rel="noopener">Ouvrir le CV</a>` : ""}${prete.Lettre ? `<a class="contour" href="${echapper(prete.Lettre)}" target="_blank" rel="noopener">Lettre</a>` : ""}</div>`
+    : `<div><div class="petit">Candidatures</div><div class="titre">${enCours ? enCours + " en préparation" : "Rien en préparation"}</div>
+       <div class="petit">Clique sur « Préparer ma candidature » dans Emploi.</div></div>`;
+}
+
+const depart = (location.hash || "").slice(1);
+ouvrir(MODULES.some(m => m.id === depart) ? depart : "accueil");
+chargerAccueil();
+</script>
+</body>
+</html>

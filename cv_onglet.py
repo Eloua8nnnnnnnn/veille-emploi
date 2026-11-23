@@ -19,7 +19,6 @@ La file d'attente utilise SHEET_ADRESSE et SHEET_CLE du fichier .env (adresse et
 import json
 import os
 import sys
-import urllib.parse
 import urllib.request
 
 
@@ -152,10 +151,8 @@ def appel_file(donnees=None):
     adresse, mot_de_passe = cles.get("SHEET_ADRESSE"), cles.get("SHEET_CLE")
     if not adresse or not mot_de_passe:
         sys.exit("Ajoute SHEET_ADRESSE et SHEET_CLE dans le fichier .env")
-    if donnees is None:
-        requete = urllib.request.Request(adresse + "?" + urllib.parse.urlencode({"cle": mot_de_passe, "action": "file"}))
-    else:
-        requete = urllib.request.Request(adresse, data=json.dumps({"cle": mot_de_passe, **donnees}).encode(), method="POST")
+    donnees = donnees or {"action": "file"}  # tout passe en POST : la clé n'apparaît jamais dans l'adresse
+    requete = urllib.request.Request(adresse, data=json.dumps({"cle": mot_de_passe, **donnees}).encode(), method="POST")
     with urllib.request.urlopen(requete, timeout=60) as reponse:
         return json.loads(reponse.read().decode())
 

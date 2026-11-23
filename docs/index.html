@@ -549,11 +549,7 @@ $("liste-offres").addEventListener("click", async e => {
 let connexion = lireLocal("google_sheet", null);
 
 async function appelSheet(methode, contenu) {
-  if (methode === "GET") {
-    const parametres = new URLSearchParams({ cle: connexion.cle, ...(contenu || {}) });
-    const reponse = await fetch(`${connexion.adresse}?${parametres}`);
-    return reponse.json();
-  }
+  if (methode === "GET") contenu = { action: "lire", ...(contenu || {}) };  // lecture : le mot de passe ne passe plus dans l'adresse
   // Envoi en texte brut : c'est ce qu'accepte Google Apps Script depuis une autre page
   const reponse = await fetch(connexion.adresse, { method: "POST", body: JSON.stringify({ cle: connexion.cle, ...contenu }) });
   return reponse.json();

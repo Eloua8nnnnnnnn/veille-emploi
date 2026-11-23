@@ -122,6 +122,8 @@ Rassembler les offres qui sortent des volets 1 et 2 mais qui m'intéressent : le
 - À chaque mise à jour, vérifier si les offres sont toujours en ligne et retirer du tableau de bord celles qui ne le sont plus.
 
 ## Tableau de bord
+- **Dashboard personnel** (`docs/app.html`, en construction) : page d'accueil « Aujourd'hui » en tuiles et un module par page (emploi, social, santé, vêtements, recettes). Il est servi par le script Google du Sheet, avec un accès réservé à mon compte Google. Ses données personnelles restent dans le Google Sheet et ne vont jamais dans le dépôt public. Claude y accède par une entrée protégée par une clé (`SHEET_CLE` dans `.env`, propriété `MOT_DE_PASSE` du script).
+- Tableau de bord des offres (`docs/index.html`, ci-dessous) : affiché dans le module Emploi du dashboard.
 - Une seule page web simple, lisible sur ordinateur et sur téléphone.
 - Quatre onglets : compagnies aériennes / offres en startup / offres autres / mes candidatures.
 - L'onglet « mes candidatures » lit et modifie mon Google Sheet de suivi (script Google Apps Script, voir `google_sheet_script.js`).
