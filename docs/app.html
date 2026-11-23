@@ -138,6 +138,7 @@
   @media (max-width: 1100px) { .bas { grid-template-columns: 1fr 1fr; } .bas .sombre { grid-column: 1 / -1; } }
   .ligne { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--bord); font-size: 14px; }
   .ligne .badge { margin-left: auto; font-size: 11px; padding: 3px 10px; border-radius: 999px; }
+  .erreur-serveur { color: #a32d2d; }
   .vide { color: var(--discret); font-size: 14px; padding: 14px 0; border-top: 1px solid var(--bord); }
   .sombre { background: var(--barre); color: #eeedfe; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
   .sombre .petit { font-size: 12px; color: #afa9ec; }
@@ -213,8 +214,9 @@
           <form class="ajout" id="ajout-contact">
             <input id="nom-contact" placeholder="Prénom ou nom" maxlength="60">
             <select id="frequence-contact" aria-label="Fréquence">
+              <option value="0" selected>Juste y penser</option>
               <option value="7">Chaque semaine</option><option value="14">Toutes les 2 semaines</option>
-              <option value="30" selected>Chaque mois</option><option value="60">Tous les 2 mois</option>
+              <option value="30">Chaque mois</option><option value="60">Tous les 2 mois</option>
               <option value="90">Tous les 3 mois</option><option value="180">Tous les 6 mois</option>
             </select>
             <button>Ajouter</button>
@@ -281,7 +283,8 @@ const FAUX_SOCIAL = { contacts: [
     { nom: "Mamie", frequence: 7, dernier: "2026-11-10", note: "" } ], activites: [] };
 function fauxSocial(date) {
   const ecart = d => d ? Math.round((new Date(date) - new Date(d)) / 86400000) : null;
-  return { contacts: FAUX_SOCIAL.contacts.map(c => ({ ...c, ecart: ecart(c.dernier), retard: c.dernier ? ecart(c.dernier) - c.frequence : c.frequence }))
+  return { contacts: FAUX_SOCIAL.contacts.map(c => ({ ...c, ecart: ecart(c.dernier),
+      retard: !c.frequence ? (c.dernier ? -100000 : 0) : c.dernier ? ecart(c.dernier) - c.frequence : c.frequence }))
     .sort((a, b) => b.retard - a.retard), activites: FAUX_SOCIAL.activites };
 }
 let FAUX_THEATRE = [
@@ -313,6 +316,17 @@ const FICTIF = {
     { Entreprise: "Coast", Poste: "Business Operations Associate", Etat: "Prêt", CV: "#", Lettre: "#", Note: "CV et lettre en anglais" },
   ] }),
 };
+function messageErreur(erreur) {
+  const texte = String(erreur && erreur.message || erreur);
+  return /is not a function|n'est pas une fonction/.test(texte)
+    ? "Le script Google n'est pas à jour : colle la dernière version dans Apps Script et redéploie « Dashboard »."
+    : "Enregistrement impossible : " + texte;
+}
+function afficherErreur(zone, erreur) {
+  const ancien = $(zone).querySelector(".erreur-serveur");
+  if (ancien) ancien.remove();
+  $(zone).insertAdjacentHTML("afterbegin", `<div class="vide erreur-serveur">${echapper(messageErreur(erreur))}</div>`);
+}
 function serveur(fonction, ...parametres) {
   return new Promise((ok, echec) => {
     if (!DANS_GOOGLE) return setTimeout(() => ok(FICTIF[fonction](...parametres)), 150);
@@ -461,7 +475,7 @@ function afficherJournee(j) {
 
 async function action(fonction, ...parametres) {
   try { afficherJournee(await serveur(fonction, ...parametres)); }
-  catch (erreur) { $("habitudes").insertAdjacentHTML("afterbegin", `<div class="vide">Enregistrement impossible : ${echapper(erreur.message || erreur)}</div>`); }
+  catch (erreur) { afficherErreur("habitudes", erreur); }
 }
 const chargerJournee = () => action("journee", dateChoisie());
 
@@ -542,7 +556,7 @@ function afficherTheatre(d) {
 }
 async function actionTheatre(fonction, ...parametres) {
   try { afficherTheatre(await serveur(fonction, ...parametres, jourLocal(new Date()))); }
-  catch (erreur) { $("a-voir").insertAdjacentHTML("afterbegin", `<div class="vide">Enregistrement impossible : ${echapper(erreur.message || erreur)}</div>`); }
+  catch (erreur) { afficherErreur("a-voir", erreur); }
 }
 const chargerTheatre = () => actionTheatre("theatre");
 $("vue-theatre").addEventListener("click", e => {
@@ -593,6 +607,7 @@ const IDEES_DE_DEPART = [
 let donneesSocial = null, categorieChoisie = "";
 const initiales = nom => nom.split(/\s+/).map(m => m[0]).join("").slice(0, 2).toUpperCase();
 function texteContact(c) {
+  if (!c.frequence) return c.dernier ? `Contacté le ${new Date(c.dernier + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}` : "À contacter, une fois";
   if (c.ecart === null || c.ecart === undefined) return "Pas encore de contact noté";
   const quand = c.ecart === 0 ? "aujourd'hui" : c.ecart === 1 ? "hier" : `il y a ${c.ecart} j`;
   return `Dernier contact ${quand} · tous les ${c.frequence} j`;
@@ -606,8 +621,9 @@ function afficherSocial(d) {
     <div class="ligne">
       <span class="initiales">${echapper(initiales(c.nom))}</span>
       <span class="nom">${echapper(c.nom)}<br><span class="detail-contact">${texteContact(c)}</span></span>
-      ${c.retard >= 0 ? `<span class="badge-relance">À relancer</span>` : `<span class="badge-relance badge-ok">dans ${-c.retard} j</span>`}
-      <button class="petit-bouton" data-contacte="${echapper(c.nom)}">Contacté</button>
+      ${c.retard >= 0 ? `<span class="badge-relance">${c.frequence ? "À relancer" : "À contacter"}</span>`
+        : c.frequence ? `<span class="badge-relance badge-ok">dans ${-c.retard} j</span>` : `<span class="badge-relance badge-ok">Fait</span>`}
+      ${c.frequence || c.retard >= 0 ? `<button class="petit-bouton" data-contacte="${echapper(c.nom)}">Contacté</button>` : ""}
       <button class="retirer" data-supprimer-contact="${echapper(c.nom)}" aria-label="Supprimer ${echapper(c.nom)}">×</button>
     </div>`).join("") : `<div class="vide">Ajoute les personnes avec qui tu veux garder le lien, et à quelle fréquence.</div>`;
 
@@ -643,7 +659,7 @@ function majCarteSocial() {
 
 async function actionSocial(fonction, ...parametres) {
   try { afficherSocial(await serveur(fonction, ...parametres, jourLocal(new Date()))); }
-  catch (erreur) { $("contacts").insertAdjacentHTML("afterbegin", `<div class="vide">Enregistrement impossible : ${echapper(erreur.message || erreur)}</div>`); }
+  catch (erreur) { afficherErreur("contacts", erreur); }
 }
 const chargerSocial = () => actionSocial("social");
 

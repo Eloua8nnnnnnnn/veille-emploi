@@ -210,10 +210,11 @@ function joursEntre(debut, fin) {
 function social(date) {
   verifierProprietaire();
   const liste = lignes(contacts()).filter(l => l.valeurs[0]).map(l => {
-    const frequence = Number(l.valeurs[1]) || 30, dernier = l.valeurs[2];
+    // fréquence 0 : « juste y penser » (une seule fois) ; sinon, nombre de jours entre deux contacts
+    const frequence = l.valeurs[1] === "" ? 30 : Number(l.valeurs[1]) || 0, dernier = l.valeurs[2];
     const ecart = dernier ? joursEntre(dernier, date) : null;
-    return { nom: l.valeurs[0], frequence: frequence, dernier: dernier, note: l.valeurs[3],
-             ecart: ecart, retard: ecart === null ? frequence : ecart - frequence };  // retard > 0 : à relancer
+    const retard = frequence === 0 ? (dernier ? -100000 : 0) : (ecart === null ? frequence : ecart - frequence);
+    return { nom: l.valeurs[0], frequence: frequence, dernier: dernier, note: l.valeurs[3], ecart: ecart, retard: retard };  // retard ≥ 0 : à contacter
   }).sort((a, b) => b.retard - a.retard);
   const idees = lignes(activites()).filter(l => l.valeurs[1] && (l.valeurs[5] || !l.valeurs[7] || l.valeurs[7] >= date)).map(l =>
     ({ id: l.valeurs[0], titre: l.valeurs[1], categorie: l.valeurs[2], lieu: l.valeurs[3], lien: l.valeurs[4], faite: l.valeurs[5],
