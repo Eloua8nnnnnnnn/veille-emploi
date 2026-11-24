@@ -139,11 +139,11 @@
    "offres": [
     {
      "titre": "Agent commercial terrain (H/F)",
-     "lien": "https://qru.pet/offre-emploi-barf/",
-     "lieu": "Plusieurs secteurs ouverts en France"
+     "lien": "https://qru.pet",
+     "lieu": "France (plusieurs secteurs ouverts, dont Île-de-France)"
     }
    ],
-   "empreinte": "427ae29fbff157914226b6a1851b783ef5d4d4d5"
+   "empreinte": "f83d928b08b07ced6859d7b365f7e7da5b8f02f6"
   },
   "Gimii": {
    "site": "https://gimii.fr/",
@@ -1006,7 +1006,7 @@
      "lieu": "Toulouse"
     }
    ],
-   "empreinte": "6f8c1731b29a61b1ae7c914f915dcc1c4f90f65b"
+   "empreinte": "9c55abb26edcff340928b84313ebd6285fdc9877"
   },
   "Womed": {
    "site": "http://www.womedtech.com/",
@@ -1088,7 +1088,7 @@
    "outil": "page",
    "page": "http://www.helloaria.me/careers/",
    "offres": [],
-   "empreinte": "6b033dad560bc567190b8a9ddc1290d106822591"
+   "empreinte": "9504ab06d612e430dd1eb179c088041a2e84bf78"
   },
   "En Carta Diagnostics": {
    "site": "http://www.encarta.bio/",
@@ -1571,7 +1571,7 @@
    "outil": "page",
    "page": "https://tiva-performance.com/pages/performance-club",
    "offres": [],
-   "empreinte": "23c47308aae270377a806dada578daba19f74da4"
+   "empreinte": "1e737e9ace7d22fbe6624a1f07c553a13bdaacc8"
   },
   "Lucis": {
    "site": "https://www.lucis.life/fr",
