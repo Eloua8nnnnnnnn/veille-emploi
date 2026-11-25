@@ -139,11 +139,11 @@
    "offres": [
     {
      "titre": "Agent commercial terrain (H/F)",
-     "lien": "https://qru.pet",
-     "lieu": "France (plusieurs secteurs ouverts, dont Île-de-France)"
+     "lien": "https://qru.pet/offre-emploi-barf/",
+     "lieu": "Plusieurs secteurs ouverts en France, dont Île de France"
     }
    ],
-   "empreinte": "f83d928b08b07ced6859d7b365f7e7da5b8f02f6"
+   "empreinte": "512a66c3a3e4c3a299d5d243430fde78f04724f1"
   },
   "Gimii": {
    "site": "https://gimii.fr/",
@@ -341,7 +341,7 @@
    "outil": "page",
    "page": "https://hylight.aero/careers",
    "offres": [],
-   "empreinte": "3da277d9be5c1a07f8382a3f923580e8ee09e991"
+   "empreinte": "43fac6525a5347eafe55b9fe0e095c7d06e51ac5"
   },
   "Goodweek": {
    "site": "https://goodweek.com/",
@@ -793,11 +793,6 @@
      "lieu": "On-site in Paris"
     },
     {
-     "titre": "Product Designer",
-     "lien": "http://www.arlq.ai/careers/senior-designer",
-     "lieu": "On-site in Paris"
-    },
-    {
      "titre": "Account Executive – France",
      "lien": "http://www.arlq.ai/careers/account-executive-france",
      "lieu": "Paris"
@@ -808,7 +803,7 @@
      "lieu": "Germany (remote, with travel)"
     }
    ],
-   "empreinte": "f1f50d2ecf3756c437c28bf5b022f2be5c8887a8"
+   "empreinte": "af38666e69e452dc8d25502f0d3e55af1250f0d2"
   },
   "Actionable": {
    "site": "http://actionable.live/",
@@ -1006,7 +1001,7 @@
      "lieu": "Toulouse"
     }
    ],
-   "empreinte": "9c55abb26edcff340928b84313ebd6285fdc9877"
+   "empreinte": "f9166d1d1442e7ebc61ea52bc13cc2644555ccfb"
   },
   "Womed": {
    "site": "http://www.womedtech.com/",
@@ -1088,7 +1083,7 @@
    "outil": "page",
    "page": "http://www.helloaria.me/careers/",
    "offres": [],
-   "empreinte": "9504ab06d612e430dd1eb179c088041a2e84bf78"
+   "empreinte": "cdd9583fbfd5d2a41213e03d6c7f8e9d9805607a"
   },
   "En Carta Diagnostics": {
    "site": "http://www.encarta.bio/",
@@ -1627,7 +1622,7 @@
    "outil": "page",
    "page": "http://mysunbed.com/fr/contact/",
    "offres": [],
-   "empreinte": "4db53ed5f85e8d13dc2caece6218fb30a61e2d7f"
+   "empreinte": "7c07cb1ad0163c85d545073bed11c4cfeca6f4ba"
   },
   "Ellipse Bikes": {
    "site": "http://ellipsebikes.com",
