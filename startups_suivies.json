@@ -139,11 +139,11 @@
    "offres": [
     {
      "titre": "Agent commercial terrain (H/F)",
-     "lien": "https://qru.pet/offre-emploi-barf/",
-     "lieu": "Plusieurs secteurs ouverts en France, dont Île de France"
+     "lien": "https://qru.pet",
+     "lieu": "Plusieurs secteurs ouverts en France"
     }
    ],
-   "empreinte": "512a66c3a3e4c3a299d5d243430fde78f04724f1"
+   "empreinte": "6ad37677c3a4d5329a612abe33d8bc7b375d9c26"
   },
   "Gimii": {
    "site": "https://gimii.fr/",
@@ -801,9 +801,14 @@
      "titre": "Account Executive – Germany",
      "lien": "http://www.arlq.ai/careers/account-executive-germany",
      "lieu": "Germany (remote, with travel)"
+    },
+    {
+     "titre": "CEO Office Intern",
+     "lien": "http://www.arlq.ai/careers/ceo-office-intern",
+     "lieu": "On-site in Paris (2nd arr.)"
     }
    ],
-   "empreinte": "af38666e69e452dc8d25502f0d3e55af1250f0d2"
+   "empreinte": "742992d6ea9e10d0ab182fc7049854efaa3bdde0"
   },
   "Actionable": {
    "site": "http://actionable.live/",
@@ -1083,7 +1088,7 @@
    "outil": "page",
    "page": "http://www.helloaria.me/careers/",
    "offres": [],
-   "empreinte": "cdd9583fbfd5d2a41213e03d6c7f8e9d9805607a"
+   "empreinte": "051461ae2d822db6bd3b3bcb5933b862873c1544"
   },
   "En Carta Diagnostics": {
    "site": "http://www.encarta.bio/",
@@ -1154,7 +1159,7 @@
    "outil": "page",
    "page": "https://panoramaed.com/products/pathways",
    "offres": [],
-   "empreinte": "37448d45bfaa3104605ce7774e60c6d8da5bfb13"
+   "empreinte": "bf247b7dfe30db3f6d804ac8bdfb87895176f214"
   },
   "Twinsight": {
    "site": "http://twinsight-medical.com/",
