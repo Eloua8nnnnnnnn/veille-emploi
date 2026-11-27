@@ -139,11 +139,11 @@
    "offres": [
     {
      "titre": "Agent commercial terrain (H/F)",
-     "lien": "https://qru.pet",
+     "lien": "https://qru.pet/offre-emploi-barf/",
      "lieu": "Plusieurs secteurs ouverts en France"
     }
    ],
-   "empreinte": "6ad37677c3a4d5329a612abe33d8bc7b375d9c26"
+   "empreinte": "e1fa777b400b390b3f6415e5b04c341231c94a7b"
   },
   "Gimii": {
    "site": "https://gimii.fr/",
@@ -1088,7 +1088,7 @@
    "outil": "page",
    "page": "http://www.helloaria.me/careers/",
    "offres": [],
-   "empreinte": "051461ae2d822db6bd3b3bcb5933b862873c1544"
+   "empreinte": "2f542f567e619c6553403121aa53890a21e410cf"
   },
   "En Carta Diagnostics": {
    "site": "http://www.encarta.bio/",
@@ -1215,13 +1215,13 @@
    "page": "http://www.tsuga.com/resources/join-us",
    "offres": [
     {
-     "titre": "Senior backend engineer - NodeJS / Rust",
-     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDo2YcQupubW5r7HskHJZsry-senior-backend-engineer-nodejs-rust",
+     "titre": "Senior Product Manager",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDow7m3Oit8ySIykqKUZe2XZ-senior-product-manager",
      "lieu": "Paris, France - hybrid"
     },
     {
-     "titre": "Senior Product Manager",
-     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDow7m3Oit8ySIykqKUZe2XZ-senior-product-manager",
+     "titre": "Senior backend engineer - NodeJS / Rust",
+     "lien": "http://www.tsuga.com/about-us/careers/am9icG9zdDo2YcQupubW5r7HskHJZsry-senior-backend-engineer-nodejs-rust",
      "lieu": "Paris, France - hybrid"
     },
     {
@@ -1270,7 +1270,7 @@
      "lieu": "United states - remote"
     }
    ],
-   "empreinte": "cb7aada080f806f97acb514da595da2cbece5f83"
+   "empreinte": "f21019e2800c8989920980c98505b145c8c02d00"
   },
   "Wheere": {
    "site": "http://wheere.io/",
@@ -1571,7 +1571,7 @@
    "outil": "page",
    "page": "https://tiva-performance.com/pages/performance-club",
    "offres": [],
-   "empreinte": "1e737e9ace7d22fbe6624a1f07c553a13bdaacc8"
+   "empreinte": "a27d10948505a92087d3824efdf1d20259ef179a"
   },
   "Lucis": {
    "site": "https://www.lucis.life/fr",
