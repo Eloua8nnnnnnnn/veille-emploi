@@ -136,14 +136,8 @@
    "levee_le": "2026-11-09",
    "outil": "page",
    "page": "https://qru.pet/offre-emploi-barf/",
-   "offres": [
-    {
-     "titre": "Agent commercial terrain (H/F)",
-     "lien": "https://qru.pet/offre-emploi-barf/",
-     "lieu": "Plusieurs secteurs ouverts en France"
-    }
-   ],
-   "empreinte": "e1fa777b400b390b3f6415e5b04c341231c94a7b"
+   "offres": [],
+   "empreinte": "504bc840e62b1ced01e04c7de7e5fabf771c4e88"
   },
   "Gimii": {
    "site": "https://gimii.fr/",
@@ -763,6 +757,11 @@
    "page": "http://www.arlq.ai/careers",
    "offres": [
     {
+     "titre": "Technical Program Manager, Research",
+     "lien": "http://www.arlq.ai/careers/technical-program-manager-research",
+     "lieu": "Paris"
+    },
+    {
      "titre": "Forward Deployed Engineer",
      "lien": "http://www.arlq.ai/careers/forward-deployed-engineer",
      "lieu": "Paris, with regular travel across Europe"
@@ -808,7 +807,7 @@
      "lieu": "On-site in Paris (2nd arr.)"
     }
    ],
-   "empreinte": "742992d6ea9e10d0ab182fc7049854efaa3bdde0"
+   "empreinte": "9e8f1b9cf1b4a2edc22a28156780e457ddacdce1"
   },
   "Actionable": {
    "site": "http://actionable.live/",
@@ -961,6 +960,11 @@
    "page": "https://www.ascendance-ft.com/career",
    "offres": [
     {
+     "titre": "Approvisionneur / Gestionnaire de stock(all gender)",
+     "lien": "https://taleez.com/apply/approvisionneur-gestionnaire-de-stock-all-gender-muret-ascendance-cdi",
+     "lieu": "Muret"
+    },
+    {
      "titre": "Stage - Talent & RH (all gender)",
      "lien": "https://www.ascendance-ft.com/https-taleez-com-apply-talent-hr-intern-all-gender-toulouse-ascendance",
      "lieu": "Toulouse"
@@ -1006,7 +1010,7 @@
      "lieu": "Toulouse"
     }
    ],
-   "empreinte": "f9166d1d1442e7ebc61ea52bc13cc2644555ccfb"
+   "empreinte": "6afcb0e72a30ef454273386045badfa72e23da79"
   },
   "Womed": {
    "site": "http://www.womedtech.com/",
@@ -1088,7 +1092,7 @@
    "outil": "page",
    "page": "http://www.helloaria.me/careers/",
    "offres": [],
-   "empreinte": "2f542f567e619c6553403121aa53890a21e410cf"
+   "empreinte": "50d980484e2ce69c4b752de4f7eecd22c1b91dba"
   },
   "En Carta Diagnostics": {
    "site": "http://www.encarta.bio/",
